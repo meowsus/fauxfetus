@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import klaw from 'klaw';
+import { parseBuffer, type IAudioMetadata } from 'music-metadata';
 import path from 'path';
 
 const CWD = process.cwd();
@@ -25,6 +26,21 @@ class DataGenerator {
 	 * ]
 	 */
 	trackUris: string[] = [];
+
+	/**
+	 * A dictionary of music-metadata objects, organized by
+	 * track slug, album slug, and artist slug.
+	 *
+	 * @example
+	 * {
+	 *   'artist-slug': {
+	 *     'album-slug': {
+	 *       'track-slug': { ... } // IAudioMetadata object
+	 *     }
+	 *   }
+	 * }
+	 */
+	metadataDictionary: Record<string, Record<string, Record<string, IAudioMetadata>>> = {};
 
 	/**
 	 * Create a list of URIs to help locate files.
@@ -74,7 +90,37 @@ class DataGenerator {
 			});
 		}
 
-		console.log(`Finished seeding write directory.`);
+		console.log(`Finished seeding write directory`);
+	}
+
+	/**
+	 * Builds the metadata directory
+	 */
+	private async buildMetadataDictionary() {
+		console.log('Building metadata dictionary...');
+
+		for (const uri of this.trackUris) {
+			const [artistSlug, albumSlug, trackSlug] = uri.split('/');
+
+			// Open & read the file buffer
+			const buffer = await fs.readFile(`${READ_PATH}/${uri}.mp3`);
+			const metadata = await parseBuffer(buffer, { mimeType: 'audio/mpeg' });
+
+			// Create the artist entry, if necessary
+			if (!this.metadataDictionary?.[artistSlug]) {
+				this.metadataDictionary[artistSlug] = {};
+			}
+
+			// Create the album entry, if necessary
+			if (!this.metadataDictionary[artistSlug]?.[albumSlug]) {
+				this.metadataDictionary[artistSlug][albumSlug] = {};
+			}
+
+			// Store the metadata
+			this.metadataDictionary[artistSlug][albumSlug][trackSlug] = metadata;
+		}
+
+		console.log('Built metadata dictionary');
 	}
 
 	/**
@@ -83,6 +129,7 @@ class DataGenerator {
 	async run() {
 		await this.buildTrackUris();
 		await this.seedWriteDirectory();
+		await this.buildMetadataDictionary();
 	}
 }
 
