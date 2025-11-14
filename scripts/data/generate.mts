@@ -47,12 +47,12 @@ class DataGenerator {
 	 * {
 	 *   'artist-slug': {
 	 *     'album-slug': {
-	 *       'track-slug': { ... } // IAudioMetadata object
+	 *       'track-slug': { ... } // Relevant metadata
 	 *     }
 	 *   }
 	 * }
 	 */
-	metadataDictionary: Record<string, Record<string, Record<string, IAudioMetadata>>> = {};
+	trackMetadataDictionary: Record<string, Record<string, Record<string, App.TrackMetadata>>> = {};
 
 	/**
 	 * Create a list of URIs to help locate files.
@@ -80,42 +80,9 @@ class DataGenerator {
 	}
 
 	/**
-	 * Builds the metadata directory
+	 * Validates and extracts track data from IAudioMetadata
 	 */
-	private async buildMetadataDictionary(): Promise<void> {
-		console.log('Building metadata dictionary...');
-
-		for (const uri of this.trackUris) {
-			const [artistSlug, albumSlug, titleSlug] = uri.split('/');
-
-			// Open & read the file buffer
-			const buffer = await fs.readFile(`${READ_PATH}/${uri}.mp3`);
-			const metadata = await parseBuffer(buffer, { mimeType: 'audio/mpeg' });
-
-			// Create the artist entry, if necessary
-			if (!this.metadataDictionary?.[artistSlug]) {
-				this.metadataDictionary[artistSlug] = {};
-			}
-
-			// Create the album entry, if necessary
-			if (!this.metadataDictionary[artistSlug]?.[albumSlug]) {
-				this.metadataDictionary[artistSlug][albumSlug] = {};
-			}
-
-			// Store the metadata
-			this.metadataDictionary[artistSlug][albumSlug][titleSlug] = metadata;
-		}
-
-		console.log('Built metadata dictionary');
-	}
-
-	/**
-	 *
-	 */
-	private extractTrackData(uri: string): App.Track {
-		const [artistSlug, albumSlug, titleSlug] = uri.split('/');
-		const metadata = this.metadataDictionary[artistSlug][albumSlug][titleSlug];
-
+	private extractTrackMetadata(metadata: IAudioMetadata): App.TrackMetadata {
 		// Prepare and parse flattened, important metadata
 		const result = MetadataSchema.safeParse({
 			duration: metadata.format.duration,
@@ -128,16 +95,42 @@ class DataGenerator {
 
 		// Fail fast if data is inconsistent
 		if (!result.success) {
-			console.error(`Issue extracting ${uri}:`, result.error);
+			console.error(`Issue extracting track data:`, result.error);
 			process.exit(1);
 		}
 
-		return {
-			...result.data,
-			artistSlug,
-			albumSlug,
-			titleSlug
-		};
+		return result.data;
+	}
+
+	/**
+	 * Builds the track data dictionary
+	 */
+	private async buildTrackMetadataDictionary(): Promise<void> {
+		console.log('Building track data dictionary...');
+
+		for (const uri of this.trackUris) {
+			const [artistSlug, albumSlug, titleSlug] = uri.split('/');
+
+			// Open & read the file buffer
+			const buffer = await fs.readFile(`${READ_PATH}/${uri}.mp3`);
+			const metadata = await parseBuffer(buffer, { mimeType: 'audio/mpeg' });
+			const trackMetadata = this.extractTrackMetadata(metadata);
+
+			// Create the artist entry, if necessary
+			if (!this.trackMetadataDictionary?.[artistSlug]) {
+				this.trackMetadataDictionary[artistSlug] = {};
+			}
+
+			// Create the album entry, if necessary
+			if (!this.trackMetadataDictionary[artistSlug]?.[albumSlug]) {
+				this.trackMetadataDictionary[artistSlug][albumSlug] = {};
+			}
+
+			// Store the metadata
+			this.trackMetadataDictionary[artistSlug][albumSlug][titleSlug] = trackMetadata;
+		}
+
+		console.log('Built track data dictionary');
 	}
 
 	/**
@@ -149,9 +142,10 @@ class DataGenerator {
 		await fs.emptyDir(WRITE_PATH);
 
 		for (const uri of this.trackUris) {
-			const trackData = this.extractTrackData(uri);
-
 			const [artistSlug, albumSlug, titleSlug] = uri.split('/');
+
+			const trackMetadata = this.trackMetadataDictionary[artistSlug][albumSlug][titleSlug];
+			const trackData: App.Track = { ...trackMetadata, artistSlug, albumSlug, titleSlug };
 
 			const jsonDirectory = `${WRITE_PATH}/${artistSlug}/${albumSlug}`;
 			const jsonWritePath = `${jsonDirectory}/${titleSlug}.json`;
@@ -168,7 +162,7 @@ class DataGenerator {
 	 */
 	async run() {
 		await this.buildTrackUris();
-		await this.buildMetadataDictionary();
+		await this.buildTrackMetadataDictionary();
 		await this.saveTrackData();
 	}
 }

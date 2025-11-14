@@ -2,10 +2,7 @@
 // for information about these interfaces
 declare global {
 	namespace App {
-		interface Track {
-			artistSlug: string;
-			albumSlug: string;
-			titleSlug: string;
+		interface TrackMetadata {
 			duration: number;
 			album: string;
 			artist: string;
@@ -14,15 +11,21 @@ declare global {
 			track: number | null;
 		}
 
+		interface Track extends TrackMetadata {
+			artistSlug: string;
+			albumSlug: string;
+			titleSlug: string;
+		}
+
 		interface Album {
 			artistSlug: string;
 			albumSlug: string;
-			tracks: TrackData[];
+			tracks: Track[];
 		}
 
 		interface Artist {
 			artistSlug: string;
-			albums: AlbumData[];
+			albums: Album[];
 		}
 	}
 }
