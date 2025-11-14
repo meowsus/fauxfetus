@@ -1,7 +1,10 @@
+import type {} from '../../src/app.d.ts';
+
 import fs from 'fs-extra';
 import klaw from 'klaw';
 import { parseBuffer, type IAudioMetadata } from 'music-metadata';
 import path from 'path';
+import { z } from 'zod';
 
 const CWD = process.cwd();
 
@@ -9,6 +12,15 @@ const READ_PATH = path.resolve(CWD, 'audio');
 const WRITE_PATH = path.resolve(CWD, 'src/lib/assets/data');
 
 const SKIP_DIR_PATTERN = /^_/;
+
+const MetadataSchema = z.object({
+	duration: z.number().positive(),
+	album: z.string().nonempty(),
+	artist: z.string().nonempty(),
+	composer: z.array(z.string().nonempty()),
+	title: z.string().nonempty(),
+	track: z.number().positive().nullable()
+});
 
 /**
  * Data generator class.
@@ -45,7 +57,7 @@ class DataGenerator {
 	/**
 	 * Create a list of URIs to help locate files.
 	 */
-	private async buildTrackUris() {
+	private async buildTrackUris(): Promise<void> {
 		console.log('Building track URI list...');
 
 		for await (const file of klaw(READ_PATH)) {
@@ -68,39 +80,13 @@ class DataGenerator {
 	}
 
 	/**
-	 * Seed the write directory with basic, URI-based data.
-	 */
-	private async seedWriteDirectory() {
-		console.log('Seeding write directory...');
-
-		// Empty the data directory
-		await fs.emptyDir(WRITE_PATH);
-
-		for (const uri of this.trackUris) {
-			const [artistSlug, albumSlug, trackSlug] = uri.split('/');
-
-			const jsonDirectory = `${WRITE_PATH}/${artistSlug}/${albumSlug}`;
-			const jsonWritePath = `${jsonDirectory}/${trackSlug}.json`;
-
-			await fs.mkdirp(jsonDirectory);
-			await fs.writeJson(jsonWritePath, {
-				artistSlug,
-				albumSlug,
-				trackSlug
-			});
-		}
-
-		console.log(`Finished seeding write directory`);
-	}
-
-	/**
 	 * Builds the metadata directory
 	 */
-	private async buildMetadataDictionary() {
+	private async buildMetadataDictionary(): Promise<void> {
 		console.log('Building metadata dictionary...');
 
 		for (const uri of this.trackUris) {
-			const [artistSlug, albumSlug, trackSlug] = uri.split('/');
+			const [artistSlug, albumSlug, titleSlug] = uri.split('/');
 
 			// Open & read the file buffer
 			const buffer = await fs.readFile(`${READ_PATH}/${uri}.mp3`);
@@ -117,10 +103,64 @@ class DataGenerator {
 			}
 
 			// Store the metadata
-			this.metadataDictionary[artistSlug][albumSlug][trackSlug] = metadata;
+			this.metadataDictionary[artistSlug][albumSlug][titleSlug] = metadata;
 		}
 
 		console.log('Built metadata dictionary');
+	}
+
+	/**
+	 *
+	 */
+	private extractTrackData(uri: string): App.Track {
+		const [artistSlug, albumSlug, titleSlug] = uri.split('/');
+		const metadata = this.metadataDictionary[artistSlug][albumSlug][titleSlug];
+
+		// Prepare and parse flattened, important metadata
+		const result = MetadataSchema.safeParse({
+			duration: metadata.format.duration,
+			album: metadata.common.album,
+			artist: metadata.common.artist,
+			composer: metadata.common.composer ?? [],
+			title: metadata.common.title,
+			track: metadata.common.track.no
+		});
+
+		// Fail fast if data is inconsistent
+		if (!result.success) {
+			console.error(`Issue extracting ${uri}:`, result.error);
+			process.exit(1);
+		}
+
+		return {
+			...result.data,
+			artistSlug,
+			albumSlug,
+			titleSlug
+		};
+	}
+
+	/**
+	 * Stores the track data to disk
+	 */
+	private async saveTrackData(): Promise<void> {
+		console.log('Saving track data...');
+
+		await fs.emptyDir(WRITE_PATH);
+
+		for (const uri of this.trackUris) {
+			const trackData = this.extractTrackData(uri);
+
+			const [artistSlug, albumSlug, titleSlug] = uri.split('/');
+
+			const jsonDirectory = `${WRITE_PATH}/${artistSlug}/${albumSlug}`;
+			const jsonWritePath = `${jsonDirectory}/${titleSlug}.json`;
+
+			await fs.mkdirp(jsonDirectory);
+			await fs.writeJson(jsonWritePath, trackData);
+		}
+
+		console.log('Saved track data');
 	}
 
 	/**
@@ -128,8 +168,8 @@ class DataGenerator {
 	 */
 	async run() {
 		await this.buildTrackUris();
-		await this.seedWriteDirectory();
 		await this.buildMetadataDictionary();
+		await this.saveTrackData();
 	}
 }
 

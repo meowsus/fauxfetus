@@ -5,7 +5,13 @@ declare global {
 		interface Track {
 			artistSlug: string;
 			albumSlug: string;
-			trackSlug: string;
+			titleSlug: string;
+			duration: number;
+			album: string;
+			artist: string;
+			composer: string[];
+			title: string;
+			track: number | null;
 		}
 
 		interface Album {
