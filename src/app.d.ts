@@ -2,19 +2,19 @@
 // for information about these interfaces
 declare global {
 	namespace App {
-		interface TrackData {
+		interface Track {
 			artistSlug: string;
 			albumSlug: string;
 			trackSlug: string;
 		}
 
-		interface AlbumData {
+		interface Album {
 			artistSlug: string;
 			albumSlug: string;
 			tracks: TrackData[];
 		}
 
-		interface ArtistData {
+		interface Artist {
 			artistSlug: string;
 			albums: AlbumData[];
 		}

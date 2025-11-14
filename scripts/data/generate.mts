@@ -4,8 +4,8 @@ import path from 'path';
 
 const CWD = process.cwd();
 
-const READ_PATH = path.resolve(CWD, 'audio/');
-const WRITE_PATH = path.resolve(CWD, 'src/lib/assets/data/');
+const READ_PATH = path.resolve(CWD, 'audio');
+const WRITE_PATH = path.resolve(CWD, 'src/lib/assets/data');
 
 const SKIP_DIR_PATTERN = /^_/;
 
@@ -17,21 +17,20 @@ const SKIP_DIR_PATTERN = /^_/;
  */
 class DataGenerator {
 	/**
-	 * List of audio files to generate data for.
+	 * A list of URIs representing paths to each track
 	 *
 	 * @example
 	 * [
-	 *   'artist-slug/album-slug/track-slug.mp3',
-	 *   'black-pus/black-pus-3/02-Swampus.mp3',
+	 *   'artist-slug/album-slug/track-slug', ...
 	 * ]
 	 */
-	audioFileList: string[] = [];
+	trackUris: string[] = [];
 
 	/**
-	 * Build the list of audio files to generate data for.
+	 * Create a list of URIs to help locate files.
 	 */
-	private async buildAudioFileList() {
-		console.log('Building audio file list...');
+	private async buildTrackUris() {
+		console.log('Building track URI list...');
 
 		for await (const file of klaw(READ_PATH)) {
 			const relativePath = path.relative(READ_PATH, file.path);
@@ -42,18 +41,48 @@ class DataGenerator {
 			// Skip files that start with the skip pattern
 			if (SKIP_DIR_PATTERN.test(relativePath)) continue;
 
-			// Add the relative path to the list
-			this.audioFileList.push(relativePath);
+			// Remove the extension from the path
+			const [uri] = relativePath.split('.mp3');
+
+			// Add the URI to the list
+			this.trackUris.push(uri);
 		}
 
-		console.log(`Built audio file list with ${this.audioFileList.length} entries`);
+		console.log(`Finished building audio file list: ${this.trackUris.length} entries`);
+	}
+
+	/**
+	 * Seed the write directory with basic, URI-based data.
+	 */
+	private async seedWriteDirectory() {
+		console.log('Seeding write directory...');
+
+		// Empty the data directory
+		await fs.emptyDir(WRITE_PATH);
+
+		for (const uri of this.trackUris) {
+			const [artistSlug, albumSlug, trackSlug] = uri.split('/');
+
+			const jsonDirectory = `${WRITE_PATH}/${artistSlug}/${albumSlug}`;
+			const jsonWritePath = `${jsonDirectory}/${trackSlug}.json`;
+
+			await fs.mkdirp(jsonDirectory);
+			await fs.writeJson(jsonWritePath, {
+				artistSlug,
+				albumSlug,
+				trackSlug
+			});
+		}
+
+		console.log(`Finished seeding write directory.`);
 	}
 
 	/**
 	 * Run the data generator.
 	 */
 	async run() {
-		await this.buildAudioFileList();
+		await this.buildTrackUris();
+		await this.seedWriteDirectory();
 	}
 }
 
