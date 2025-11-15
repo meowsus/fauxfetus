@@ -67,18 +67,6 @@ class DataGenerator {
 	}
 
 	/**
-	 * A list of URIs representing paths to each album
-	 *
-	 * @example
-	 * [
-	 *   'artist-slug, ...
-	 * ]
-	 */
-	get artistUris() {
-		return Array.from(new Set(this.albumUris.map((uri) => uri.slice(0, uri.lastIndexOf('/')))));
-	}
-
-	/**
 	 * Create a list of URIs to help locate files.
 	 */
 	private async buildTrackUris(): Promise<void> {
@@ -217,6 +205,38 @@ class DataGenerator {
 	}
 
 	/**
+	 * Generates and stores the artist index data files
+	 */
+	private async saveArtistData(): Promise<void> {
+		console.log('Generating artist data...');
+
+		for (const artistSlug of Object.keys(this.trackMetadataDictionary)) {
+			const directory = `${WRITE_PATH}/${artistSlug}`;
+			const filename = `${directory}/index.json`;
+
+			const artistData: App.Artist = { artistSlug, artist: '', albums: [] };
+
+			for await (const file of klaw(directory, { depthLimit: 1 })) {
+				// If it's not an album index file, we don't want it
+				if (!file.path.endsWith('index.json')) continue;
+
+				// Read the album file
+				const albumData: App.Album = await fs.readJson(file.path);
+
+				// Assume the first entry's album name applies to the entire directory
+				if (artistData.artist === '') artistData.artist = albumData.artist;
+
+				// Push the track data into the album
+				artistData.albums.push(albumData);
+			}
+
+			await fs.writeJson(filename, artistData);
+		}
+
+		console.log('Generated artist data...');
+	}
+
+	/**
 	 * Run the data generator.
 	 */
 	async run() {
@@ -224,6 +244,7 @@ class DataGenerator {
 		await this.buildTrackMetadataDictionary();
 		await this.saveTrackData();
 		await this.saveAlbumData();
+		await this.saveArtistData();
 	}
 }
 
