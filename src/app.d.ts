@@ -30,6 +30,8 @@ declare global {
 			artist: string;
 			albums: Album[];
 		}
+
+		type Catalog = Artist[];
 	}
 }
 

@@ -237,6 +237,33 @@ class DataGenerator {
 	}
 
 	/**
+	 * Generates and stores the main catalog index file
+	 */
+	private async saveCatalogData(): Promise<void> {
+		console.log('Generating catalog data...');
+
+		const directory = WRITE_PATH;
+		const filename = `${directory}/index.json`;
+
+		const catalogData: App.Catalog = [];
+
+		for await (const file of klaw(directory, { depthLimit: 1 })) {
+			// If it's not an artist index file, we don't want it
+			if (!file.path.endsWith('index.json')) continue;
+
+			// Read the album file
+			const artistData: App.Artist = await fs.readJson(file.path);
+
+			// Push the track data into the album
+			catalogData.push(artistData);
+		}
+
+		await fs.writeJson(filename, catalogData);
+
+		console.log('Generated catalog data...');
+	}
+
+	/**
 	 * Run the data generator.
 	 */
 	async run() {
@@ -245,6 +272,7 @@ class DataGenerator {
 		await this.saveTrackData();
 		await this.saveAlbumData();
 		await this.saveArtistData();
+		await this.saveCatalogData();
 	}
 }
 
