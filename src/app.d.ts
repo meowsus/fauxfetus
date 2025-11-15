@@ -20,11 +20,14 @@ declare global {
 		interface Album {
 			artistSlug: string;
 			albumSlug: string;
+			artist: string;
+			album: string;
 			tracks: Track[];
 		}
 
 		interface Artist {
 			artistSlug: string;
+			artist: string;
 			albums: Album[];
 		}
 	}

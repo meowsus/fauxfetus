@@ -34,7 +34,7 @@ class DataGenerator {
 	 *
 	 * @example
 	 * [
-	 *   'artist-slug/album-slug/track-slug', ...
+	 *   'artist-slug/album-slug/title-slug', ...
 	 * ]
 	 */
 	trackUris: string[] = [];
@@ -47,12 +47,36 @@ class DataGenerator {
 	 * {
 	 *   'artist-slug': {
 	 *     'album-slug': {
-	 *       'track-slug': { ... } // Relevant metadata
+	 *       'title-slug': { ... } // Relevant metadata
 	 *     }
 	 *   }
 	 * }
 	 */
 	trackMetadataDictionary: Record<string, Record<string, Record<string, App.TrackMetadata>>> = {};
+
+	/**
+	 * A list of URIs representing paths to each album
+	 *
+	 * @example
+	 * [
+	 *   'artist-slug/album-slug', ...
+	 * ]
+	 */
+	get albumUris() {
+		return Array.from(new Set(this.trackUris.map((uri) => uri.slice(0, uri.lastIndexOf('/')))));
+	}
+
+	/**
+	 * A list of URIs representing paths to each album
+	 *
+	 * @example
+	 * [
+	 *   'artist-slug, ...
+	 * ]
+	 */
+	get artistUris() {
+		return Array.from(new Set(this.albumUris.map((uri) => uri.slice(0, uri.lastIndexOf('/')))));
+	}
 
 	/**
 	 * Create a list of URIs to help locate files.
@@ -70,10 +94,10 @@ class DataGenerator {
 			if (SKIP_DIR_PATTERN.test(relativePath)) continue;
 
 			// Remove the extension from the path
-			const [uri] = relativePath.split('.mp3');
+			const [trackUri] = relativePath.split('.mp3');
 
 			// Add the URI to the list
-			this.trackUris.push(uri);
+			this.trackUris.push(trackUri);
 		}
 
 		console.log(`Finished building audio file list: ${this.trackUris.length} entries`);
@@ -108,11 +132,11 @@ class DataGenerator {
 	private async buildTrackMetadataDictionary(): Promise<void> {
 		console.log('Building track data dictionary...');
 
-		for (const uri of this.trackUris) {
-			const [artistSlug, albumSlug, titleSlug] = uri.split('/');
+		for (const trackUri of this.trackUris) {
+			const [artistSlug, albumSlug, titleSlug] = trackUri.split('/');
 
 			// Open & read the file buffer
-			const buffer = await fs.readFile(`${READ_PATH}/${uri}.mp3`);
+			const buffer = await fs.readFile(`${READ_PATH}/${trackUri}.mp3`);
 			const metadata = await parseBuffer(buffer, { mimeType: 'audio/mpeg' });
 			const trackMetadata = this.extractTrackMetadata(metadata);
 
@@ -141,8 +165,8 @@ class DataGenerator {
 
 		await fs.emptyDir(WRITE_PATH);
 
-		for (const uri of this.trackUris) {
-			const [artistSlug, albumSlug, titleSlug] = uri.split('/');
+		for (const trackUri of this.trackUris) {
+			const [artistSlug, albumSlug, titleSlug] = trackUri.split('/');
 
 			const trackMetadata = this.trackMetadataDictionary[artistSlug][albumSlug][titleSlug];
 			const trackData: App.Track = { ...trackMetadata, artistSlug, albumSlug, titleSlug };
@@ -158,12 +182,48 @@ class DataGenerator {
 	}
 
 	/**
+	 * Generates and stores the album index data files
+	 */
+	private async saveAlbumData(): Promise<void> {
+		console.log('Generating album data...');
+
+		for (const albumUri of this.albumUris) {
+			const directory = `${WRITE_PATH}/${albumUri}`;
+			const filename = `${directory}/index.json`;
+
+			const [artistSlug, albumSlug] = albumUri.split('/');
+
+			const albumData: App.Album = { artistSlug, albumSlug, artist: '', album: '', tracks: [] };
+
+			for await (const file of klaw(directory, { depthLimit: 1 })) {
+				// If it's not a JSON file, we don't want it
+				if (!file.path.endsWith('.json')) continue;
+
+				// Read the track file
+				const trackData: App.Track = await fs.readJson(file.path);
+
+				// Assume the first entry's artist & album name applies to the entire directory
+				if (albumData.artist === '') albumData.artist = trackData.artist;
+				if (albumData.album === '') albumData.album = trackData.album;
+
+				// Push the track data into the album
+				albumData.tracks.push(trackData);
+			}
+
+			await fs.writeJson(filename, albumData);
+		}
+
+		console.log('Generated album data...');
+	}
+
+	/**
 	 * Run the data generator.
 	 */
 	async run() {
 		await this.buildTrackUris();
 		await this.buildTrackMetadataDictionary();
 		await this.saveTrackData();
+		await this.saveAlbumData();
 	}
 }
 
