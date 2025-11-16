@@ -8,67 +8,25 @@ import { z } from 'zod';
 
 const CWD = process.cwd();
 
-const READ_PATH = path.resolve(CWD, 'audio');
-const WRITE_PATH = path.resolve(CWD, 'src/lib/assets/data');
+const READ_PATH = path.resolve(CWD, 'static/audio');
+const WRITE_PATH = path.resolve(CWD, 'static/data');
 
 const SKIP_DIR_PATTERN = /^_/;
 
 const MetadataSchema = z.object({
-	duration: z.number().positive(),
-	album: z.string().nonempty(),
-	artist: z.string().nonempty(),
-	composer: z.array(z.string().nonempty()),
-	title: z.string().nonempty(),
-	track: z.number().positive().nullable()
+	albumName: z.string().nonempty(),
+	artistName: z.string().nonempty(),
+	trackName: z.string().nonempty(),
+	trackNumber: z.number().positive().nullable()
 });
 
-/**
- * Data generator class.
- *
- * Procedurally generates data for the audio files in the audio directory.
- * This class is not focused on performance, but rather on readability and maintainability.
- */
 class DataGenerator {
-	/**
-	 * A list of URIs representing paths to each track
-	 *
-	 * @example
-	 * [
-	 *   'artist-slug/album-slug/title-slug', ...
-	 * ]
-	 */
 	trackUris: string[] = [];
 
-	/**
-	 * A dictionary of music-metadata objects, organized by
-	 * track slug, album slug, and artist slug.
-	 *
-	 * @example
-	 * {
-	 *   'artist-slug': {
-	 *     'album-slug': {
-	 *       'title-slug': { ... } // Relevant metadata
-	 *     }
-	 *   }
-	 * }
-	 */
-	trackMetadataDictionary: Record<string, Record<string, Record<string, App.TrackMetadata>>> = {};
+	catalog: App.Catalog = [];
 
-	/**
-	 * A list of URIs representing paths to each album
-	 *
-	 * @example
-	 * [
-	 *   'artist-slug/album-slug', ...
-	 * ]
-	 */
-	get albumUris() {
-		return Array.from(new Set(this.trackUris.map((uri) => uri.slice(0, uri.lastIndexOf('/')))));
-	}
+	structuredCatalog: App.StructuredCatalog = {};
 
-	/**
-	 * Create a list of URIs to help locate files.
-	 */
 	private async buildTrackUris(): Promise<void> {
 		console.log('Building track URI list...');
 
@@ -91,18 +49,13 @@ class DataGenerator {
 		console.log(`Finished building audio file list: ${this.trackUris.length} entries`);
 	}
 
-	/**
-	 * Validates and extracts track data from IAudioMetadata
-	 */
-	private extractTrackMetadata(metadata: IAudioMetadata): App.TrackMetadata {
+	private extractTrackIndexData(trackUri: string, metadata: IAudioMetadata): App.TrackIndex {
 		// Prepare and parse flattened, important metadata
 		const result = MetadataSchema.safeParse({
-			duration: metadata.format.duration,
-			album: metadata.common.album,
-			artist: metadata.common.artist,
-			composer: metadata.common.composer ?? [],
-			title: metadata.common.title,
-			track: metadata.common.track.no
+			albumName: metadata.common.album,
+			artistName: metadata.common.artist,
+			trackName: metadata.common.title,
+			trackNumber: metadata.common.track.no
 		});
 
 		// Fail fast if data is inconsistent
@@ -111,168 +64,143 @@ class DataGenerator {
 			process.exit(1);
 		}
 
-		return result.data;
+		const [artistSlug, albumSlug] = trackUri.split('/');
+
+		return {
+			trackUri,
+			artistPath: `/artists/${artistSlug}`,
+			albumPath: `/artists/${artistSlug}/${albumSlug}`,
+			audioUrl: `/audio/${trackUri}.mp3`,
+			...result.data
+		};
 	}
 
-	/**
-	 * Builds the track data dictionary
-	 */
-	private async buildTrackMetadataDictionary(): Promise<void> {
-		console.log('Building track data dictionary...');
+	private async buildCatalog() {
+		console.log('Building catalog...');
 
 		for (const trackUri of this.trackUris) {
-			const [artistSlug, albumSlug, titleSlug] = trackUri.split('/');
+			const mp3Path = `${READ_PATH}/${trackUri}.mp3`;
 
-			// Open & read the file buffer
-			const buffer = await fs.readFile(`${READ_PATH}/${trackUri}.mp3`);
+			const buffer = await fs.readFile(mp3Path);
 			const metadata = await parseBuffer(buffer, { mimeType: 'audio/mpeg' });
-			const trackMetadata = this.extractTrackMetadata(metadata);
 
-			// Create the artist entry, if necessary
-			if (!this.trackMetadataDictionary?.[artistSlug]) {
-				this.trackMetadataDictionary[artistSlug] = {};
-			}
+			const trackIndexData: App.TrackIndex = this.extractTrackIndexData(trackUri, metadata);
 
-			// Create the album entry, if necessary
-			if (!this.trackMetadataDictionary[artistSlug]?.[albumSlug]) {
-				this.trackMetadataDictionary[artistSlug][albumSlug] = {};
-			}
-
-			// Store the metadata
-			this.trackMetadataDictionary[artistSlug][albumSlug][titleSlug] = trackMetadata;
+			this.catalog.push(trackIndexData);
 		}
 
-		console.log('Built track data dictionary');
+		console.log('Built catalog');
 	}
 
-	/**
-	 * Stores the track data to disk
-	 */
-	private async saveTrackData(): Promise<void> {
-		console.log('Saving track data...');
+	private async buildStructuredCatalog() {
+		console.log('Building structured catalog...');
 
+		for (const trackIndexData of this.catalog) {
+			const [artistSlug, albumSlug, trackSlug] = trackIndexData.trackUri.split('/');
+
+			if (!this.structuredCatalog[artistSlug]) {
+				this.structuredCatalog[artistSlug] = {};
+			}
+
+			if (!this.structuredCatalog[artistSlug][albumSlug]) {
+				this.structuredCatalog[artistSlug][albumSlug] = {};
+			}
+
+			this.structuredCatalog[artistSlug][albumSlug][trackSlug] = trackIndexData;
+		}
+
+		console.log('Built structured catalog');
+	}
+
+	private async createDataDirectory() {
+		console.log('Creating data directory...');
+
+		// Empty the write directory
 		await fs.emptyDir(WRITE_PATH);
 
-		for (const trackUri of this.trackUris) {
-			const [artistSlug, albumSlug, titleSlug] = trackUri.split('/');
+		// Stub the artists data
+		const artistsIndexData: App.ArtistsIndex = [];
 
-			const trackMetadata = this.trackMetadataDictionary[artistSlug][albumSlug][titleSlug];
-			const trackData: App.Track = { ...trackMetadata, artistSlug, albumSlug, titleSlug };
+		// Iterate over artists
+		for (const artistSlug of Object.keys(this.structuredCatalog)) {
+			// Stub artist data
+			const artistIndexData: App.ArtistIndex = { artistName: '', albums: [] };
 
-			const jsonDirectory = `${WRITE_PATH}/${artistSlug}/${albumSlug}`;
-			const jsonWritePath = `${jsonDirectory}/${titleSlug}.json`;
+			// Iterate over albums
+			for (const albumSlug of Object.keys(this.structuredCatalog[artistSlug])) {
+				// Find the first track of the album, assuming consistent data
+				const albumTracks = this.structuredCatalog[artistSlug][albumSlug];
+				const firstTrackSlug = Object.keys(albumTracks)[0];
+				const firstTrack = albumTracks[firstTrackSlug];
 
-			await fs.mkdirp(jsonDirectory);
-			await fs.writeJson(jsonWritePath, trackData);
-		}
+				// Stub the album data, using first track
+				const albumIndexData: App.AlbumIndex = {
+					artistName: firstTrack.artistName,
+					artistPath: firstTrack.artistPath,
+					albumName: firstTrack.albumName,
+					tracks: []
+				};
 
-		console.log('Saved track data');
-	}
+				// Fill in the artist data stub, if necessary
+				if (artistIndexData.artistName === '') {
+					artistIndexData.artistName = firstTrack.artistName;
+				}
 
-	/**
-	 * Generates and stores the album index data files
-	 */
-	private async saveAlbumData(): Promise<void> {
-		console.log('Generating album data...');
+				// Iterate over the
+				for (const trackSlug of Object.keys(this.structuredCatalog[artistSlug][albumSlug])) {
+					const trackIndexData: App.TrackIndex =
+						this.structuredCatalog[artistSlug][albumSlug][trackSlug];
 
-		for (const albumUri of this.albumUris) {
-			const directory = `${WRITE_PATH}/${albumUri}`;
-			const filename = `${directory}/index.json`;
+					// Create the track directory
+					await fs.mkdirp(`${WRITE_PATH}/${trackIndexData.trackUri}`);
 
-			const [artistSlug, albumSlug] = albumUri.split('/');
+					// Write the track index file
+					const trackIndexFilePath = `${WRITE_PATH}/${trackIndexData.trackUri}/index.json`;
+					await fs.writeJson(trackIndexFilePath, trackIndexData);
 
-			const albumData: App.Album = { artistSlug, albumSlug, artist: '', album: '', tracks: [] };
+					// Push the track data into the album
+					albumIndexData.tracks.push({
+						trackName: trackIndexData.trackName,
+						trackNumber: trackIndexData.trackNumber,
+						audioUrl: trackIndexData.audioUrl,
+						trackPath: `/artists/${trackIndexData.trackUri}`
+					});
+				}
 
-			for await (const file of klaw(directory, { depthLimit: 1 })) {
-				// If it's not a JSON file, we don't want it
-				if (!file.path.endsWith('.json')) continue;
+				// Write the album index file
+				const albumIndexFilePath = `${WRITE_PATH}/${artistSlug}/${albumSlug}/index.json`;
+				await fs.writeJson(albumIndexFilePath, albumIndexData);
 
-				// Read the track file
-				const trackData: App.Track = await fs.readJson(file.path);
-
-				// Assume the first entry's artist & album name applies to the entire directory
-				if (albumData.artist === '') albumData.artist = trackData.artist;
-				if (albumData.album === '') albumData.album = trackData.album;
-
-				// Push the track data into the album
-				albumData.tracks.push(trackData);
+				// Push the album data into the artist
+				artistIndexData.albums.push({
+					albumName: albumIndexData.albumName,
+					albumPath: `/artists/${artistSlug}/${albumSlug}`
+				});
 			}
 
-			await fs.writeJson(filename, albumData);
+			// Write the artist index file
+			const artistIndexFilePath = `${WRITE_PATH}/${artistSlug}/index.json`;
+			await fs.writeJson(artistIndexFilePath, artistIndexData);
+
+			// Push the artist data into the artists
+			artistsIndexData.push({
+				artistName: artistIndexData.artistName,
+				artistPath: `/artists/${artistSlug}`
+			});
 		}
 
-		console.log('Generated album data...');
+		// Write the artists index file
+		const artistsIndexFilePath = `${WRITE_PATH}/index.json`;
+		await fs.writeJson(artistsIndexFilePath, artistsIndexData);
+
+		console.log('Created data directory');
 	}
 
-	/**
-	 * Generates and stores the artist index data files
-	 */
-	private async saveArtistData(): Promise<void> {
-		console.log('Generating artist data...');
-
-		for (const artistSlug of Object.keys(this.trackMetadataDictionary)) {
-			const directory = `${WRITE_PATH}/${artistSlug}`;
-			const filename = `${directory}/index.json`;
-
-			const artistData: App.Artist = { artistSlug, artist: '', albums: [] };
-
-			for await (const file of klaw(directory, { depthLimit: 1 })) {
-				// If it's not an album index file, we don't want it
-				if (!file.path.endsWith('index.json')) continue;
-
-				// Read the album file
-				const albumData: App.Album = await fs.readJson(file.path);
-
-				// Assume the first entry's album name applies to the entire directory
-				if (artistData.artist === '') artistData.artist = albumData.artist;
-
-				// Push the track data into the album
-				artistData.albums.push(albumData);
-			}
-
-			await fs.writeJson(filename, artistData);
-		}
-
-		console.log('Generated artist data...');
-	}
-
-	/**
-	 * Generates and stores the main catalog index file
-	 */
-	private async saveCatalogData(): Promise<void> {
-		console.log('Generating catalog data...');
-
-		const directory = WRITE_PATH;
-		const filename = `${directory}/index.json`;
-
-		const catalogData: App.Catalog = [];
-
-		for await (const file of klaw(directory, { depthLimit: 1 })) {
-			// If it's not an artist index file, we don't want it
-			if (!file.path.endsWith('index.json')) continue;
-
-			// Read the album file
-			const artistData: App.Artist = await fs.readJson(file.path);
-
-			// Push the track data into the album
-			catalogData.push(artistData);
-		}
-
-		await fs.writeJson(filename, catalogData);
-
-		console.log('Generated catalog data...');
-	}
-
-	/**
-	 * Run the data generator.
-	 */
 	async run() {
 		await this.buildTrackUris();
-		await this.buildTrackMetadataDictionary();
-		await this.saveTrackData();
-		await this.saveAlbumData();
-		await this.saveArtistData();
-		await this.saveCatalogData();
+		await this.buildCatalog();
+		await this.buildStructuredCatalog();
+		await this.createDataDirectory();
 	}
 }
 
