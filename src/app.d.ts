@@ -2,36 +2,52 @@
 // for information about these interfaces
 declare global {
 	namespace App {
-		interface TrackMetadata {
-			duration: number;
-			album: string;
-			artist: string;
-			composer: string[];
-			title: string;
-			track: number | null;
+		// interface Error {}
+		// interface Locals {}
+		// interface PageData {}
+		// interface PageState {}
+		// interface Platform {}
+
+		interface TrackIndex {
+			trackUri: string;
+			artistPath: string;
+			albumPath: string;
+			artistName: string;
+			albumName: string;
+			trackName: string;
+			trackNumber: number | null;
+			audioUrl: string;
 		}
 
-		interface Track extends TrackMetadata {
-			artistSlug: string;
-			albumSlug: string;
-			titleSlug: string;
+		type AlbumTrack = Pick<TrackIndexData, 'trackName' | 'trackNumber' | 'audioUrl'> & {
+			trackPath: string;
+		};
+
+		interface AlbumIndex {
+			artistName: string;
+			artistPath: string;
+			albumName: string;
+			tracks: AlbumTrack[];
 		}
 
-		interface Album {
-			artistSlug: string;
-			albumSlug: string;
-			artist: string;
-			album: string;
-			tracks: Track[];
+		type ArtistAlbum = Pick<AlbumIndexData, 'albumName'> & {
+			albumPath: string;
+		};
+
+		interface ArtistIndex {
+			artistName: string;
+			albums: ArtistAlbum[];
 		}
 
-		interface Artist {
-			artistSlug: string;
-			artist: string;
-			albums: Album[];
-		}
+		type Artist = Pick<ArtistIndexData, 'artistName'> & {
+			artistPath: string;
+		};
 
-		type Catalog = Artist[];
+		type ArtistsIndex = Artist[];
+
+		type Catalog = TrackIndex[];
+
+		type StructuredCatalog = { [artistSlug: { [albumSlug: { [trackSlug: TrackIndex[]] }] }] };
 	}
 }
 
