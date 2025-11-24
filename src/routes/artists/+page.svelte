@@ -5,17 +5,17 @@
 </script>
 
 <div class="container mx-auto px-4 py-8">
-	<h1 class="mb-8 text-4xl font-bold">Artists</h1>
-	<ul class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-		{#each data.artists as artist}
-			<li>
-				<a
-					href={artist.artistPath}
-					class="block rounded-lg border border-gray-300 p-4 transition-colors hover:border-gray-400 hover:bg-gray-50"
-				>
-					<h2 class="text-xl font-semibold">{artist.artistName}</h2>
-				</a>
-			</li>
+	<h1 class="mb-8 text-4xl font-bold text-base-content">Artists</h1>
+	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+		{#each data.artists as artist (artist.artistPath)}
+			<a
+				href={artist.artistPath}
+				class="card bg-base-100 transition-colors card-border hover:bg-base-200"
+			>
+				<div class="card-body">
+					<h2 class="card-title text-base-content">{artist.artistName}</h2>
+				</div>
+			</a>
 		{/each}
-	</ul>
+	</div>
 </div>
