@@ -1,22 +1,25 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 
 	let { data }: { data: PageData } = $props();
+
+	// Construct track path from album path and track name
+	const trackPath = `${data.track.albumPath}/${data.track.trackName.toLowerCase().replace(/\s+/g, '-')}`;
+	const breadcrumbItems = [
+		{ name: 'Home', href: '/' },
+		{ name: 'Artists', href: '/artists' },
+		{ name: data.track.artistName, href: data.track.artistPath },
+		{ name: data.track.albumName, href: data.track.albumPath },
+		{ name: data.track.trackName, href: trackPath }
+	];
 </script>
 
 <div class="container mx-auto px-4 py-8">
-	<div class="breadcrumbs mb-6 text-sm">
-		<ul>
-			<li><a href="/artists" class="link link-primary">Artists</a></li>
-			<li><a href={data.track.artistPath} class="link link-primary">{data.track.artistName}</a></li>
-			<li><a href={data.track.albumPath} class="link link-primary">{data.track.albumName}</a></li>
-			<li class="text-base-content">{data.track.trackName}</li>
-		</ul>
-	</div>
+	<Breadcrumb items={breadcrumbItems} />
 
 	<div class="card card-border bg-base-100">
 		<div class="card-body">
-			<h1 class="card-title text-4xl text-base-content mb-2">{data.track.trackName}</h1>
 			<p class="text-xl text-base-content/70 mb-6">
 				by {data.track.artistName} • {data.track.albumName}
 				{#if data.track.trackNumber !== null}

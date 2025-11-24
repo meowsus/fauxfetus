@@ -1,22 +1,25 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 
 	let { data }: { data: PageData } = $props();
+
+	const breadcrumbItems = [
+		{ name: 'Home', href: '/' },
+		{ name: 'Artists', href: '/artists' },
+		{ name: data.album.artistName, href: data.album.artistPath },
+		{ name: data.album.albumName, href: data.album.albumPath }
+	];
 </script>
 
 <div class="container mx-auto px-4 py-8">
-	<div class="breadcrumbs mb-6 text-sm">
-		<ul>
-			<li><a href="/artists" class="link link-primary">Artists</a></li>
-			<li><a href={data.album.artistPath} class="link link-primary">{data.album.artistName}</a></li>
-			<li class="text-base-content">{data.album.albumName}</li>
-		</ul>
-	</div>
+	<Breadcrumb items={breadcrumbItems} />
 
-	<h1 class="mb-2 text-4xl font-bold text-base-content">{data.album.albumName}</h1>
 	<p class="mb-8 text-xl text-base-content/70">by {data.album.artistName}</p>
 
-	<h2 class="mb-4 text-2xl font-semibold text-base-content">Tracks</h2>
+	<div class="mb-6">
+		<h2 class="text-xl font-semibold text-base-content/70">Tracks</h2>
+	</div>
 	<ul class="list">
 		{#each data.album.tracks as track (track.trackPath)}
 			<li class="list-row">
