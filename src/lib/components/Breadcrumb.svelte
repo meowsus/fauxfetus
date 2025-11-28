@@ -24,7 +24,7 @@
 	</script>
 </svelte:head>
 
-<nav class="breadcrumbs mb-8 rounded-lg bg-base-200 px-4 py-2 text-lg" aria-label="Breadcrumb">
+<nav class="breadcrumbs rounded-lg bg-base-200 px-4 py-2 text-lg" aria-label="Breadcrumb">
 	<ul>
 		{#each items as item, index (item.name + index)}
 			<li>

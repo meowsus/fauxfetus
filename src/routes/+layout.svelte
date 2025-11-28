@@ -10,7 +10,7 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div class="flex flex-col gap-6">
+<div class="flex flex-col gap-6 py-2">
 	<Navbar />
 
 	<div class="container mx-auto px-4">
