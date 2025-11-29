@@ -1,5 +1,8 @@
 <script lang="ts">
-	let { tracks }: { tracks: App.AlbumTrack[] } = $props();
+	import type { AlbumTrack } from '@fauxfetus/generator';
+	import { resolve } from '$app/paths';
+
+	let { tracks }: { tracks: AlbumTrack[] } = $props();
 </script>
 
 <ul class="list rounded-box bg-base-100 shadow-md">
@@ -21,7 +24,7 @@
 				/> -->
 			</div>
 			<div class="list-col-grow">
-				<a href={track.trackPath} class="hover:link-primary/80 link link-primary"
+				<a href={resolve(track.trackPath)} class="hover:link-primary/80 link link-primary"
 					>{track.trackName}</a
 				>
 				<!-- <div class="text-xs font-semibold uppercase opacity-60">by {artistName}</div> -->

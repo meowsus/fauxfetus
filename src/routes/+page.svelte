@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 
-	const breadcrumbItems = [{ name: 'Home', href: '/' }];
+	const breadcrumbItems = [{ name: 'Home', href: '/' as const }];
 </script>
 
 <div class="flex flex-col gap-6">

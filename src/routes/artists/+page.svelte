@@ -5,7 +5,7 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const breadcrumbItems = [{ name: 'Home', href: '/' }, { name: 'Artists' }];
+	const breadcrumbItems = [{ name: 'Home', href: '/' as const }, { name: 'Artists' }];
 </script>
 
 <div class="flex flex-col gap-2">

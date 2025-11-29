@@ -9,7 +9,8 @@ import type {
 	ArtistsIndexData,
 	Catalog,
 	StructuredCatalog,
-	TrackIndexData
+	TrackIndexData,
+	TrackUri
 } from './types';
 
 const SKIP_DIR_PATTERN = /^_/;
@@ -22,7 +23,7 @@ const MetadataSchema = z.object({
 });
 
 export default class DataGenerator {
-	trackUris: string[] = [];
+	trackUris: `${string}/${string}/${string}`[] = [];
 
 	catalog: Catalog = [];
 
@@ -53,13 +54,13 @@ export default class DataGenerator {
 			const [trackUri] = relativePath.split('.mp3');
 
 			// Add the URI to the list
-			this.trackUris.push(trackUri);
+			this.trackUris.push(trackUri as TrackUri);
 		}
 
 		console.log(`Finished building audio file list: ${this.trackUris.length} entries`);
 	}
 
-	private extractTrackIndexData(trackUri: string, metadata: IAudioMetadata): TrackIndexData {
+	private extractTrackIndexData(trackUri: TrackUri, metadata: IAudioMetadata): TrackIndexData {
 		// Prepare and parse flattened, important metadata
 		const result = MetadataSchema.safeParse({
 			albumName: metadata.common.album,
