@@ -1,0 +1,21 @@
+{
+	"name": "@fauxfetus/generator",
+	"version": "0.1.0",
+	"description": "Data generator for fauxfetus",
+	"main": "index.mts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"packageManager": "pnpm@10.23.0",
+	"devDependencies": {
+		"@types/fs-extra": "catalog:fs-extra",
+		"fs-extra": "catalog:fs-extra",
+		"@types/klaw": "^3.0.7",
+		"klaw": "^4.1.0",
+		"music-metadata": "^11.10.0",
+		"zod": "^4.1.12"
+	}
+}
