@@ -7,47 +7,6 @@ declare global {
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}
-
-		interface TrackIndex {
-			trackUri: string;
-			artistPath: string;
-			albumPath: string;
-			artistName: string;
-			albumName: string;
-			trackName: string;
-			trackNumber: number | null;
-			audioUrl: string;
-		}
-
-		type AlbumTrack = Pick<TrackIndexData, 'trackName' | 'trackNumber' | 'audioUrl'> & {
-			trackPath: string;
-		};
-
-		interface AlbumIndex {
-			artistName: string;
-			artistPath: string;
-			albumName: string;
-			tracks: AlbumTrack[];
-		}
-
-		type ArtistAlbum = Pick<AlbumIndexData, 'albumName'> & {
-			albumPath: string;
-		};
-
-		interface ArtistIndex {
-			artistName: string;
-			albums: ArtistAlbum[];
-		}
-
-		type Artist = Pick<ArtistIndexData, 'artistName'> & {
-			artistPath: string;
-		};
-
-		type ArtistsIndex = Artist[];
-
-		type Catalog = TrackIndex[];
-
-		type StructuredCatalog = { [artistSlug: { [albumSlug: { [trackSlug: TrackIndex[]] }] }] };
 	}
 }
 
