@@ -5,8 +5,8 @@
 	let { data }: { data: PageData } = $props();
 
 	const breadcrumbItems = [
-		{ name: 'Home', href: '/' },
-		{ name: 'Artists', href: '/artists' },
+		{ name: 'Home', href: '/' as const },
+		{ name: 'Artists', href: '/artists' as const },
 		{ name: data.track.artistName, href: data.track.artistPath },
 		{ name: data.track.albumName, href: data.track.albumPath },
 		{ name: data.track.trackName }

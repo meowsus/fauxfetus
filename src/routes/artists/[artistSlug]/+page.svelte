@@ -5,11 +5,10 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const artistPath = `/artists/${data.artist.artistName.toLowerCase().replace(/\s+/g, '-')}`;
 	const breadcrumbItems = [
-		{ name: 'Home', href: '/' },
-		{ name: 'Artists', href: '/artists' },
-		{ name: data.artist.artistName, href: artistPath }
+		{ name: 'Home', href: '/' as const },
+		{ name: 'Artists', href: '/artists' as const },
+		{ name: data.artist.artistName }
 	];
 </script>
 

@@ -1,7 +1,13 @@
+export type TrackUri = `${string}/${string}/${string}`;
+
+export type ArtistPath = `/artists/${string}`;
+export type AlbumPath = `/artists/${string}/${string}`;
+export type TrackPath = `/artists/${string}/${string}/${string}`;
+
 export interface TrackIndexData {
-	trackUri: string;
-	artistPath: string;
-	albumPath: string;
+	trackUri: TrackUri;
+	artistPath: ArtistPath;
+	albumPath: AlbumPath;
 	artistName: string;
 	albumName: string;
 	trackName: string;
@@ -10,18 +16,18 @@ export interface TrackIndexData {
 }
 
 export type AlbumTrack = Pick<TrackIndexData, 'trackName' | 'trackNumber' | 'audioUrl'> & {
-	trackPath: string;
+	trackPath: TrackPath;
 };
 
 export interface AlbumIndexData {
 	artistName: string;
-	artistPath: string;
+	artistPath: ArtistPath;
 	albumName: string;
 	tracks: AlbumTrack[];
 }
 
 export type ArtistAlbum = Pick<AlbumIndexData, 'albumName'> & {
-	albumPath: string;
+	albumPath: AlbumPath;
 };
 
 export interface ArtistIndexData {
@@ -30,7 +36,7 @@ export interface ArtistIndexData {
 }
 
 export type Artist = Pick<ArtistIndexData, 'artistName'> & {
-	artistPath: string;
+	artistPath: ArtistPath;
 };
 
 export type ArtistsIndexData = Artist[];
