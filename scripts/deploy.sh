@@ -4,4 +4,4 @@ set -euo pipefail
 pnpm lint
 pnpm build
 
-rsync -avzh --delete --exclude=".htaccess" build/ meowsus@fauxfetus.net:fauxfetus.net/
+rsync -avzh --delete build/ meowsus@fauxfetus.net:fauxfetus.net/
