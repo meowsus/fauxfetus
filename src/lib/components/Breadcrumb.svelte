@@ -10,7 +10,7 @@
 	let { items }: { items: BreadcrumbItem[] } = $props();
 </script>
 
-<nav class="breadcrumbs rounded-lg bg-base-200 px-4 py-2 text-lg" aria-label="Breadcrumb">
+<nav class="breadcrumbs rounded bg-base-100 px-4 py-2" aria-label="Breadcrumb">
 	<ul>
 		{#each items as item, index (item.name + index)}
 			<li>
