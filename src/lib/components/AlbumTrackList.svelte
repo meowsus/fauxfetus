@@ -24,10 +24,12 @@
 	});
 
 	function onplay(currentIndex: number) {
-		if (currentTrackAudio) {
-			currentTrackAudio.pause();
-			currentTrackAudio.currentTime = 0;
-		}
+		audioElements
+			.filter((_, index) => index !== currentIndex)
+			.forEach((audioElement) => {
+				audioElement.pause();
+				audioElement.currentTime = 0;
+			});
 
 		currentTrackIndex = currentIndex;
 	}
@@ -74,7 +76,7 @@
 						bind:this={audioElements[index]}
 						onplay={() => onplay(index)}
 						{onended}
-						preload="metadata"
+						preload="none"
 					>
 						<source src={track.audioUrl} type="audio/mpeg" />
 						Your browser does not support the audio element.
