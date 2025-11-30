@@ -13,7 +13,8 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint . && svelte-check",
 		"data:generate": "tsx ./scripts/data/generate.mts",
-		"deploy:build": "./scripts/deploy.sh"
+		"deploy:build": "./scripts/deploy.sh",
+		"release": "./scripts/release.sh"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.4.0",
