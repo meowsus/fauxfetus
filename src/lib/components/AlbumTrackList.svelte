@@ -3,12 +3,51 @@
 	import { resolve } from '$app/paths';
 
 	let { tracks }: { tracks: AlbumTrack[] } = $props();
+
+	let audioElements: HTMLAudioElement[] = $state([]);
+	let currentTrackIndex: number | null = $state(null);
+
+	let currentTrackAudio: HTMLAudioElement | null = null;
+	let nextTrackAudio: HTMLAudioElement | null = null;
+
+	$effect(() => {
+		if (currentTrackIndex === null) return;
+
+		currentTrackAudio = audioElements[currentTrackIndex];
+
+		if (currentTrackIndex < audioElements.length - 1) {
+			nextTrackAudio = audioElements[currentTrackIndex + 1];
+		} else {
+			nextTrackAudio = null;
+		}
+	});
+
+	function onplay(currentIndex: number) {
+		audioElements
+			.filter((_, index) => index !== currentIndex)
+			.forEach((audioElement) => {
+				audioElement.currentTime = 0;
+				audioElement.pause();
+			});
+
+		currentTrackIndex = currentIndex;
+	}
+
+	function onended() {
+		if (currentTrackAudio) {
+			currentTrackAudio.currentTime = 0;
+		}
+
+		if (nextTrackAudio) {
+			nextTrackAudio.play();
+		}
+	}
 </script>
 
 <ul class="list rounded-box bg-base-100 shadow-md">
 	<li class="p-4 pb-2 text-xs tracking-wide opacity-60">Track catalog</li>
 
-	{#each tracks as track (track.trackPath)}
+	{#each tracks as track, index (track.trackPath)}
 		<li class="list-row">
 			<div class="text-4xl font-thin tabular-nums opacity-30">
 				{track.trackNumber
@@ -24,9 +63,21 @@
 				/> -->
 			</div>
 			<div class="list-col-grow">
-				<a href={resolve(track.trackPath)} class="hover:link-primary/80 link link-primary"
-					>{track.trackName}</a
-				>
+				<div class="flex flex-col gap-2">
+					<a href={resolve(track.trackPath)} class="hover:link-primary/80 link link-primary"
+						>{track.trackName}</a
+					>
+					<audio
+						controls
+						class="w-full"
+						bind:this={audioElements[index]}
+						onplay={() => onplay(index)}
+						{onended}
+					>
+						<source src={track.audioUrl} type="audio/mpeg" />
+						Your browser does not support the audio element.
+					</audio>
+				</div>
 				<!-- <div class="text-xs font-semibold uppercase opacity-60">by {artistName}</div> -->
 			</div>
 			<!-- <button class="btn btn-square btn-ghost">
