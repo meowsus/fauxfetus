@@ -6,7 +6,21 @@ set -euo pipefail
 #   ./scripts/release.sh minor
 #   ./scripts/release.sh major
 
-BUMP=${1:-patch}
+# Ensure version bump type was provided
+if [ $# -ne 1 ]; then
+  echo "❌ Missing argument."
+  echo "Usage: $0 <patch|minor|major>"
+  exit 1
+fi
+
+BUMP=$1
+
+# Validate the argument
+if [[ ! "$BUMP" =~ ^(patch|minor|major)$ ]]; then
+  echo "❌ Invalid release type: '$BUMP'"
+  echo "Valid options: patch, minor, major"
+  exit 1
+fi
 
 # Ensure clean working tree except CHANGELOG.md
 if ! git diff --quiet -- . ':!CHANGELOG.md' || ! git diff --cached --quiet -- . ':!CHANGELOG.md'; then
