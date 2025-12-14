@@ -12,6 +12,11 @@
 	];
 </script>
 
+<svelte:head>
+	<title>{data.artist.artistName} - Faux Fetus</title>
+	<meta name="description" content="Browse albums by {data.artist.artistName} on Faux Fetus." />
+</svelte:head>
+
 <div class="flex flex-col gap-2">
 	<Breadcrumb items={breadcrumbItems} />
 	<ArtistAlbumList albums={data.artist.albums} />
