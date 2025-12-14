@@ -13,6 +13,15 @@
 	];
 </script>
 
+<svelte:head>
+	<title>{data.track.trackName} by {data.track.artistName} - Faux Fetus</title>
+	<meta
+		name="description"
+		content="Listen to {data.track.trackName} from the album {data.track.albumName} by {data.track
+			.artistName} on Faux Fetus."
+	/>
+</svelte:head>
+
 <div class="flex flex-col gap-2">
 	<Breadcrumb items={breadcrumbItems} />
 
