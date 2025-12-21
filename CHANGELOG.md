@@ -1,3 +1,7 @@
+# v1.4.0 - Dec 21, 2025
+
+- We've got splits!
+
 # v1.3.0 - Dec 21, 2025
 
 - tsconfig cleanup for packages
