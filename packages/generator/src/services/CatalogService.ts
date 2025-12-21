@@ -113,6 +113,9 @@ export class CatalogService {
 			});
 		}
 
+		// Sort tracks by trackNumber
+		albumIndexData.tracks.sort((a, b) => (a.trackNumber ?? 0) - (b.trackNumber ?? 0));
+
 		return albumIndexData;
 	}
 }
