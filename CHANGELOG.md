@@ -1,3 +1,9 @@
+# v1.2.0 - Dec 20, 2025
+
+- Added Aunt Viv
+- Added timeline component
+- Updated dark mode to suck less
+
 # v1.1.0 - Dec 14, 2025
 
 - Added basic SEO
