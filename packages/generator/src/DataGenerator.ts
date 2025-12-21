@@ -11,7 +11,7 @@ import type {
 	StructuredCatalog,
 	TrackIndexData,
 	TrackUri
-} from './types';
+} from '../types';
 
 const SKIP_DIR_PATTERN = /^_/;
 
