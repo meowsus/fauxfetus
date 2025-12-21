@@ -1,3 +1,8 @@
+# v1.3.0 - Dec 21, 2025
+
+- tsconfig cleanup for packages
+- refactor data generation
+
 # v1.2.0 - Dec 20, 2025
 
 - Added Aunt Viv
