@@ -12,7 +12,7 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint . && svelte-check",
-		"data:generate": "tsx ./scripts/data/generate.mts",
+		"data:generate": "tsx ./scripts/data/generate.ts",
 		"deploy:build": "./scripts/deploy.sh",
 		"release": "./scripts/release.sh"
 	},
