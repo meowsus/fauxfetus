@@ -1,5 +1,8 @@
 <script lang="ts">
-	let theme = $state('dark');
+	const DARK_THEME = 'dracula';
+	const LIGHT_THEME = 'light';
+
+	let theme = $state(DARK_THEME);
 
 	$effect(() => {
 		const savedTheme = localStorage.getItem('theme');
@@ -12,17 +15,17 @@
 	});
 
 	function onchange() {
-		if (theme === 'dark') {
-			theme = 'light';
+		if (theme === DARK_THEME) {
+			theme = LIGHT_THEME;
 		} else {
-			theme = 'dark';
+			theme = DARK_THEME;
 		}
 	}
 </script>
 
 <svelte:head>
 	<script>
-		const savedTheme = localStorage.getItem('theme') ?? 'dark';
+		const savedTheme = localStorage.getItem('theme') ?? DARK_THEME;
 		document.documentElement.dataset.theme = savedTheme;
 	</script>
 </svelte:head>
