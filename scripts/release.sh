@@ -44,10 +44,10 @@ VERSION=$(jq -r '.version' package.json)
 # Stage version bump + changelog
 git add package.json CHANGELOG.md
 
-git repull
-
 # Create release commit
 git commit -m "Release v$VERSION"
+
+git repull
 
 # Tag it
 git tag "v$VERSION"
