@@ -104,6 +104,13 @@ export class CatalogService {
 			});
 		}
 
+		// Sort artists by name
+		artistsIndexData.sort((a, b) => {
+			const nameA = a.artistName.replace(/^The\s+/i, '');
+			const nameB = b.artistName.replace(/^The\s+/i, '');
+			return nameA.localeCompare(nameB);
+		});
+
 		return artistsIndexData;
 	}
 
@@ -127,6 +134,9 @@ export class CatalogService {
 				albumPath: `/artists/${artistSlug}/${albumSlug}`
 			});
 		}
+
+		// Sort albums by name
+		artistIndexData.albums.sort((a, b) => a.albumName.localeCompare(b.albumName));
 
 		return artistIndexData;
 	}
