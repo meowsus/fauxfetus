@@ -19,39 +19,66 @@
 
 				<ul class="list-inside list-disc">
 					<li>
-						<a href={resolve('/artists/bornpilot/bornpilot-welcome-wizard')} class="link-primary"
-							>Bornpilot / Welcome Wizard</a
+						<a
+							href={resolve('/artists/bornpilot/bornpilot-welcome-wizard-split')}
+							class="link-primary">Bornpilot</a
+						>
+						/
+						<a
+							href={resolve('/artists/welcome-wizard/bornpilot-welcome-wizard-split')}
+							class="link-primary">Welcome Wizard</a
 						>
 					</li>
 					<li>
 						<a
-							href={resolve('/artists/captain-werewolf/captain-werewolf-miles-rozatti')}
-							class="link-primary">Captain Werewolf / Miles Rozatti</a
+							href={resolve('/artists/captain-werewolf/captain-werewolf-miles-rozatti-split')}
+							class="link-primary">Captain Werewolf</a
+						>
+						/
+						<a
+							href={resolve('/artists/miles-rozatti/captain-werewolf-miles-rozatti-split')}
+							class="link-primary">Miles Rozatti</a
 						>
 					</li>
 					<li>
 						<a
-							href={resolve('/artists/father-sleep/happybear-kaboom-father-sleep')}
-							class="link-primary">Happybear Kaboom / Father Sleep</a
+							href={resolve('/artists/father-sleep/happybear-kaboom-father-sleep-split')}
+							class="link-primary">Happybear Kaboom</a
+						>
+						/
+						<a
+							href={resolve('/artists/father-sleep/happybear-kaboom-father-sleep-split')}
+							class="link-primary">Father Sleep</a
 						>
 					</li>
 					<li>
 						<a
-							href={resolve('/artists/the-cold-lamper/the-cold-lamper-j-mono')}
-							class="link-primary">The Cold Lamper / J. Mono</a
+							href={resolve('/artists/the-cold-lamper/the-cold-lamper-j-mono-split')}
+							class="link-primary">The Cold Lamper</a
+						>
+						/
+						<a href={resolve('/artists/j-mono/the-cold-lamper-j-mono-split')} class="link-primary"
+							>J. Mono</a
 						>
 					</li>
 					<li>
 						<a
-							href={resolve('/artists/the-night-owl/the-night-owl-welcome-wizard')}
-							class="link-primary">The Night Owl / Welcome Wizard</a
+							href={resolve('/artists/the-night-owl/the-night-owl-welcome-wizard-split')}
+							class="link-primary">The Night Owl</a
+						>
+						/
+						<a
+							href={resolve('/artists/welcome-wizard/the-night-owl-welcome-wizard-split')}
+							class="link-primary">Welcome Wizard</a
 						>
 					</li>
 					<li>
 						<a
-							href={resolve('/artists/the-riffingtons/the-riffingtons-eat-taco-enema')}
-							class="link-primary">The Riffingtons / EAT</a
+							href={resolve('/artists/the-riffingtons/the-riffingtons-eat-split')}
+							class="link-primary">The Riffingtons</a
 						>
+						/
+						<a href={resolve('/artists/eat/the-riffingtons-eat-split')} class="link-primary">Eat</a>
 					</li>
 				</ul>
 			</TimelineEntry>
