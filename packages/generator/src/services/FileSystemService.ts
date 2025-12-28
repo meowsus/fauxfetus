@@ -3,7 +3,7 @@ import klaw from 'klaw';
 import path from 'path';
 import type { TrackUri } from '../../types';
 
-const SKIP_DIR_PATTERN = /^_(COMPS|RETIRED)/;
+const SKIP_DIR_PATTERN = /^_RETIRED/;
 
 export class FileSystemService {
 	async readMp3File(filePath: string): Promise<Buffer> {

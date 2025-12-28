@@ -34,6 +34,7 @@ export class CatalogService {
 			structuredCatalog[artistSlug][albumSlug][trackSlug] = trackIndexData;
 		}
 
+		// TODO: There's something here. We need to combine split & comp releases!
 		// // Merge tracks for albums with multiple artists
 		// for (const [albumSlug, artistSlugs] of artistsByAlbumSlugMap.entries()) {
 		// 	for (const artistSlug of artistSlugs) {
