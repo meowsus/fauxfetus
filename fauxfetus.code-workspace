@@ -6,6 +6,14 @@
 	],
 	"settings": {
 		"editor.tabSize": 2,
-		"cSpell.words": ["klaw"]
+		"cSpell.words": ["klaw"],
+		"cSpell.customDictionaries": {
+			"custom-dictionary-workspace": {
+				"name": "custom-dictionary-workspace",
+				"path": "${workspaceFolder:fauxfetus}/.cspell/custom-dictionary-workspace.txt",
+				"addWords": true,
+				"scope": "workspace"
+			}
+		}
 	}
 }

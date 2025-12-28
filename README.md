@@ -1,6 +1,11 @@
 # fauxfetus
 
-1. `/static/audio` must exist as a symlink to faux mp3 archive
-1. During deployment, `/static/audio` must be replaced with a copy of the faux mp3 archive
-1. The faux mp3 archive directory must follow this structure: `artist-slug/album-slug/track-slug.mp3`
-1. Each track in each artist's album's directory _must_ have consistent data for each entry. Use [kid3](https://kid3.kde.org/) to create consistent APEv2 tags for all files.
+An experimental music collective website created in service of a small, incestuous group of young artists located in the Northwestern suburbs of Philadelphia in the early 2000s.
+
+This project has seen many iterations. It's current form is a static site generated entirely from MP3 metadata and served by Sveltekit.
+
+[https://fauxfetus.net]
+
+## Packages
+
+- The [generator](./packages/generator/) package generates the site data from the MP3 files
