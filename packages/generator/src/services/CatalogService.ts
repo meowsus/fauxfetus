@@ -9,9 +9,19 @@ import type {
 export class CatalogService {
 	buildStructuredCatalog(catalog: Catalog): StructuredCatalog {
 		const structuredCatalog: StructuredCatalog = {};
+		const artistsByAlbumSlugMap: Map<string, Set<string>> = new Map();
 
 		for (const trackIndexData of catalog) {
-			const [artistSlug, albumSlug, trackSlug] = trackIndexData.trackUri.split('/');
+			const [artistSlug, albumSlug, trackSlug] = this.discoverSlugs(trackIndexData.trackUri);
+
+			// Handle special tracks that may belong to multiple artists
+			if (trackIndexData.trackUri.startsWith('_')) {
+				if (!artistsByAlbumSlugMap.has(albumSlug)) {
+					artistsByAlbumSlugMap.set(albumSlug, new Set());
+				}
+
+				artistsByAlbumSlugMap.get(albumSlug)?.add(artistSlug);
+			}
 
 			if (!structuredCatalog[artistSlug]) {
 				structuredCatalog[artistSlug] = {};
@@ -24,7 +34,42 @@ export class CatalogService {
 			structuredCatalog[artistSlug][albumSlug][trackSlug] = trackIndexData;
 		}
 
+		// // Merge tracks for albums with multiple artists
+		// for (const [albumSlug, artistSlugs] of artistsByAlbumSlugMap.entries()) {
+		// 	for (const artistSlug of artistSlugs) {
+		// 		structuredCatalog[artistSlug][albumSlug] = Array.from(artistSlugs).reduce(
+		// 			(acc, artistSlug) => ({
+		// 				...acc,
+		// 				...structuredCatalog[artistSlug][albumSlug]
+		// 			}),
+		// 			{}
+		// 		);
+		// 	}
+		// }
+
 		return structuredCatalog;
+	}
+
+	/**
+	 * Extracts artist and album slugs from a track URI.
+	 * Handles both regular and special track formats.
+	 * Regular track format: `artist-slug/album-slug/track-slug`
+	 * Special track format: `_<TYPE>/album-slug/track-number_artist-slug_track-name`
+	 *
+	 * @param trackUri
+	 * @returns [artistSlug, albumSlug, trackSlug]
+	 */
+	private discoverSlugs(trackUri: string): [string, string, string] {
+		const uriChunks = trackUri.split('/');
+
+		if (!trackUri.startsWith('_')) {
+			return [uriChunks[0], uriChunks[1], uriChunks[2]];
+		}
+
+		const trackSlug = uriChunks[2];
+		const trackChunks = trackSlug.split('_');
+
+		return [trackChunks[1], uriChunks[1], trackSlug];
 	}
 
 	buildArtistsIndexData(structuredCatalog: StructuredCatalog): ArtistsIndexData {
@@ -109,7 +154,7 @@ export class CatalogService {
 				trackName: trackIndexData.trackName,
 				trackNumber: trackIndexData.trackNumber,
 				audioUrl: trackIndexData.audioUrl,
-				trackPath: `/artists/${trackIndexData.trackUri}`
+				trackPath: `/artists/${artistSlug}/${albumSlug}/${trackSlug}`
 			});
 		}
 

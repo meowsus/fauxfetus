@@ -24,6 +24,24 @@ export default class DataGenerator {
 		this.catalogService = new CatalogService();
 	}
 
+	async run(): Promise<void> {
+		await this.ensurePathsExist();
+		await this.buildTrackUris();
+		await this.buildCatalog();
+		await this.buildStructuredCatalog();
+		await this.createDataDirectory();
+	}
+
+	private async ensurePathsExist(): Promise<void> {
+		try {
+			await this.fileSystemService.ensureDirectoryExists(this.readPath);
+			await this.fileSystemService.ensureDirectoryExists(this.writePath);
+		} catch (error) {
+			console.error('Error ensuring directory:', error);
+			process.exit(1);
+		}
+	}
+
 	private async buildTrackUris(): Promise<void> {
 		console.log('Building track URI list...');
 		this.trackUris = await this.fileSystemService.getTrackUris(this.readPath);
@@ -88,9 +106,11 @@ export default class DataGenerator {
 				for (const trackSlug of Object.keys(this.structuredCatalog[artistSlug][albumSlug])) {
 					const trackIndexData = this.structuredCatalog[artistSlug][albumSlug][trackSlug];
 
-					// Create track directory and write track data
-					const trackDirPath = `${this.writePath}/${trackIndexData.trackUri}`;
+					// Create track directory
+					const trackDirPath = `${albumDirPath}/${trackSlug}`;
 					await this.fileSystemService.createDirectory(trackDirPath);
+
+					// Write track data
 					const trackIndexFilePath = `${trackDirPath}/index.json`;
 					await this.fileSystemService.writeJsonFile(trackIndexFilePath, trackIndexData);
 				}
@@ -103,23 +123,5 @@ export default class DataGenerator {
 		await this.fileSystemService.writeJsonFile(artistsIndexFilePath, artistsIndexData);
 
 		console.log('Created data directory');
-	}
-
-	private async ensurePathsExist(): Promise<void> {
-		try {
-			await this.fileSystemService.ensureDirectoryExists(this.readPath);
-			await this.fileSystemService.ensureDirectoryExists(this.writePath);
-		} catch (error) {
-			console.error('Error ensuring directory:', error);
-			process.exit(1);
-		}
-	}
-
-	async run(): Promise<void> {
-		await this.ensurePathsExist();
-		await this.buildTrackUris();
-		await this.buildCatalog();
-		await this.buildStructuredCatalog();
-		await this.createDataDirectory();
 	}
 }

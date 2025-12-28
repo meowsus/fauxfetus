@@ -22,7 +22,7 @@ export class MetadataService {
 			throw new Error(`Issue extracting track data: ${result.error}`);
 		}
 
-		const [artistSlug, albumSlug] = trackUri.split('/');
+		const [artistSlug, albumSlug] = this.discoverSlugs(trackUri);
 
 		return {
 			trackUri,
@@ -31,6 +31,28 @@ export class MetadataService {
 			audioUrl: `/audio/${trackUri}.mp3`,
 			...result.data
 		};
+	}
+
+	/**
+	 * Extracts artist and album slugs from a track URI.
+	 * Handles both regular and special track formats.
+	 * Regular track format: `artist-slug/album-slug/track-slug`
+	 * Special track format: `_<TYPE>/album-slug/track-number_artist-slug_track-name`
+	 *
+	 * @param trackUri
+	 * @returns [artistSlug, albumSlug]
+	 */
+	private discoverSlugs(trackUri: TrackUri): [string, string] {
+		const uriChunks = trackUri.split('/');
+
+		if (!trackUri.startsWith('_')) {
+			return [uriChunks[0], uriChunks[1]];
+		}
+
+		const trackSlug = uriChunks[2];
+		const trackChunks = trackSlug.split('_');
+
+		return [trackChunks[1], uriChunks[1]];
 	}
 
 	async parseAudioBuffer(buffer: Buffer): Promise<IAudioMetadata> {
