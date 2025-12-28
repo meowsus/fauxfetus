@@ -8,6 +8,74 @@
 <div class="flex flex-col gap-6 px-6 py-2">
 	<section class="flex flex-col gap-4 text-lg">
 		<Timeline>
+			<TimelineEntry date="Dec 28, 2025">
+				<p class="mb-2">
+					We suffered a slight regression where splits are split up by artist. This means that you
+					can't currently listen to a split in its entirety from any page. As it turns out,
+					showcasing more than one artist on a single album is a hard problem to solve. The way I
+					solved it last week *technically* worked, but the way I handled it was gross. I'll keep
+					noodling on it.
+				</p>
+				<p class="mb-2">
+					But more good news, we have new releases! Specifically, "The Best Of The First Four Acts
+					of Faux Fest" and "Faux Faux Fest '24". The first was recorded forever ago but was never
+					released. The second was recorded on my 40th birthday.
+				</p>
+				<ul class="mb-2 list-inside list-disc">
+					<li>
+						<em>The Best Of The First Four Acts of Faux Fest</em> features
+						<a
+							href={resolve(
+								'/artists/captain-werewolf/the-best-of-the-first-four-acts-of-faux-fest'
+							)}
+							class="link-primary">Captain Werewolf</a
+						>,
+						<a
+							href={resolve(
+								'/artists/a-three-ring-circus/the-best-of-the-first-four-acts-of-faux-fest'
+							)}
+							class="link-primary">A Three Ring Circus (for Autistic Children)</a
+						>,
+						<a
+							href={resolve('/artists/lee-jae-won/the-best-of-the-first-four-acts-of-faux-fest')}
+							class="link-primary">Lee, J. Won</a
+						>, and
+						<a
+							href={resolve(
+								'/artists/happybear-kaboom/the-best-of-the-first-four-acts-of-faux-fest'
+							)}
+							class="link-primary">Happybear Kaboom</a
+						>.
+					</li>
+					<li>
+						<em>Faux Faux Fest '24</em> features
+						<a
+							href={resolve('/artists/dust-from-1000-years/faux-faux-fest-24')}
+							class="link-primary">Dust From 1000 Years</a
+						>,
+						<a href={resolve('/artists/bad-history-month/faux-faux-fest-24')} class="link-primary"
+							>Bad History Month</a
+						>,
+						<a href={resolve('/artists/luna-honey/faux-faux-fest-24')} class="link-primary"
+							>Luna Honey</a
+						>,
+						<a href={resolve('/artists/idiot-mambo/faux-faux-fest-24')} class="link-primary"
+							>Idiot Mambo</a
+						>,
+						<a
+							href={resolve('/artists/drums-like-machine-guns/faux-faux-fest-24')}
+							class="link-primary">Drums Like Machine Guns</a
+						>, and
+						<a href={resolve('/artists/nyxy-nix/faux-faux-fest-24')} class="link-primary"
+							>Nyxy Nix</a
+						>.
+					</li>
+				</ul>
+				<p>
+					I also made sure that artists & albums were sorted alphabetically and added a little
+					search bar for the artists page.
+				</p>
+			</TimelineEntry>
 			<TimelineEntry date="Dec 21, 2025">
 				<p class="mb-2">
 					Okay, this is actually exciting: I added six split releases that have been sitting around
