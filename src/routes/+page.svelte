@@ -8,6 +8,11 @@
 <div class="flex flex-col gap-6 px-6 py-2">
 	<section class="flex flex-col gap-4 text-lg">
 		<Timeline>
+			<TimelineEntry date="Dec 29, 2025">
+				<a href={resolve('/artists/assisted-living/faux-faux-fest-24')} class="link-primary"
+					>Assisted Living</a
+				> also played Faux Faux Fest '24. I added their track.
+			</TimelineEntry>
 			<TimelineEntry date="Dec 28, 2025">
 				<p class="mb-2">
 					We suffered a slight regression where splits are split up by artist. This means that you
