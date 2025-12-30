@@ -1,3 +1,7 @@
+# v1.5.1 - Dec 29, 2025
+
+- Add Assisted Living track to Faux Faux Fest '24
+
 # v1.5.0 - Dec 28, 2025
 
 - Artist & album sorting
