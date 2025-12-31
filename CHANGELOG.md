@@ -1,3 +1,7 @@
+# v1.6.1 - Dec 30, 2025
+
+- Fix homepage link styling
+
 # v1.6.0 - Dec 30, 2025
 
 - Add The Beautiful Traps & Ugh God, Live at WPRB
