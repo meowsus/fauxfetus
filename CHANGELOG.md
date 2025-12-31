@@ -1,3 +1,7 @@
+# v1.6.0 - Dec 30, 2025
+
+- Add The Beautiful Traps & Ugh God, Live at WPRB
+
 # v1.5.1 - Dec 29, 2025
 
 - Add Assisted Living track to Faux Faux Fest '24
