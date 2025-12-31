@@ -10,8 +10,10 @@
 		<Timeline>
 			<TimelineEntry date="Dec 30, 2025">
 				<p class="mb-4">
-					After <a href="https://www.brandkramp.us/2025/12/30/curts-big-fat-faux-fetus-40th/"
-						>a recent article was published about Faux Faux Fest '24</a
+					After <a
+						href="https://www.brandkramp.us/2025/12/30/curts-big-fat-faux-fetus-40th/"
+						class="link-primary"
+						target="_blank">a recent article was published about Faux Faux Fest '24</a
 					>, the better <a href={resolve('/artists/ugh-god')} class="link-primary">Ugh God</a>
 					drummer reminded me of a long-forgotten live set that they and
 					<a href={resolve('/artists/the-beautiful-traps')} class="link-primary"
