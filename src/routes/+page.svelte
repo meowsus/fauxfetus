@@ -8,25 +8,56 @@
 <div class="flex flex-col gap-6 px-6 py-2">
 	<section class="flex flex-col gap-4 text-lg">
 		<Timeline>
+			<TimelineEntry date="Dec 30, 2025">
+				<p class="mb-4">
+					After <a href="https://www.brandkramp.us/2025/12/30/curts-big-fat-faux-fetus-40th/"
+						>a recent article was published about Faux Faux Fest '24</a
+					>, the better <a href={resolve('/artists/ugh-god')} class="link-primary">Ugh God</a>
+					drummer reminded me of a long-forgotten live set that they and
+					<a href={resolve('/artists/the-beautiful-traps')} class="link-primary"
+						>The Beautiful Traps</a
+					> performed back in 2008. I made a split release of it:
+				</p>
+
+				<ul class="mb-4 list-inside list-disc">
+					<li>
+						<em>Live @ WPRB</em> by
+						<a
+							href={resolve('/artists/ugh-god/the-beautiful-traps-ugh-god-wprb-split')}
+							class="link-primary">Ugh God</a
+						>
+						&
+						<a
+							href={resolve('/artists/the-beautiful-traps/the-beautiful-traps-ugh-god-wprb-split')}
+							class="link-primary">The Beautiful Traps</a
+						>
+					</li>
+				</ul>
+
+				<p>
+					Also, let's all take a moment to finally welcome Ugh God into the fold. Better late than
+					never!
+				</p>
+			</TimelineEntry>
 			<TimelineEntry date="Dec 29, 2025">
 				<a href={resolve('/artists/assisted-living/faux-faux-fest-24')} class="link-primary"
 					>Assisted Living</a
 				> also played Faux Faux Fest '24. I added their track.
 			</TimelineEntry>
 			<TimelineEntry date="Dec 28, 2025">
-				<p class="mb-2">
+				<p class="mb-4">
 					We suffered a slight regression where splits are split up by artist. This means that you
 					can't currently listen to a split in its entirety from any page. As it turns out,
 					showcasing more than one artist on a single album is a hard problem to solve. The way I
 					solved it last week *technically* worked, but the way I handled it was gross. I'll keep
 					noodling on it.
 				</p>
-				<p class="mb-2">
+				<p class="mb-4">
 					But more good news, we have new releases! Specifically, "The Best Of The First Four Acts
 					of Faux Fest" and "Faux Faux Fest '24". The first was recorded forever ago but was never
 					released. The second was recorded on my 40th birthday.
 				</p>
-				<ul class="mb-2 list-inside list-disc">
+				<ul class="mb-4 list-inside list-disc">
 					<li>
 						<em>The Best Of The First Four Acts of Faux Fest</em> features
 						<a
@@ -82,7 +113,7 @@
 				</p>
 			</TimelineEntry>
 			<TimelineEntry date="Dec 21, 2025">
-				<p class="mb-2">
+				<p class="mb-4">
 					Okay, this is actually exciting: I added six split releases that have been sitting around
 					for far too long. This means that we welcome a few "new" "artists" into the fold, namely
 					J. Mono & Miles Rozatti. Welcome. I'm sure you're SO happy to be here. We also welcome

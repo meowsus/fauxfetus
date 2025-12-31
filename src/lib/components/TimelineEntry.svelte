@@ -14,7 +14,7 @@
 		</svg>
 	</div>
 	<div class="timeline-end timeline-box border-neutral-700">
-		<div class="text-lg text-neutral-300">
+		<div class="p-1 text-lg text-neutral-300">
 			<slot />
 		</div>
 	</div>
