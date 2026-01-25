@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import type { AlbumPath, ArtistPath, TrackPath } from '@fauxfetus/generator';
+
+	type ArtistPath = `/artists/${string}`;
+	type AlbumPath = `/artists/${string}/${string}`;
+	type TrackPath = `/artists/${string}/${string}/${string}`;
 
 	interface BreadcrumbItem {
 		name: string;

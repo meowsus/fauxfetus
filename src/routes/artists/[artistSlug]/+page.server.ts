@@ -1,26 +1,24 @@
-import type { ArtistIndexData, ArtistsIndexData } from '@fauxfetus/generator';
+import { readCatalog } from '$lib/helpers/catalog.js';
 import { error } from '@sveltejs/kit';
-import fs from 'fs-extra';
-import { join } from 'path';
 import type { PageServerLoad } from './$types';
 
 export const entries = async () => {
-	const artistsIndexPath = join(process.cwd(), 'static', 'data', 'index.json');
-	const artists: ArtistsIndexData = await fs.readJson(artistsIndexPath);
+	const catalog = await readCatalog();
 
-	return artists.map((artist) => ({
-		artistSlug: artist.artistPath.replace('/artists/', '')
+	return catalog.map((artist) => ({
+		artistSlug: artist.slug
 	}));
 };
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { artistSlug } = params;
-	const dataPath = join(process.cwd(), 'static', 'data', artistSlug, 'index.json');
 
-	try {
-		const artist: ArtistIndexData = await fs.readJson(dataPath);
-		return { artist };
-	} catch {
+	const catalog = await readCatalog();
+	const artist = catalog.find((artist) => artist.slug === artistSlug);
+
+	if (!artist) {
 		throw error(404, 'Artist not found');
 	}
+
+	return { artist };
 };

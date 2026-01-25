@@ -1,4 +1,4 @@
-import type { ArtistIndexData, ArtistsIndexData } from '@fauxfetus/generator';
+import type { Artist } from '@fauxfetus/generator';
 import fs from 'fs-extra';
 import { join } from 'path';
 
@@ -7,12 +7,12 @@ export async function GET() {
 	const baseUrl = 'https://fauxfetus.net'; // or process.env.BASE_URL
 
 	// Read all artists
-	const dataPath = join(process.cwd(), 'static', 'data', 'index.json');
-	const artists: ArtistsIndexData = await fs.readJson(dataPath);
+	const dataPath = join(process.cwd(), 'static', 'data', 'catalog.json');
+	const artists: Artist[] = await fs.readJson(dataPath);
 
 	// Generate URLs for artists
 	const artistUrls = artists.map((artist) => {
-		const artistSlug = artist.artistPath.replace('/artists/', '');
+		const artistSlug = artist.slug;
 		return `<url>
     <loc>${baseUrl}/artists/${artistSlug}</loc>
     <changefreq>weekly</changefreq>
@@ -23,22 +23,15 @@ export async function GET() {
 	// Generate URLs for albums
 	const albumUrls = [];
 	for (const artist of artists) {
-		const artistSlug = artist.artistPath.replace('/artists/', '');
-		try {
-			const artistIndexPath = join(process.cwd(), 'static', 'data', artistSlug, 'index.json');
-			const artistData: ArtistIndexData = await fs.readJson(artistIndexPath);
+		const artistSlug = artist.slug;
 
-			for (const album of artistData.albums) {
-				const albumSlug = album.albumPath.split('/').pop()!;
-				albumUrls.push(`<url>
+		for (const album of artist.albums) {
+			const albumSlug = album.slug;
+			albumUrls.push(`<url>
     <loc>${baseUrl}/artists/${artistSlug}/${albumSlug}</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
 </url>`);
-			}
-		} catch (error) {
-			// Skip if artist data not found
-			console.warn(`Could not load data for artist: ${artistSlug}`, error);
 		}
 	}
 

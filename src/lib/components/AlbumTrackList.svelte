@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { AlbumTrack } from '@fauxfetus/generator';
 	import { resolve } from '$app/paths';
 	import { cn } from '$lib/helpers/tailwind';
+	import type { Track } from '@fauxfetus/generator';
 
-	let { tracks }: { tracks: AlbumTrack[] } = $props();
+	let { tracks }: { tracks: Track[] } = $props();
 
 	let audioElements: HTMLAudioElement[] = $state([]);
 	let currentTrackIndex: number | null = $state(null);
@@ -52,7 +52,7 @@
 <ul class="list rounded-box bg-base-100 shadow-md">
 	<li class="p-4 pb-2 text-xs tracking-wide opacity-60">Tracks</li>
 
-	{#each tracks as track, index (track.trackPath)}
+	{#each tracks as track, index (`${track.number || index}-${track.slug}`)}
 		<li class="list-row md:items-center">
 			<div
 				class={cn(
@@ -60,14 +60,25 @@
 					currentTrackIndex === index && 'font-bold'
 				)}
 			>
-				{track.trackNumber ? formatTrackNumber(track.trackNumber) : formatTrackNumber(index + 1)}
+				{track.number ? formatTrackNumber(track.number) : formatTrackNumber(index + 1)}
 			</div>
 			<div class="list-col-grow">
 				<div class="flex flex-col gap-2 md:grid md:grid-cols-[auto_400px] md:items-center">
-					<div class="py-1.5 md:py-0">
+					<div class="flex flex-wrap items-center gap-2 py-1.5 md:py-0">
+						{#if track.isCompilation}
+							<span class="text-lg"
+								><a
+									href={resolve(`/artists/${track.artistSlug}`)}
+									class="hover:link-secondary/80 link text-lg link-secondary">{track.artistName}</a
+								></span
+							>
+
+							//
+						{/if}
+
 						<a
-							href={resolve(track.trackPath)}
-							class="hover:link-primary/80 link text-lg link-primary">{track.trackName}</a
+							href={resolve(`/artists/${track.artistSlug}/${track.albumSlug}/${track.slug}`)}
+							class="hover:link-primary/80 link text-lg link-primary">{track.name}</a
 						>
 					</div>
 					<audio
@@ -78,7 +89,7 @@
 						{onended}
 						preload="none"
 					>
-						<source src={track.audioUrl} type="audio/mpeg" />
+						<source src={`/audio/${track.audioUrl}`} type="audio/mpeg" />
 						Your browser does not support the audio element.
 					</audio>
 				</div>
