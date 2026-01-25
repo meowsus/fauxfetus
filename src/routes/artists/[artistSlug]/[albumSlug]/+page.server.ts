@@ -1,22 +1,15 @@
-import type { AlbumIndexData, ArtistIndexData, ArtistsIndexData } from '@fauxfetus/generator';
+import { readCatalog } from '$lib/helpers/catalog.js';
 import { error } from '@sveltejs/kit';
-import fs from 'fs-extra';
-import { join } from 'path';
 import type { PageServerLoad } from './$types';
 
 export const entries = async () => {
 	const entries: Array<{ artistSlug: string; albumSlug: string }> = [];
-	const artistsIndexPath = join(process.cwd(), 'static', 'data', 'index.json');
-	const artists: ArtistsIndexData = await fs.readJson(artistsIndexPath);
 
-	for (const artist of artists) {
-		const artistSlug = artist.artistPath.replace('/artists/', '');
-		const artistIndexPath = join(process.cwd(), 'static', 'data', artistSlug, 'index.json');
-		const artistData: ArtistIndexData = await fs.readJson(artistIndexPath);
+	const catalog = await readCatalog();
 
-		for (const album of artistData.albums) {
-			const albumSlug = album.albumPath.split('/').pop()!;
-			entries.push({ artistSlug, albumSlug });
+	for (const artist of catalog) {
+		for (const album of artist.albums) {
+			entries.push({ artistSlug: artist.slug, albumSlug: album.slug });
 		}
 	}
 
@@ -25,12 +18,16 @@ export const entries = async () => {
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { artistSlug, albumSlug } = params;
-	const dataPath = join(process.cwd(), 'static', 'data', artistSlug, albumSlug, 'index.json');
 
-	try {
-		const album: AlbumIndexData = await fs.readJson(dataPath);
-		return { album };
-	} catch {
-		throw error(404, 'Album not found');
-	}
+	const catalog = await readCatalog();
+
+	const artist = catalog.find((artist) => artist.slug === artistSlug);
+
+	if (!artist) throw error(404, 'Artist not found');
+
+	const album = artist.albums.find((album) => album.slug === albumSlug);
+
+	if (!album) throw error(404, 'Album not found');
+
+	return { album };
 };

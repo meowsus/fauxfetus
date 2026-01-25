@@ -8,13 +8,13 @@
 	const breadcrumbItems = [
 		{ name: 'Home', href: '/' as const },
 		{ name: 'Artists', href: '/artists' as const },
-		{ name: data.artist.artistName }
+		{ name: data.artist.name }
 	];
 </script>
 
 <svelte:head>
-	<title>{data.artist.artistName} - Faux Fetus</title>
-	<meta name="description" content="Browse albums by {data.artist.artistName} on Faux Fetus." />
+	<title>{data.artist.name} - Faux Fetus</title>
+	<meta name="description" content="Browse albums by {data.artist.name} on Faux Fetus." />
 </svelte:head>
 
 <div class="flex flex-col gap-2">

@@ -24,14 +24,10 @@
 				<ul class="mb-4 list-inside list-disc">
 					<li>
 						<em>Live @ WPRB</em> by
-						<a
-							href={resolve('/artists/ugh-god/the-beautiful-traps-ugh-god-wprb-split')}
-							class="link-primary">Ugh God</a
-						>
+						<a href={resolve('/artists/ugh-god/live-wprb')} class="link-primary">Ugh God</a>
 						&
-						<a
-							href={resolve('/artists/the-beautiful-traps/the-beautiful-traps-ugh-god-wprb-split')}
-							class="link-primary">The Beautiful Traps</a
+						<a href={resolve('/artists/the-beautiful-traps/live-wprb')} class="link-primary"
+							>The Beautiful Traps</a
 						>
 					</li>
 				</ul>
@@ -70,7 +66,7 @@
 						>,
 						<a
 							href={resolve(
-								'/artists/a-three-ring-circus/the-best-of-the-first-four-acts-of-faux-fest'
+								'/artists/a-three-ring-circus-for-autistic-children/the-best-of-the-first-four-acts-of-faux-fest'
 							)}
 							class="link-primary">A Three Ring Circus (for Autistic Children)</a
 						>,
@@ -179,12 +175,11 @@
 						>
 					</li>
 					<li>
-						<a
-							href={resolve('/artists/the-riffingtons/the-riffingtons-eat-split')}
-							class="link-primary">The Riffingtons</a
+						<a href={resolve('/artists/the-riffingtons/taco-enema')} class="link-primary"
+							>The Riffingtons</a
 						>
 						/
-						<a href={resolve('/artists/eat/the-riffingtons-eat-split')} class="link-primary">Eat</a>
+						<a href={resolve('/artists/eat/taco-enema')} class="link-primary">Eat</a>
 					</li>
 				</ul>
 			</TimelineEntry>

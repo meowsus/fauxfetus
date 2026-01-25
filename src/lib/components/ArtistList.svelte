@@ -8,7 +8,7 @@
 
 	let filteredArtists = $derived.by(() => {
 		return artists.filter((artist) =>
-			artist.artistName.toLowerCase().includes(searchValue.toLowerCase())
+			artist.name.toLowerCase().includes(searchValue.toLowerCase())
 		);
 	});
 </script>
@@ -25,11 +25,12 @@
 		/>
 	</div>
 
-	{#each filteredArtists as artist (artist.artistPath)}
+	{#each filteredArtists as artist (artist.slug)}
 		<li class="list-row">
 			<div>
-				<a href={resolve(artist.artistPath)} class="hover:link-primary/80 link text-lg link-primary"
-					>{artist.artistName}</a
+				<a
+					href={resolve(`/artists/${artist.slug}`)}
+					class="hover:link-primary/80 link text-lg link-primary">{artist.name}</a
 				>
 			</div>
 		</li>

@@ -5,19 +5,21 @@
 
 	let { data }: { data: PageData } = $props();
 
+	const artistHref: `/artists/${string}` = `/artists/${data.album.artistSlug}`;
+
 	const breadcrumbItems = [
 		{ name: 'Home', href: '/' as const },
 		{ name: 'Artists', href: '/artists' as const },
-		{ name: data.album.artistName, href: data.album.artistPath },
-		{ name: data.album.albumName }
+		{ name: data.album.artistName, href: artistHref },
+		{ name: data.album.name }
 	];
 </script>
 
 <svelte:head>
-	<title>{data.album.albumName} by {data.album.artistName} - Faux Fetus</title>
+	<title>{data.album.name} by {data.album.artistName} - Faux Fetus</title>
 	<meta
 		name="description"
-		content="Listen to tracks from the album {data.album.albumName} by {data.album
+		content="Listen to tracks from the album {data.album.name} by {data.album
 			.artistName} on Faux Fetus."
 	/>
 </svelte:head>

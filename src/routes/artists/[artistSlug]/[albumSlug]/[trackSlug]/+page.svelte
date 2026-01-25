@@ -4,20 +4,23 @@
 
 	let { data }: { data: PageData } = $props();
 
+	const artistHref: `/artists/${string}` = `/artists/${data.track.artistSlug}`;
+	const albumHref: `/artists/${string}/${string}` = `${artistHref}/${data.track.albumSlug}`;
+
 	const breadcrumbItems = [
 		{ name: 'Home', href: '/' as const },
 		{ name: 'Artists', href: '/artists' as const },
-		{ name: data.track.artistName, href: data.track.artistPath },
-		{ name: data.track.albumName, href: data.track.albumPath },
-		{ name: data.track.trackName }
+		{ name: data.track.artistName, href: artistHref },
+		{ name: data.track.albumName, href: albumHref },
+		{ name: data.track.name }
 	];
 </script>
 
 <svelte:head>
-	<title>{data.track.trackName} by {data.track.artistName} - Faux Fetus</title>
+	<title>{data.track.name} by {data.track.artistName} - Faux Fetus</title>
 	<meta
 		name="description"
-		content="Listen to {data.track.trackName} from the album {data.track.albumName} by {data.track
+		content="Listen to {data.track.name} from the album {data.track.albumName} by {data.track
 			.artistName} on Faux Fetus."
 	/>
 </svelte:head>
@@ -26,7 +29,7 @@
 	<Breadcrumb items={breadcrumbItems} />
 
 	<audio controls class="w-full">
-		<source src={data.track.audioUrl} type="audio/mpeg" />
+		<source src={`/audio/${data.track.audioUrl}`} type="audio/mpeg" />
 		Your browser does not support the audio element.
 	</audio>
 </div>

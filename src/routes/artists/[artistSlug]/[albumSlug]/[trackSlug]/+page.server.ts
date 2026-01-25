@@ -1,39 +1,16 @@
-import type {
-	AlbumIndexData,
-	ArtistIndexData,
-	ArtistsIndexData,
-	TrackIndexData
-} from '@fauxfetus/generator';
+import { readCatalog } from '$lib/helpers/catalog.js';
 import { error } from '@sveltejs/kit';
-import fs from 'fs-extra';
-import { join } from 'path';
 import type { PageServerLoad } from './$types';
 
 export const entries = async () => {
 	const entries: Array<{ artistSlug: string; albumSlug: string; trackSlug: string }> = [];
-	const artistsIndexPath = join(process.cwd(), 'static', 'data', 'index.json');
-	const artists: ArtistsIndexData = await fs.readJson(artistsIndexPath);
 
-	for (const artist of artists) {
-		const artistSlug = artist.artistPath.replace('/artists/', '');
-		const artistIndexPath = join(process.cwd(), 'static', 'data', artistSlug, 'index.json');
-		const artistData: ArtistIndexData = await fs.readJson(artistIndexPath);
+	const catalog = await readCatalog();
 
-		for (const album of artistData.albums) {
-			const albumSlug = album.albumPath.split('/').pop()!;
-			const albumIndexPath = join(
-				process.cwd(),
-				'static',
-				'data',
-				artistSlug,
-				albumSlug,
-				'index.json'
-			);
-			const albumData: AlbumIndexData = await fs.readJson(albumIndexPath);
-
-			for (const track of albumData.tracks) {
-				const trackSlug = track.trackPath.split('/').pop()!;
-				entries.push({ artistSlug, albumSlug, trackSlug });
+	for (const artist of catalog) {
+		for (const album of artist.albums) {
+			for (const track of album.tracks) {
+				entries.push({ artistSlug: artist.slug, albumSlug: album.slug, trackSlug: track.slug });
 			}
 		}
 	}
@@ -43,20 +20,20 @@ export const entries = async () => {
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { artistSlug, albumSlug, trackSlug } = params;
-	const dataPath = join(
-		process.cwd(),
-		'static',
-		'data',
-		artistSlug,
-		albumSlug,
-		trackSlug,
-		'index.json'
-	);
 
-	try {
-		const track: TrackIndexData = await fs.readJson(dataPath);
-		return { track };
-	} catch {
-		throw error(404, 'Track not found');
-	}
+	const catalog = await readCatalog();
+
+	const artist = catalog.find((artist) => artist.slug === artistSlug);
+
+	if (!artist) throw error(404, 'Artist not found');
+
+	const album = artist.albums.find((album) => album.slug === albumSlug);
+
+	if (!album) throw error(404, 'Album not found');
+
+	const track = album.tracks.find((track) => track.slug === trackSlug);
+
+	if (!track) throw error(404, 'Track not found');
+
+	return { track };
 };
