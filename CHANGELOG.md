@@ -1,3 +1,7 @@
+# v2.0.0 - Jan 24, 2026
+
+- Total rewrite of the data generator to better support compilation albums
+
 # v1.6.1 - Dec 30, 2025
 
 - Fix homepage link styling
