@@ -8,6 +8,28 @@
 <div class="flex flex-col gap-6 px-6 py-2">
 	<section class="flex flex-col gap-4 text-lg">
 		<Timeline>
+			<TimelineEntry date="Jan 24, 2026">
+				<p class="mb-4">
+					No one will care, but I just released a much more flexible version of the data generator.
+					Now splits and comps are much easier for me to manage. As a result <a
+						href={resolve('/artists/5limbs/faux-comp-1/')}
+						class="link-primary">Faux Comp 1</a
+					> exists, and along with it are some more "new" artists:
+				</p>
+
+				<ul class="mb-4 list-inside list-disc">
+					<li>
+						<a href={resolve('/artists/casy-brian')} class="link-primary">Casy + Brian</a>
+					</li>
+					<li><a href={resolve('/artists/dead-rabbits')} class="link-primary">Dead Rabbits</a></li>
+					<li><a href={resolve('/artists/the-grays')} class="link-primary">The Grays</a></li>
+				</ul>
+
+				<p>
+					Additionally, album pages responsible for listing splits or true compilations will list
+					each track's artist, interlinking these album pages appropriately.
+				</p>
+			</TimelineEntry>
 			<TimelineEntry date="Dec 30, 2025">
 				<p class="mb-4">
 					After <a
