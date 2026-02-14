@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
+	import MetadataTable from '$lib/components/MetadataTable.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -25,11 +26,8 @@
 	/>
 </svelte:head>
 
-<div class="flex flex-col gap-2">
+<div class="flex flex-col gap-4">
 	<Breadcrumb items={breadcrumbItems} />
 
-	<audio controls class="w-full">
-		<source src={`/audio/${data.track.audioUrl}`} type="audio/mpeg" />
-		Your browser does not support the audio element.
-	</audio>
+	<MetadataTable metadata={data.track.metadata} />
 </div>
