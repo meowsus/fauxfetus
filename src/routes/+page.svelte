@@ -19,15 +19,12 @@
 				<ul class="list-disc pl-5">
 					<li>
 						<a
-							href={resolve(
-								'/artists/a-three-ring-circus-for-autistic-children/a-three-ring-circus'
-							)}
+							href={resolve('/artists/a-three-ring-circus/a-three-ring-circus')}
 							class="link-primary">A Three Ring Circus</a
 						>
 						by
-						<a
-							href={resolve('/artists/a-three-ring-circus-for-autistic-children')}
-							class="link-primary">A Three Ring Circus (for Autistic Children)</a
+						<a href={resolve('/artists/a-three-ring-circus')} class="link-primary"
+							>A Three Ring Circus</a
 						>
 						- Did you know that they released a real, full album at some point? I sure didn't!
 					</li>
