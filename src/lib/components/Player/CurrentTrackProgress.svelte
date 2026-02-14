@@ -30,7 +30,7 @@
 
 	// Reset progress when track index changes
 	$effect(() => {
-		currentTrackIndex;
+		void currentTrackIndex;
 		progress = 0;
 	});
 </script>
