@@ -1,3 +1,10 @@
+# v2.1.0 - Feb 14, 2026
+
+- Remove theme toggle
+- Add audio player
+- Add albums from A Three Ring Circus & Plain Jain
+- Repurpose track pages
+
 # v2.0.0 - Jan 24, 2026
 
 - Total rewrite of the data generator to better support compilation albums
