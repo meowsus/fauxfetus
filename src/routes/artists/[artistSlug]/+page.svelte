@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
-	import ArtistAlbumList from '$lib/components/ArtistAlbumList.svelte';
+	import AlbumList from '$lib/components/AlbumList.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -19,5 +19,5 @@
 
 <div class="flex flex-col gap-2">
 	<Breadcrumb items={breadcrumbItems} />
-	<ArtistAlbumList albums={data.artist.albums} />
+	<AlbumList albums={data.artist.albums} />
 </div>

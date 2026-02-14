@@ -1,7 +1,23 @@
 <script lang="ts">
 	import '../app.css';
+
 	import favicon from '$lib/assets/favicon.svg';
 	import Navbar from '$lib/components/Navbar.svelte';
+	import Player from '$lib/components/Player/index.svelte';
+
+	import { setPlayerContext, type PlayerState } from '$lib/context/player';
+	import { writable } from 'svelte/store';
+
+	const playerStore = writable<PlayerState>({
+		isLoading: false,
+		isPlaying: false,
+		isRadio: false,
+		allTracks: [],
+		playlist: [],
+		currentTrackIndex: null
+	});
+
+	setPlayerContext(playerStore);
 
 	let { children } = $props();
 </script>
@@ -16,8 +32,20 @@
 	/>
 </svelte:head>
 
-<div class="container mx-auto flex flex-col gap-4 px-4 py-4">
-	<Navbar />
+<div class="drawer drawer-end">
+	<input id="player-drawer-toggle" type="checkbox" class="drawer-toggle" />
 
-	{@render children()}
+	<div class="drawer-content">
+		<div class="container mx-auto flex flex-col gap-4 px-4 py-4">
+			<Navbar />
+			{@render children()}
+		</div>
+	</div>
+
+	<div class="drawer-side">
+		<label for="player-drawer-toggle" aria-label="close sidebar" class="drawer-overlay"></label>
+		<div class="min-h-full w-[90vw] bg-base-200 p-4 lg:w-[30vw]">
+			<Player />
+		</div>
+	</div>
 </div>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
-	import AlbumTrackList from '$lib/components/AlbumTrackList.svelte';
+	import TrackList from '$lib/components/TrackList.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -26,5 +26,5 @@
 
 <div class="flex flex-col gap-2">
 	<Breadcrumb items={breadcrumbItems} />
-	<AlbumTrackList tracks={data.album.tracks} />
+	<TrackList tracks={data.album.tracks} shouldDisableRadioMode={true} />
 </div>
