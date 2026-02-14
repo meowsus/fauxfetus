@@ -8,8 +8,43 @@
 <div class="flex flex-col gap-6 px-6 py-2">
 	<section class="flex flex-col gap-4 text-lg">
 		<Timeline>
-			<TimelineEntry date="Feb 1, 2026">
+			<TimelineEntry date="Feb 14, 2026">
 				<p>I removed the theme stuff. No one likes light mode anyway.</p>
+				<p>
+					I also added a dedicated audio player. It supports radio mode and an album playlist mode.
+					It should be intuitive to use. Good luck, Benji, and you're welcome. You can find it by
+					clicking the "Player" button in the header or by clicking the play button next to any
+					track. Let's celebrate with two new releases:
+				</p>
+				<ul class="list-inside list-disc">
+					<li>
+						Did you know that <a
+							href={resolve('/artists/a-three-ring-circus-for-autistic-children')}
+							class="link-primary">A Three Ring Circus (for Autistic Children)</a
+						>
+						released a real, full album at some point? I sure didn't! If you didn't either,
+						<a
+							href={resolve(
+								'/artists/a-three-ring-circus-for-autistic-children/a-three-ring-circus'
+							)}
+							class="link-primary">here it is</a
+						>.
+					</li>
+					<li>
+						I hear that <a href={resolve('/artists/plain-jain')} class="link-primary">Plain Jain</a>
+						was from Baltimore. It's a gone-noplace side-project from one of the
+						<a href={resolve('/artists/caw')} class="link-primary">CAW!</a> kids. It's been a while
+						since any <em>actually new</em> artists have been added. Welcome, bois. Enjoy their
+						album
+						<a href={resolve('/artists/plain-jain/nos-navizgark')} class="link-primary"
+							>Nos Navizgark</a
+						>.
+					</li>
+				</ul>
+				<p>
+					Lastly, the track pages now display the track's metadata. These will probably be removed
+					at some point because they're pretty pointless.
+				</p>
 			</TimelineEntry>
 			<TimelineEntry date="Jan 24, 2026">
 				<p>
