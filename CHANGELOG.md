@@ -1,3 +1,7 @@
+# v2.2.1 - Feb 14, 2026
+
+- Erase the autistic children :(
+
 # v2.2.0 - Feb 14, 2026
 
 - Add MONKEYKNUCkLER & Pink Panzer albums
