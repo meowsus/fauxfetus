@@ -42,6 +42,8 @@ export interface Album {
 	artistName: string;
 
 	tracks: Track[];
+
+	isCompilation: boolean;
 }
 
 export interface Artist {
@@ -264,12 +266,18 @@ export class DataGenerator {
 
 			for (const [albumName, trackData] of Object.entries(albumData)) {
 				const albumSlug = createSlug(albumName);
+
+				const isCompilation = trackData.some((track) =>
+					track.metadata?.native.APEv2.some((tag) => tag.id === ApeTag.Compilation)
+				);
+
 				const album: Album = {
 					slug: albumSlug,
 					name: albumName,
 					artistSlug,
 					artistName,
-					tracks: []
+					tracks: [],
+					isCompilation
 				};
 
 				for (const { audioUrl, metadata } of trackData) {
