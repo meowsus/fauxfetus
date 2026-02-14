@@ -1,3 +1,7 @@
+# v2.1.1 - Feb 14, 2026
+
+- Add compilation badge to album list
+
 # v2.1.0 - Feb 14, 2026
 
 - Remove theme toggle
