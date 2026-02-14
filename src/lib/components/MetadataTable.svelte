@@ -93,7 +93,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each tableRows as { label, value }}
+				{#each tableRows as { label, value } (label)}
 					<tr>
 						<th>{label}</th>
 						<td>{value}</td>

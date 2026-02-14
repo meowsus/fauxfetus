@@ -57,7 +57,7 @@
 	}
 
 	$effect(() => {
-		playlist;
+		void playlist;
 
 		if (audioElement && currentTrack) {
 			audioElement.load();

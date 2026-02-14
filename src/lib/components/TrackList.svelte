@@ -42,8 +42,8 @@
 			currentTrackIndex: index
 		}));
 
-		shouldTogglePlayerDrawer && togglePlayerDrawer();
-		shouldDisableRadioMode && playerStore.update((state) => ({ ...state, isRadio: false }));
+		if (shouldTogglePlayerDrawer) togglePlayerDrawer();
+		if (shouldDisableRadioMode) playerStore.update((state) => ({ ...state, isRadio: false }));
 	}
 </script>
 
