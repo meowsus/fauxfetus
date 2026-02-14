@@ -31,7 +31,7 @@ export interface Track {
 	isCompilation: boolean;
 
 	audioUrl: string;
-	metadata: IAudioMetadata;
+	metadata?: IAudioMetadata;
 }
 
 export interface Album {
@@ -86,6 +86,42 @@ export class DataGenerator {
 		this.writePath = writePath;
 
 		this.validatorService = new ValidatorService();
+	}
+
+	/** Build a Track from validated metadata. Single place for IAudioMetadata → Track. */
+	private metadataToTrack(
+		audioUrl: string,
+		metadata: IAudioMetadata,
+		omitMetadata: boolean = false
+	): Track {
+		const trackName = findAPEv2TagValue(metadata, ApeTag.Title);
+		const artistName = findAPEv2TagValue(metadata, ApeTag.Artist);
+		const albumName = findAPEv2TagValue(metadata, ApeTag.Album);
+		const isCompilation = !!metadata.native.APEv2.find((tag) => tag.id === ApeTag.Compilation)
+			?.value;
+
+		const track: Track = {
+			slug: createSlug(trackName),
+			name: trackName,
+			number: metadata.common.track.no,
+
+			artistSlug: createSlug(artistName),
+			artistName,
+			albumSlug: createSlug(albumName),
+			albumName,
+
+			isCompilation,
+
+			audioUrl
+		};
+
+		if (omitMetadata) {
+			return track;
+		}
+
+		track.metadata = metadata;
+
+		return track;
 	}
 
 	private async ensurePathsExist(): Promise<void> {
@@ -237,29 +273,7 @@ export class DataGenerator {
 				};
 
 				for (const { audioUrl, metadata } of trackData) {
-					const trackName = findAPEv2TagValue(metadata, ApeTag.Title);
-					const artistName = findAPEv2TagValue(metadata, ApeTag.Artist);
-
-					const isCompilation = !!metadata.native.APEv2.find((tag) => tag.id === ApeTag.Compilation)
-						?.value;
-
-					const track = {
-						slug: createSlug(trackName),
-						name: trackName,
-						number: metadata.common.track.no,
-
-						artistSlug: isCompilation ? createSlug(artistName) : artistSlug,
-						artistName,
-						albumSlug,
-						albumName: findAPEv2TagValue(metadata, ApeTag.Album),
-
-						isCompilation,
-
-						audioUrl,
-						metadata
-					};
-
-					album.tracks.push(track);
+					album.tracks.push(this.metadataToTrack(audioUrl, metadata));
 				}
 
 				artist.albums.push(album);
@@ -297,8 +311,16 @@ export class DataGenerator {
 		}
 	}
 
-	private async writeCatalog(): Promise<void> {
+	private async writeCatalogJson(): Promise<void> {
 		await fs.writeJson(path.join(this.writePath, 'catalog.json'), this.catalog);
+	}
+
+	private async writeTracksJson(): Promise<void> {
+		const tracks = [...this.mp3Metadata, ...this.compilationsMp3Metadata].map(
+			([audioUrl, metadata]) => this.metadataToTrack(audioUrl, metadata, true)
+		);
+
+		await fs.writeJson(path.join(this.writePath, 'tracks.json'), tracks);
 	}
 
 	async run(): Promise<void> {
@@ -311,6 +333,7 @@ export class DataGenerator {
 		await this.backfillCompilations();
 		await this.buildCatalog();
 		await this.sortCatalog();
-		await this.writeCatalog();
+		await this.writeCatalogJson();
+		await this.writeTracksJson();
 	}
 }

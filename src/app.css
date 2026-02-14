@@ -1,7 +1,8 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
+@plugin '@iconify/tailwind4' {
+	scale: 2;
+}
 @plugin 'daisyui' {
-	themes:
-		light,
-		dracula --default;
+	themes: dracula --default;
 }

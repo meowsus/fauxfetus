@@ -8,8 +8,11 @@
 <div class="flex flex-col gap-6 px-6 py-2">
 	<section class="flex flex-col gap-4 text-lg">
 		<Timeline>
+			<TimelineEntry date="Feb 1, 2026">
+				<p>I removed the theme stuff. No one likes light mode anyway.</p>
+			</TimelineEntry>
 			<TimelineEntry date="Jan 24, 2026">
-				<p class="mb-4">
+				<p>
 					No one will care, but I just released a much more flexible version of the data generator.
 					Now splits and comps are much easier for me to manage. As a result <a
 						href={resolve('/artists/5limbs/faux-comp-1/')}
@@ -17,7 +20,7 @@
 					> exists, and along with it are some more "new" artists:
 				</p>
 
-				<ul class="mb-4 list-inside list-disc">
+				<ul class="list-inside list-disc">
 					<li>
 						<a href={resolve('/artists/casy-brian')} class="link-primary">Casy + Brian</a>
 					</li>
@@ -31,7 +34,7 @@
 				</p>
 			</TimelineEntry>
 			<TimelineEntry date="Dec 30, 2025">
-				<p class="mb-4">
+				<p>
 					After <a
 						href="https://www.brandkramp.us/2025/12/30/curts-big-fat-faux-fetus-40th/"
 						class="link-primary"
@@ -43,13 +46,10 @@
 					> performed back in 2008. I made a split release of it:
 				</p>
 
-				<ul class="mb-4 list-inside list-disc">
+				<ul class="list-inside list-disc">
 					<li>
-						<em>Live @ WPRB</em> by
-						<a href={resolve('/artists/ugh-god/live-wprb')} class="link-primary">Ugh God</a>
-						&
 						<a href={resolve('/artists/the-beautiful-traps/live-wprb')} class="link-primary"
-							>The Beautiful Traps</a
+							>Ugh God & The Beautiful Traps - Live @ WPRB</a
 						>
 					</li>
 				</ul>
@@ -60,71 +60,39 @@
 				</p>
 			</TimelineEntry>
 			<TimelineEntry date="Dec 29, 2025">
-				<a href={resolve('/artists/assisted-living/faux-faux-fest-24')} class="link-primary"
-					>Assisted Living</a
-				> also played Faux Faux Fest '24. I added their track.
+				<p>
+					<a href={resolve('/artists/assisted-living/faux-faux-fest-24')} class="link-primary"
+						>Assisted Living</a
+					> also played Faux Faux Fest '24. I added their track.
+				</p>
 			</TimelineEntry>
 			<TimelineEntry date="Dec 28, 2025">
-				<p class="mb-4">
+				<p>
 					We suffered a slight regression where splits are split up by artist. This means that you
 					can't currently listen to a split in its entirety from any page. As it turns out,
 					showcasing more than one artist on a single album is a hard problem to solve. The way I
 					solved it last week *technically* worked, but the way I handled it was gross. I'll keep
 					noodling on it.
 				</p>
-				<p class="mb-4">
+				<p>
 					But more good news, we have new releases! Specifically, "The Best Of The First Four Acts
 					of Faux Fest" and "Faux Faux Fest '24". The first was recorded forever ago but was never
 					released. The second was recorded on my 40th birthday.
 				</p>
-				<ul class="mb-4 list-inside list-disc">
+				<ul class="list-inside list-disc">
 					<li>
-						<em>The Best Of The First Four Acts of Faux Fest</em> features
 						<a
 							href={resolve(
 								'/artists/captain-werewolf/the-best-of-the-first-four-acts-of-faux-fest'
 							)}
-							class="link-primary">Captain Werewolf</a
-						>,
-						<a
-							href={resolve(
-								'/artists/a-three-ring-circus-for-autistic-children/the-best-of-the-first-four-acts-of-faux-fest'
-							)}
-							class="link-primary">A Three Ring Circus (for Autistic Children)</a
-						>,
-						<a
-							href={resolve('/artists/lee-jae-won/the-best-of-the-first-four-acts-of-faux-fest')}
-							class="link-primary">Lee, J. Won</a
-						>, and
-						<a
-							href={resolve(
-								'/artists/happybear-kaboom/the-best-of-the-first-four-acts-of-faux-fest'
-							)}
-							class="link-primary">Happybear Kaboom</a
-						>.
+							class="link-primary">The Best of the First Four Acts of Faux Fest</a
+						>
 					</li>
 					<li>
-						<em>Faux Faux Fest '24</em> features
 						<a
 							href={resolve('/artists/dust-from-1000-years/faux-faux-fest-24')}
-							class="link-primary">Dust From 1000 Years</a
-						>,
-						<a href={resolve('/artists/bad-history-month/faux-faux-fest-24')} class="link-primary"
-							>Bad History Month</a
-						>,
-						<a href={resolve('/artists/luna-honey/faux-faux-fest-24')} class="link-primary"
-							>Luna Honey</a
-						>,
-						<a href={resolve('/artists/idiot-mambo/faux-faux-fest-24')} class="link-primary"
-							>Idiot Mambo</a
-						>,
-						<a
-							href={resolve('/artists/drums-like-machine-guns/faux-faux-fest-24')}
-							class="link-primary">Drums Like Machine Guns</a
-						>, and
-						<a href={resolve('/artists/nyxy-nix/faux-faux-fest-24')} class="link-primary"
-							>Nyxy Nix</a
-						>.
+							class="link-primary">Faux Faux Fest '24</a
+						>
 					</li>
 				</ul>
 				<p>
@@ -133,7 +101,7 @@
 				</p>
 			</TimelineEntry>
 			<TimelineEntry date="Dec 21, 2025">
-				<p class="mb-4">
+				<p>
 					Okay, this is actually exciting: I added six split releases that have been sitting around
 					for far too long. This means that we welcome a few "new" "artists" into the fold, namely
 					J. Mono & Miles Rozatti. Welcome. I'm sure you're SO happy to be here. We also welcome
@@ -145,81 +113,60 @@
 					<li>
 						<a
 							href={resolve('/artists/bornpilot/bornpilot-welcome-wizard-split')}
-							class="link-primary">Bornpilot</a
-						>
-						/
-						<a
-							href={resolve('/artists/welcome-wizard/bornpilot-welcome-wizard-split')}
-							class="link-primary">Welcome Wizard</a
+							class="link-primary">Bornpilot & Welcome Wizard - Split</a
 						>
 					</li>
 					<li>
 						<a
 							href={resolve('/artists/captain-werewolf/captain-werewolf-miles-rozatti-split')}
-							class="link-primary">Captain Werewolf</a
-						>
-						/
-						<a
-							href={resolve('/artists/miles-rozatti/captain-werewolf-miles-rozatti-split')}
-							class="link-primary">Miles Rozatti</a
+							class="link-primary">Captain Werewolf & Miles Rozatti Split</a
 						>
 					</li>
 					<li>
 						<a
 							href={resolve('/artists/father-sleep/happybear-kaboom-father-sleep-split')}
-							class="link-primary">Happybear Kaboom</a
-						>
-						/
-						<a
-							href={resolve('/artists/father-sleep/happybear-kaboom-father-sleep-split')}
-							class="link-primary">Father Sleep</a
+							class="link-primary">Happybear Kaboom & Father Sleep Split</a
 						>
 					</li>
 					<li>
 						<a
 							href={resolve('/artists/the-cold-lamper/the-cold-lamper-j-mono-split')}
-							class="link-primary">The Cold Lamper</a
-						>
-						/
-						<a href={resolve('/artists/j-mono/the-cold-lamper-j-mono-split')} class="link-primary"
-							>J. Mono</a
+							class="link-primary">The Cold Lamper & J. Mono Split</a
 						>
 					</li>
 					<li>
 						<a
 							href={resolve('/artists/the-night-owl/the-night-owl-welcome-wizard-split')}
-							class="link-primary">The Night Owl</a
-						>
-						/
-						<a
-							href={resolve('/artists/welcome-wizard/the-night-owl-welcome-wizard-split')}
-							class="link-primary">Welcome Wizard</a
+							class="link-primary">The Night Owl & Welcome Wizard Split</a
 						>
 					</li>
 					<li>
 						<a href={resolve('/artists/the-riffingtons/taco-enema')} class="link-primary"
-							>The Riffingtons</a
+							>The Riffingtons & Eat Split</a
 						>
-						/
-						<a href={resolve('/artists/eat/taco-enema')} class="link-primary">Eat</a>
 					</li>
 				</ul>
 			</TimelineEntry>
 			<TimelineEntry date="Dec 20, 2025">
-				I added <a href={resolve('/artists/aunt-vivians-revengence')} class="link-primary"
-					>Aunt Vivian's Revengence</a
-				>. This was the first recording ever made by the
-				<a href={resolve('/artists/chamomile')} class="link-primary">Chamomile</a> boys, back when
-				they didn't know how to play their instruments and they spent all their time getting high
-				and listening to Pink Floyd and Yes. The name is inspired by
-				<a href="https://superbad.com/1/turkey/viv.html">Superbad.com</a>. It is an objectively
-				terrible album, but one that hasn't been heard by very many people. Now it's here for no
-				additional people to listen to. Oh, and I updated dark mode to be less suck. You're welcome.
+				<p>
+					I added <a href={resolve('/artists/aunt-vivians-revengence')} class="link-primary"
+						>Aunt Vivian's Revengence</a
+					>. This was the first recording ever made by the
+					<a href={resolve('/artists/chamomile')} class="link-primary">Chamomile</a> boys, back when
+					they didn't know how to play their instruments and they spent all their time getting high
+					and listening to Pink Floyd and Yes. The name is inspired by
+					<a href="https://superbad.com/1/turkey/viv.html">Superbad.com</a>. It is an objectively
+					terrible album, but one that hasn't been heard by very many people. Now it's here for no
+					additional people to listen to. Oh, and I updated dark mode to be less suck. You're
+					welcome.
+				</p>
 			</TimelineEntry>
 			<TimelineEntry date="Dec 14, 2025">
-				I added basic SEO. Pretty boring, tbh. It'll get good soon.
+				<p>I added basic SEO. Pretty boring, tbh. It'll get good soon.</p>
 			</TimelineEntry>
-			<TimelineEntry date="Nov 30, 2025">I've relaunched the site. Don't ask me why.</TimelineEntry>
+			<TimelineEntry date="Nov 30, 2025"
+				><p>I've relaunched the site. Don't ask me why.</p></TimelineEntry
+			>
 		</Timeline>
 	</section>
 </div>

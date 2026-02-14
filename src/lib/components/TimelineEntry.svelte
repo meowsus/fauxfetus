@@ -1,5 +1,8 @@
 <script lang="ts">
+	import { cn } from '$lib/helpers/tailwind';
+
 	export let date: string;
+	export let classes: string = '';
 </script>
 
 <li>
@@ -14,7 +17,7 @@
 		</svg>
 	</div>
 	<div class="timeline-end timeline-box border-neutral-700">
-		<div class="p-1 text-lg text-neutral-300">
+		<div class={cn('flex flex-col gap-4 p-1 text-lg text-neutral-300', classes)}>
 			<slot />
 		</div>
 	</div>
