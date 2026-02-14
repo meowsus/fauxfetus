@@ -1,3 +1,7 @@
+# v2.2.2 - Feb 14, 2026
+
+- Missed a spot...
+
 # v2.2.1 - Feb 14, 2026
 
 - Erase the autistic children :(
