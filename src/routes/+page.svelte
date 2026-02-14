@@ -14,36 +14,55 @@
 					I also added a dedicated audio player. It supports radio mode and an album playlist mode.
 					It should be intuitive to use. Good luck, Benji, and you're welcome. You can find it by
 					clicking the "Player" button in the header or by clicking the play button next to any
-					track. Let's celebrate with two new releases:
+					track. Let's celebrate with some new releases:
 				</p>
-				<ul class="list-inside list-disc">
+				<ul class="list-disc pl-5">
 					<li>
-						Did you know that <a
-							href={resolve('/artists/a-three-ring-circus-for-autistic-children')}
-							class="link-primary">A Three Ring Circus (for Autistic Children)</a
-						>
-						released a real, full album at some point? I sure didn't! If you didn't either,
 						<a
 							href={resolve(
 								'/artists/a-three-ring-circus-for-autistic-children/a-three-ring-circus'
 							)}
-							class="link-primary">here it is</a
-						>.
+							class="link-primary">A Three Ring Circus</a
+						>
+						by
+						<a
+							href={resolve('/artists/a-three-ring-circus-for-autistic-children')}
+							class="link-primary">A Three Ring Circus (for Autistic Children)</a
+						>
+						- Did you know that they released a real, full album at some point? I sure didn't!
 					</li>
 					<li>
-						I hear that <a href={resolve('/artists/plain-jain')} class="link-primary">Plain Jain</a>
-						was from Baltimore. It's a gone-noplace side-project from one of the
-						<a href={resolve('/artists/caw')} class="link-primary">CAW!</a> kids. It's been a while
-						since any <em>actually new</em> artists have been added. Welcome, bois. Enjoy their
-						album
 						<a href={resolve('/artists/plain-jain/nos-navizgark')} class="link-primary"
 							>Nos Navizgark</a
-						>.
+						>
+						by <a href={resolve('/artists/plain-jain')} class="link-primary">Plain Jain</a>
+						- I hear that Plain Jain was from Baltimore. It's a gone-noplace side-project from one of
+						the <a href={resolve('/artists/caw')} class="link-primary">CAW!</a> kids. It's been a
+						while since any <em>actually new</em> artists have been added. Welcome, bois.
+					</li>
+					<li>
+						<a href={resolve('/artists/monkeyknuckler/monkeyknuckler')} class="link-primary"
+							>MONKEYKNUCkLER</a
+						>
+						by <a href={resolve('/artists/monkeyknuckler')} class="link-primary">MONKEYKNUCkLER</a>
+						- For some strange reason they lost their presence on here. I had a CD-R laying around that
+						just said "MONKEYKNUCkLER" on it. I'm pretty sure it's just a collection of every song that
+						was released. I have no idea what the song titles should be.
+					</li>
+					<li>
+						<a href={resolve('/artists/pink-panzer/dearth')} class="link-primary">Dearth</a>
+						by <a href={resolve('/artists/pink-panzer')} class="link-primary">Pink Panzer</a>
+						- Another Pink Panzer album I found on a CD-R. I'm calling it Dearth because I think it's
+						supposed to just be self titled, but there's already a self titled Pink Panzer release.
 					</li>
 				</ul>
 				<p>
-					Lastly, the track pages now display the track's metadata. These will probably be removed
-					at some point because they're pretty pointless.
+					Also, the track pages now display the track's metadata. These will probably be removed at
+					some point because they're pretty pointless. Just something for the nerds to enjoy.
+				</p>
+				<p>
+					Lastly, the albums page now displays a badge for compilation albums to help with some
+					confusion.
 				</p>
 			</TimelineEntry>
 			<TimelineEntry date="Jan 24, 2026">
@@ -55,7 +74,7 @@
 					> exists, and along with it are some more "new" artists:
 				</p>
 
-				<ul class="list-inside list-disc">
+				<ul class="list-disc pl-5">
 					<li>
 						<a href={resolve('/artists/casy-brian')} class="link-primary">Casy + Brian</a>
 					</li>
@@ -81,7 +100,7 @@
 					> performed back in 2008. I made a split release of it:
 				</p>
 
-				<ul class="list-inside list-disc">
+				<ul class="list-disc pl-5">
 					<li>
 						<a href={resolve('/artists/the-beautiful-traps/live-wprb')} class="link-primary"
 							>Ugh God & The Beautiful Traps - Live @ WPRB</a
@@ -114,7 +133,7 @@
 					of Faux Fest" and "Faux Faux Fest '24". The first was recorded forever ago but was never
 					released. The second was recorded on my 40th birthday.
 				</p>
-				<ul class="list-inside list-disc">
+				<ul class="list-disc pl-5">
 					<li>
 						<a
 							href={resolve(
@@ -144,7 +163,7 @@
 					Here's the list:
 				</p>
 
-				<ul class="list-inside list-disc">
+				<ul class="list-disc pl-5">
 					<li>
 						<a
 							href={resolve('/artists/bornpilot/bornpilot-welcome-wizard-split')}
