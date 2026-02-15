@@ -34,6 +34,23 @@
 						<a href={resolve('/artists/adipem-frumenti')} class="link-primary">Adipem Frumenti</a> without
 						The Night Owl.
 					</li>
+					<li>
+						<a href={resolve('/artists/satanic-harvest/satanic-harvest')} class="link-primary"
+							>Satanic Harvest</a
+						>
+						was a late
+						<a href={resolve('/artists/ugh-god')} class="link-primary">Ugh God</a> side-project.
+					</li>
+					<li>
+						<a href={resolve('/artists/drug-from-shit/the-pentagram')} class="link-primary"
+							>The Pentagram</a
+						>
+						(by
+						<a href={resolve('/artists/drug-from-shit')} class="link-primary">Drug from Shit</a>)
+						was effectively the first
+						<a href={resolve('/artists/satanic-harvest')} class="link-primary">Satanic Harvest</a>
+						demo. I think.
+					</li>
 				</ul>
 			</TimelineEntry>
 			<TimelineEntry date="Feb 14, 2026">
