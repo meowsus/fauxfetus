@@ -1,3 +1,7 @@
+# v2.3.0 - Feb 15, 2026
+
+- Add Adipem Frumenti, Apples & Cinnamon, Drug from Shit, Satanic Harvest, and Mega Mega
+
 # v2.2.2 - Feb 14, 2026
 
 - Missed a spot...
