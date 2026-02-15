@@ -62,6 +62,10 @@
 						to.
 					</li>
 				</ul>
+				<p>
+					Also, fun fact: You can now install this site as an app on your phone. You should be
+					prompted to install it when you visit the site from now on.
+				</p>
 			</TimelineEntry>
 			<TimelineEntry date="Feb 14, 2026">
 				<p>I removed the theme stuff. No one likes light mode anyway.</p>
