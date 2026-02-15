@@ -8,6 +8,22 @@
 <div class="flex flex-col gap-6 px-6 py-2">
 	<section class="flex flex-col gap-4 text-lg">
 		<Timeline>
+			<TimelineEntry date="Feb 15, 2026">
+				<p>I'm digging around my old backup hard drives this morning and am finding some stuff:</p>
+
+				<ul class="list-disc pl-5">
+					<li>
+						<a href={resolve('/artists/adipem-frumenti/adipem-frumenti')} class="link-primary"
+							>Adipem Frumenti</a
+						>
+						was a collab between the members of
+						<a href={resolve('/artists/father-sleep')} class="link-primary">Father Sleep</a>,
+						<a href={resolve('/artists/welcome-wizard')} class="link-primary">Welcome Wizard</a>,
+						and probably
+						<a href={resolve('/artists/the-night-owl')} class="link-primary">The Night Owl</a>.
+					</li>
+				</ul>
+			</TimelineEntry>
 			<TimelineEntry date="Feb 14, 2026">
 				<p>I removed the theme stuff. No one likes light mode anyway.</p>
 				<p>
