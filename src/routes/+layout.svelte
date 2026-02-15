@@ -1,7 +1,6 @@
 <script lang="ts">
 	import '../app.css';
 
-	import favicon from '$lib/assets/favicon.svg';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import Player from '$lib/components/Player/index.svelte';
 
@@ -23,7 +22,7 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href="/icons/icon-32x32.png" type="image/png" />
 
 	<title>Faux Fetus</title>
 	<meta
