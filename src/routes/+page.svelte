@@ -51,6 +51,16 @@
 						<a href={resolve('/artists/satanic-harvest')} class="link-primary">Satanic Harvest</a>
 						demo. I think.
 					</li>
+					<li>
+						<a href={resolve('/artists/mega-mega')} class="link-primary">Mega Mega</a> was
+						<a href={resolve('/artists/lee-jae-won')} class="link-primary">Lee, Jae Won</a> but with
+						a sampled Greg Saunier on drums. Here's their incredible
+						<a href={resolve('/artists/mega-mega/demo')} class="link-primary">demo</a>
+						and a few
+						<a href={resolve('/artists/mega-mega/live')} class="link-primary">live</a>
+						tracks. I don't have expressed permission to post this, but I don't care. I've always wanted
+						to.
+					</li>
 				</ul>
 			</TimelineEntry>
 			<TimelineEntry date="Feb 14, 2026">
