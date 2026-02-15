@@ -22,6 +22,18 @@
 						and probably
 						<a href={resolve('/artists/the-night-owl')} class="link-primary">The Night Owl</a>.
 					</li>
+					<li>
+						<a
+							href={resolve('/artists/apples-and-cinnamon/apples-and-banananananas')}
+							class="link-primary">Apples and Banananananas</a
+						>
+						(by
+						<a href={resolve('/artists/apples-and-cinnamon')} class="link-primary"
+							>Apples and Cinnamon</a
+						>) was essentially
+						<a href={resolve('/artists/adipem-frumenti')} class="link-primary">Adipem Frumenti</a> without
+						The Night Owl.
+					</li>
 				</ul>
 			</TimelineEntry>
 			<TimelineEntry date="Feb 14, 2026">
