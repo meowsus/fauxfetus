@@ -1,3 +1,7 @@
+# v2.4.0 - Feb 15, 2026
+
+- Add PWA
+
 # v2.3.0 - Feb 15, 2026
 
 - Add Adipem Frumenti, Apples & Cinnamon, Drug from Shit, Satanic Harvest, and Mega Mega
