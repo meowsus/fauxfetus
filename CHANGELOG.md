@@ -1,3 +1,9 @@
+# v2.5.0 - Feb 15, 2026
+
+- Update navbar
+- Add install button to navbar
+- Markdownify the homepage content
+
 # v2.4.0 - Feb 15, 2026
 
 - Add PWA
