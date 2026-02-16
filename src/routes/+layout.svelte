@@ -35,8 +35,13 @@
 	<input id="player-drawer-toggle" type="checkbox" class="drawer-toggle" />
 
 	<div class="drawer-content">
+		<div class="bg-base-300 shadow-sm">
+			<div class="container mx-auto">
+				<Navbar />
+			</div>
+		</div>
+
 		<div class="container mx-auto flex flex-col gap-4 px-4 py-4">
-			<Navbar />
 			{@render children()}
 		</div>
 	</div>
