@@ -10,6 +10,8 @@ I'm digging around my old backup hard drives this morning and am finding some st
 
 Also, fun fact: You can now install this site as an app on your phone. You should be prompted to install it when you visit the site from now on.
 
+I redid the header and replaced the homepage content to make it easier for me to futz with. Not all that exciting.
+
 ## Feb 14, 2026
 
 I removed the theme stuff. No one likes light mode anyway.
@@ -17,7 +19,7 @@ I removed the theme stuff. No one likes light mode anyway.
 I also added a dedicated audio player. It supports radio mode and an album playlist mode. It should be intuitive to use. Good luck, Benji, and you're welcome. You can find it by clicking the "Player" button in the header or by clicking the play button next to any track. Let's celebrate with some new releases:
 
 - [A Three Ring Circus](/artists/a-three-ring-circus/a-three-ring-circus) by [A Three Ring Circus](/artists/a-three-ring-circus) - Did you know that they released a real, full album at some point? I sure didn't!
-- [Nos Navizgark](/artists/plain-jain/nos-navizgark) by [Plain Jain](/artists/plain-jain) - I hear that Plain Jain was from Baltimore. It's a gone-noplace side-project from one of the [CAW!](/artists/caw) kids. It's been a while since any *actually new* artists have been added. Welcome, bois.
+- [Nos Navizgark](/artists/plain-jain/nos-navizgark) by [Plain Jain](/artists/plain-jain) - I hear that Plain Jain was from Baltimore. It's a gone-noplace side-project from one of the [CAW!](/artists/caw) kids. It's been a while since any _actually new_ artists have been added. Welcome, bois.
 - [MONKEYKNUCkLER](/artists/monkeyknuckler/monkeyknuckler) by [MONKEYKNUCkLER](/artists/monkeyknuckler) - For some strange reason they lost their presence on here. I had a CD-R laying around that just said "MONKEYKNUCkLER" on it. I'm pretty sure it's just a collection of every song that was released. I have no idea what the song titles should be.
 - [Dearth](/artists/pink-panzer/dearth) by [Pink Panzer](/artists/pink-panzer) - Another Pink Panzer album I found on a CD-R. I'm calling it Dearth because I think it's supposed to just be self titled, but there's already a self titled Pink Panzer release.
 
@@ -49,7 +51,7 @@ Also, let's all take a moment to finally welcome Ugh God into the fold. Better l
 
 ## Dec 28, 2025
 
-We suffered a slight regression where splits are split up by artist. This means that you can't currently listen to a split in its entirety from any page. As it turns out, showcasing more than one artist on a single album is a hard problem to solve. The way I solved it last week *technically* worked, but the way I handled it was gross. I'll keep noodling on it.
+We suffered a slight regression where splits are split up by artist. This means that you can't currently listen to a split in its entirety from any page. As it turns out, showcasing more than one artist on a single album is a hard problem to solve. The way I solved it last week _technically_ worked, but the way I handled it was gross. I'll keep noodling on it.
 
 But more good news, we have new releases! Specifically, "The Best Of The First Four Acts of Faux Fest" and "Faux Faux Fest '24". The first was recorded forever ago but was never released. The second was recorded on my 40th birthday.
 
