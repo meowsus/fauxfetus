@@ -12,7 +12,14 @@ const ASSETS = [...build, ...files];
 self.addEventListener('install', (event: ExtendableEvent) => {
 	async function addFilesToCache() {
 		const cache = await caches.open(CACHE);
-		await cache.addAll(ASSETS);
+		const results = await Promise.allSettled(ASSETS.map((url) => cache.add(url)));
+		const failed = results.filter((r) => r.status === 'rejected');
+		if (failed.length > 0) {
+			console.warn(
+				`[service worker] Failed to cache ${failed.length} asset(s); install continued.`,
+				failed
+			);
+		}
 	}
 	event.waitUntil(addFilesToCache());
 });

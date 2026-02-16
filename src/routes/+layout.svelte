@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 
-	import Navbar from '$lib/components/Navbar.svelte';
+	import Navbar from '$lib/components/Navbar/index.svelte';
 	import Player from '$lib/components/Player/index.svelte';
 
 	import { setPlayerContext, type PlayerState } from '$lib/context/player';
@@ -35,11 +35,7 @@
 	<input id="player-drawer-toggle" type="checkbox" class="drawer-toggle" />
 
 	<div class="drawer-content">
-		<div class="bg-base-300 shadow-sm">
-			<div class="container mx-auto">
-				<Navbar />
-			</div>
-		</div>
+		<Navbar />
 
 		<div class="container mx-auto flex flex-col gap-4 px-4 py-4">
 			{@render children()}
