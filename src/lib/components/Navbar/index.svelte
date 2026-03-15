@@ -31,10 +31,11 @@
 			</div>
 			<ul
 				tabindex="-1"
-				class="dropdown-content menu z-1 mt-3 w-52 menu-lg rounded-box bg-base-100 p-2 shadow"
+				class="dropdown-content menu z-1 mt-3 w-52 menu-lg rounded-box bg-base-200 p-2 shadow"
 			>
 				<li><a href={resolve('/')}>Home</a></li>
 				<li><a href={resolve('/artists')}>Artists</a></li>
+				<li><a href="https://github.com/meowsus/fauxfetus/issues/new/choose">Contact</a></li>
 			</ul>
 		</div>
 	</div>
