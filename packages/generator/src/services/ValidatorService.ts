@@ -37,7 +37,14 @@ const ValidMetadataSchema = z.object({
 		APEv2: z.array(
 			z.object({
 				id: z.string(),
-				value: z.string()
+				value: z.union([
+					z.string(),
+					// Embedded cover art
+					z.object({
+						description: z.string(),
+						data: z.instanceof(Uint8Array)
+					})
+				])
 			})
 		)
 	})
