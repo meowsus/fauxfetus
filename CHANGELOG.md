@@ -1,3 +1,7 @@
+# v2.6.1 - Mar 15, 2026
+
+- Add "Contact" link to Navbar
+
 # v2.6.0 - Mar 15, 2026
 
 - Add Mr. Pure catalog
