@@ -27,3 +27,6 @@ audio
 
 # cspell
 .cspell/
+
+# tmp
+tmp/
