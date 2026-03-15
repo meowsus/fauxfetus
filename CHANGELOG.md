@@ -1,3 +1,7 @@
+# v2.6.0 - Mar 15, 2026
+
+- Add Mr. Pure catalog
+
 # v2.5.0 - Feb 15, 2026
 
 - Update navbar
