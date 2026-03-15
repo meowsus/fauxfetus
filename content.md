@@ -1,3 +1,14 @@
+## Mar 15, 2026
+
+After 18 years 4 months and 27 days I am beyond pleased to announce that the mysteriously illustrious "Mr. Pure" has joined these hairy, hallowed halls. This is a big day, at least for me. If you're unfamiliar with his work I would recommend starting with [Eschaton](/artists/the-wacky-ball-kickers/eschaton) by The Wacky Ball Kickers and traverse thenceforth at thy own risk. I will not apologize for what you are about to witness. Enjoy?
+
+- [The Wacky Ball Kickers](/artists/the-wacky-ball-kickers)
+- [Abe Lincoln & The Stincolns](/artists/abe-lincoln-and-the-stincolns)
+- [Hemmorhoy Rogers](/artists/hemorrhoy-rogers)
+- [Big Poo Generator](/artists/big-poo-generator)
+- [The Gland Puppies](/artists/the-gland-puppies)
+- [The Crapenters](/artists/the-crapenters)
+
 ## Feb 15, 2026
 
 I'm digging around my old backup hard drives this morning and am finding some stuff:
