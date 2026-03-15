@@ -22,8 +22,9 @@ Thumbs.db
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-# Audio symlink
-audio
+# Static folders
+static/audio
+static/data
 
 # cspell
 .cspell/
