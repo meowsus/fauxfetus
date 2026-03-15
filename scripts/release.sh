@@ -53,6 +53,6 @@ git repull
 git tag "v$VERSION"
 
 git push
-git push --tags
+git push origin "v$VERSION"
 
 echo "✨ Release v$VERSION created."
