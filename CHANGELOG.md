@@ -1,3 +1,8 @@
+# v2.6.3 - Apr 26, 2026
+
+- Stop loading all radio audio data on load
+- Stop loading all catalog data on /artists request
+
 # v2.6.2 - Apr 26, 2026
 
 - Fix player download bug
