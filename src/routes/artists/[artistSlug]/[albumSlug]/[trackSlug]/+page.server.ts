@@ -31,9 +31,22 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	if (!album) throw error(404, 'Album not found');
 
-	const track = album.tracks.find((track) => track.slug === trackSlug);
+	const fullTrack = album.tracks.find((track) => track.slug === trackSlug);
 
-	if (!track) throw error(404, 'Track not found');
+	if (!fullTrack) throw error(404, 'Track not found');
+
+	const track = {
+		slug: fullTrack.slug,
+		name: fullTrack.name,
+		artistSlug: fullTrack.artistSlug,
+		artistName: fullTrack.artistName,
+		albumSlug: fullTrack.albumSlug,
+		albumName: fullTrack.albumName,
+		isCompilation: fullTrack.isCompilation,
+		audioUrl: fullTrack.audioUrl,
+		number: fullTrack.number,
+		metadata: fullTrack.metadata
+	};
 
 	return { track };
 };

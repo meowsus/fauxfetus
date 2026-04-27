@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 
-	let {
-		artists
-	}: { artists: Array<{ slug: string; name: string }> } = $props();
+	let { artists }: { artists: Array<{ slug: string; name: string }> } = $props();
 
 	let searchValue = $state('');
 

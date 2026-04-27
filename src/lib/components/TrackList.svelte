@@ -5,6 +5,18 @@
 	import { cn } from '$lib/helpers/tailwind';
 	import type { Track } from '@fauxfetus/generator';
 
+	interface Track {
+		slug: string;
+		name: string;
+		artistSlug: string;
+		artistName: string;
+		albumSlug: string;
+		albumName: string;
+		isCompilation: boolean;
+		audioUrl: string;
+		number: number | null;
+	}
+
 	interface Props {
 		tracks: Track[];
 		className?: string;

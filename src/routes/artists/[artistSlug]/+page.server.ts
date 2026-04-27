@@ -14,11 +14,22 @@ export const load: PageServerLoad = async ({ params }) => {
 	const { artistSlug } = params;
 
 	const catalog = await readCatalog();
-	const artist = catalog.find((artist) => artist.slug === artistSlug);
+	const fullArtist = catalog.find((artist) => artist.slug === artistSlug);
 
-	if (!artist) {
+	if (!fullArtist) {
 		throw error(404, 'Artist not found');
 	}
+
+	const artist = {
+		slug: fullArtist.slug,
+		name: fullArtist.name,
+		albums: fullArtist.albums.map((album) => ({
+			slug: album.slug,
+			name: album.name,
+			artistSlug: album.artistSlug,
+			isCompilation: album.isCompilation
+		}))
+	};
 
 	return { artist };
 };

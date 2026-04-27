@@ -1,8 +1,16 @@
 <script lang="ts">
-	import type { Album } from '@fauxfetus/generator';
 	import { resolve } from '$app/paths';
 
-	let { albums }: { albums: Album[] } = $props();
+	let {
+		albums
+	}: {
+		albums: Array<{
+			slug: string;
+			name: string;
+			artistSlug: string;
+			isCompilation: boolean;
+		}>;
+	} = $props();
 </script>
 
 <ul class="list rounded-box bg-base-100 shadow-md">

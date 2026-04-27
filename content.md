@@ -4,6 +4,7 @@ Oh boy. I heard from quite a number of you that the site wasn't working. I could
 
 1. full data of all 49 radio tracks as soon as the page loaded
 2. entire ~150MB catalog file for no reason on the Artists page
+3. artist, album, and track page objects in full, unnecessarily
 
 Both of these bugs caused the site to behave super erratically. These should be fixed now!
 
