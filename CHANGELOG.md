@@ -1,3 +1,7 @@
+# v2.6.2 - Apr 26, 2026
+
+- Fix player download bug
+
 # v2.6.1 - Mar 15, 2026
 
 - Add "Contact" link to Navbar
