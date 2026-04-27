@@ -1,8 +1,9 @@
 <script lang="ts">
-	import type { Artist } from '@fauxfetus/generator';
 	import { resolve } from '$app/paths';
 
-	let { artists }: { artists: Artist[] } = $props();
+	let {
+		artists
+	}: { artists: Array<{ slug: string; name: string }> } = $props();
 
 	let searchValue = $state('');
 

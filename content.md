@@ -1,6 +1,11 @@
 ## Apr 26, 2026
 
-Super sorry, y'all. I introduced a massive bug with the audio player, where _all_ tracks would be downloaded all at once. That should be fixed now.
+Oh boy. I heard from quite a number of you that the site wasn't working. I could reproduce the symptoms y'all were describing, but it took me a minute to figure out what was going on. I was loading the
+
+1. full data of all 49 radio tracks as soon as the page loaded
+2. entire ~150MB catalog file for no reason on the Artists page
+
+Both of these bugs caused the site to behave super erratically. These should be fixed now!
 
 ## Mar 15, 2026
 

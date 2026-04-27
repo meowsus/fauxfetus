@@ -1,11 +1,10 @@
-import type { Artist } from '@fauxfetus/generator';
-import fs from 'fs-extra';
-import { join } from 'path';
-import type { PageServerLoad } from './$types';
+import { readCatalog } from '$lib/helpers/catalog.js';
 
-const catalogPath = join(process.cwd(), 'static', 'data', 'catalog.json');
-const artists: Artist[] = await fs.readJson(catalogPath);
-
-export const load: PageServerLoad = async () => {
+export const load = async () => {
+	const catalog = await readCatalog();
+	const artists = catalog.map((artist) => ({
+		slug: artist.slug,
+		name: artist.name
+	}));
 	return { artists };
 };
