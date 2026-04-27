@@ -1,3 +1,7 @@
+## Apr 26, 2026
+
+Super sorry, y'all. I introduced a massive bug with the audio player, where _all_ tracks would be downloaded all at once. That should be fixed now.
+
 ## Mar 15, 2026
 
 After 18 years 4 months and 27 days I am beyond pleased to announce that the mysteriously illustrious "Mr. Pure" has joined these hairy, hallowed halls. This is a big day, at least for me. If you're unfamiliar with his work I would recommend starting with [Eschaton](/artists/the-wacky-ball-kickers/eschaton) by The Wacky Ball Kickers and traverse thenceforth at thy own risk. I will not apologize for what you are about to witness. Enjoy?

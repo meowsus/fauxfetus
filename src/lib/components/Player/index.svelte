@@ -103,7 +103,7 @@
 		class="hidden w-full"
 		bind:this={audioElement}
 		onended={handleAudioElementEnded}
-		preload="auto"
+		preload="none"
 	>
 		<source src={`/audio/${currentTrack.audioUrl}`} type="audio/mpeg" />
 		Your browser does not support the audio element.
