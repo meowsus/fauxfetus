@@ -1,3 +1,7 @@
+# v2.7.4 - May 02, 2026
+
+- Reduce PWA footprint from ~8GB to ~50k :|
+
 # v2.6.3 - Apr 26, 2026
 
 - Stop loading all radio audio data on load
