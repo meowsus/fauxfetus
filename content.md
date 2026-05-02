@@ -1,3 +1,13 @@
+## May 02, 2026
+
+As a follow-up to the fixes that rolled out on April 26, I believe I've actually fixed the issue underlying the weird behavior that was being reported. I'm sure that nobody cares, but the problem was a misconfigured service worker (_classic_, amirite?) that eagerly loaded the entirety of the site's contents into the accessing device. How much content you ask? Oh, well, somewhere in the neighborhood of 8 gigabytes.
+
+Yeah.
+
+So while every MP3 file was being loaded onto your computer or smart phone en masse the website tended to behave a bit wonky when you were trying to use it.
+
+Super sorry about this. If it's any consolation, my cell phone plan is usage based and my bill was $128 last month. This is my penance.
+
 ## Apr 26, 2026
 
 Oh boy. I heard from quite a number of you that the site wasn't working. I could reproduce the symptoms y'all were describing, but it took me a minute to figure out what was going on. I was loading the
