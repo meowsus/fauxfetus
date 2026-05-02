@@ -7,7 +7,11 @@ import { build, files, version } from '$service-worker';
 
 const self = globalThis as unknown as ServiceWorkerGlobalScope;
 const CACHE = `cache-${version}`;
-const ASSETS = [...build, ...files];
+
+const ASSETS = [...build, ...files].filter((url) => {
+	const pathname = new URL(url, self.location.origin).pathname;
+	return pathname.startsWith('/audio') && pathname === '/catalog.json';
+});
 
 self.addEventListener('install', (event: ExtendableEvent) => {
 	async function addFilesToCache() {
@@ -36,8 +40,14 @@ self.addEventListener('activate', (event: ExtendableEvent) => {
 self.addEventListener('fetch', (event: FetchEvent) => {
 	if (event.request.method !== 'GET') return;
 
+	const url = new URL(event.request.url);
+
+	// Pass audio requests directly to the network; don't cache them
+	if (isAudioUrl(event.request.url)) {
+		return;
+	}
+
 	async function respond(): Promise<Response> {
-		const url = new URL(event.request.url);
 		const cache = await caches.open(CACHE);
 
 		if (ASSETS.includes(url.pathname)) {
