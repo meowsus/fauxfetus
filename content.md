@@ -8,6 +8,19 @@ So while every MP3 file was being loaded onto your computer or smart phone en ma
 
 Super sorry about this. If it's any consolation, my cell phone plan is usage based and my bill was $128 last month. This is my penance.
 
+As an act of contrition, I'm uploading the entire [Ugh God](/artists/ugh-god) catalog:
+
+- [Secret Demo](/artists/ugh-god/secret-demo)
+- [Deep, Dark, Mysterious, and Serious](/artists/ugh-god/deep-dark-mysterious-and-serious)
+- [The Happily Married Tammywhale Tape](/artists/ugh-god/the-happily-married-tammywhale-tape)
+- [Dangerbird Split](/artists/ugh-god/dangerbird-split)
+- [Ugh God Fucks Drexel](/artists/ugh-god/ugh-god-fucks-drexel)
+- [Ugh God... Not The M Room](/artists/ugh-god/ugh-god-not-the-m-room)
+- [Wood](/artists/ugh-god/wood)
+- [A Pony On Top Of A Mountain](/artists/ugh-god/a-pony-on-top-of-a-mountain)
+- [Heavy Flow](/artists/ugh-god/heavy-flow)
+- [Rock & Real Bad: The Worst Of Ugh God](/artists/ugh-god/rock-and-real-bad-the-worst-of-ugh-god)
+
 ## Apr 26, 2026
 
 Oh boy. I heard from quite a number of you that the site wasn't working. I could reproduce the symptoms y'all were describing, but it took me a minute to figure out what was going on. I was loading the
