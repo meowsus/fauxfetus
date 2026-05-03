@@ -10,7 +10,7 @@ const CACHE = `cache-${version}`;
 
 const ASSETS = [...build, ...files].filter((url) => {
 	const pathname = new URL(url, self.location.origin).pathname;
-	return pathname.startsWith('/audio') && pathname === '/catalog.json';
+	return !pathname.startsWith('/audio') && pathname !== '/data/catalog.json';
 });
 
 self.addEventListener('install', (event: ExtendableEvent) => {
@@ -42,8 +42,7 @@ self.addEventListener('fetch', (event: FetchEvent) => {
 
 	const url = new URL(event.request.url);
 
-	// Pass audio requests directly to the network; don't cache them
-	if (url.pathname.startsWith('/audio')) {
+	if (url.pathname.startsWith('/audio') || url.pathname === '/data/catalog.json') {
 		return;
 	}
 
