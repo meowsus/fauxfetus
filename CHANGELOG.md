@@ -1,4 +1,8 @@
-# v2.7.4 - May 02, 2026
+v v2.7.0 - May 02, 2026
+
+- Release Ugh God catalog
+
+# v2.6.4 - May 02, 2026
 
 - Reduce PWA footprint from ~8GB to ~50k :|
 
