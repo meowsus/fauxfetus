@@ -1,4 +1,4 @@
-v v2.7.0 - May 02, 2026
+# v2.7.0 - May 02, 2026
 
 - Release Ugh God catalog
 
