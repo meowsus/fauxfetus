@@ -31,3 +31,6 @@ static/data
 
 # tmp
 tmp/
+
+# Agents
+.hermes/
