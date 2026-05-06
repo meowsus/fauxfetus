@@ -5,10 +5,10 @@
 		"svelte": {
 			"type": "remote",
 			"url": "https://mcp.svelte.dev/mcp"
-    },
-    "DaisyUI Docs": {
-      "type": "remote",
-      "url": "https://gitmcp.io/saadeghi/daisyui"
-    }
+		},
+		"DaisyUI Docs": {
+			"type": "remote",
+			"url": "https://gitmcp.io/saadeghi/daisyui"
+		}
 	}
 }

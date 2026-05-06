@@ -99,17 +99,17 @@ fauxfetus/
 
 # Commands
 
-| Command | Purpose | Allowed to run? |
-|---|---|
-| `pnpm dev` | Start dev server | No |
-| `pnpm build` | Production build to `./build/` | Yes |
-| `pnpm preview` | Preview production build locally | Yes |
-| `pnpm check` | Type-check with `svelte-check` | Yes |
-| `pnpm lint` | Prettier check + ESLint + svelte-check | Yes |
-| `pnpm format` | Format all files with Prettier | Yes |
-| `pnpm data:generate` | Regenerate catalog/tracks JSON from audio files | Yes |
-| `pnpm deploy:build` | Build + rsync to server | No, never |
-| `pnpm release` | Version bump + release | No, never |
+| Command              | Purpose                                         | Allowed to run? |
+| -------------------- | ----------------------------------------------- | --------------- |
+| `pnpm dev`           | Start dev server                                | No              |
+| `pnpm build`         | Production build to `./build/`                  | Yes             |
+| `pnpm preview`       | Preview production build locally                | Yes             |
+| `pnpm check`         | Type-check with `svelte-check`                  | Yes             |
+| `pnpm lint`          | Prettier check + ESLint + svelte-check          | Yes             |
+| `pnpm format`        | Format all files with Prettier                  | Yes             |
+| `pnpm data:generate` | Regenerate catalog/tracks JSON from audio files | Yes             |
+| `pnpm deploy:build`  | Build + rsync to server                         | No, never       |
+| `pnpm release`       | Version bump + release                          | No, never       |
 
 # Common Tasks
 
