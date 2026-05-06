@@ -92,7 +92,7 @@ fauxfetus/
 ## Conventions
 
 - Component style: `<script lang="ts">` with TypeScript.
-- Utility classes: use `cn()` from `$lib/helpers/tailwind` (wraps `clsx` + `tailwind-merge`).
+- Utility classes: use `cn()` from `$lib/helpers/tailwind` (wraps `clsx` + `tailwind-merge`) when merging or conditionally applying classes. For static class strings with no merging needed, plain string classnames are fine.
 - Import aliases: `$lib` for `src/lib/`.
 - Data access: always go through `readCatalog()` in `$lib/helpers/catalog.ts` — it memoizes and reads from `static/data/catalog.json`.
 - Type imports: `Artist`, `Album`, `Track`, etc. come from `@fauxfetus/generator`.

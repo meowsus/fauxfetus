@@ -2,7 +2,13 @@
 	import type { PageData } from './$types';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import MetadataTable from '$lib/components/MetadataTable.svelte';
-	import { canonicalUrl, jsonLdBreadcrumb, jsonLdMusicRecording, ogMeta } from '$lib/helpers/seo';
+	import {
+		canonicalUrl,
+		jsonLdBreadcrumb,
+		jsonLdMusicRecording,
+		jsonLdScript,
+		ogMeta
+	} from '$lib/helpers/seo';
 	import JsonLd from '$lib/components/JsonLd.svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -48,8 +54,8 @@
 	{/each}
 </svelte:head>
 
-<JsonLd data={trackLd} />
-<JsonLd data={breadcrumbLd} />
+<JsonLd html={jsonLdScript(trackLd)} />
+<JsonLd html={jsonLdScript(breadcrumbLd)} />
 
 <div class="flex flex-col gap-4">
 	<Breadcrumb items={breadcrumbItems} />

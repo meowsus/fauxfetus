@@ -3,6 +3,13 @@ const SITE_NAME = 'Faux Fetus';
 const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.png`;
 
 /**
+ * Wraps a JSON-LD object in a <script type="application/ld+json"> HTML string.
+ */
+export function jsonLdScript(data: Record<string, unknown>): string {
+	return `<script type="application/ld+json">${JSON.stringify(data)}</script>`;
+}
+
+/**
  * Returns the full canonical URL for a given path.
  * Paths should start with / and end with / (trailing slash convention).
  */

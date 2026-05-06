@@ -1,6 +1,12 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { canonicalUrl, jsonLdBreadcrumb, jsonLdWebsite, ogMeta } from '$lib/helpers/seo';
+	import {
+		canonicalUrl,
+		jsonLdBreadcrumb,
+		jsonLdScript,
+		jsonLdWebsite,
+		ogMeta
+	} from '$lib/helpers/seo';
 	import JsonLd from '$lib/components/JsonLd.svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -28,8 +34,8 @@
 	{/each}
 </svelte:head>
 
-<JsonLd data={webSiteLd} />
-<JsonLd data={breadcrumbLd} />
+<JsonLd html={jsonLdScript(webSiteLd)} />
+<JsonLd html={jsonLdScript(breadcrumbLd)} />
 
 <h1 class="sr-only">Faux Fetus</h1>
 

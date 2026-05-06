@@ -2,7 +2,13 @@
 	import type { PageData } from './$types';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import AlbumList from '$lib/components/AlbumList.svelte';
-	import { canonicalUrl, jsonLdBreadcrumb, jsonLdMusicGroup, ogMeta } from '$lib/helpers/seo';
+	import {
+		canonicalUrl,
+		jsonLdBreadcrumb,
+		jsonLdMusicGroup,
+		jsonLdScript,
+		ogMeta
+	} from '$lib/helpers/seo';
 	import JsonLd from '$lib/components/JsonLd.svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -24,7 +30,7 @@
 	const musicGroupLd = jsonLdMusicGroup({
 		name: data.artist.name,
 		slug: data.artist.slug,
-		albums: data.artist.albums.map((a: { name: string; slug: string }) => ({
+		albums: data.artist.albums.map((a) => ({
 			name: a.name,
 			slug: a.slug
 		}))
@@ -41,8 +47,8 @@
 	{/each}
 </svelte:head>
 
-<JsonLd data={musicGroupLd} />
-<JsonLd data={breadcrumbLd} />
+<JsonLd html={jsonLdScript(musicGroupLd)} />
+<JsonLd html={jsonLdScript(breadcrumbLd)} />
 
 <div class="flex flex-col gap-2">
 	<Breadcrumb items={breadcrumbItems} />
