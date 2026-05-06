@@ -2,6 +2,8 @@
 	import type { PageData } from './$types';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import MetadataTable from '$lib/components/MetadataTable.svelte';
+	import { canonicalUrl, jsonLdBreadcrumb, jsonLdMusicRecording, ogMeta } from '$lib/helpers/seo';
+	import JsonLd from '$lib/components/JsonLd.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -15,19 +17,42 @@
 		{ name: data.track.albumName, href: albumHref },
 		{ name: data.track.name }
 	];
+
+	const pageUrl = canonicalUrl(
+		`/artists/${data.track.artistSlug}/${data.track.albumSlug}/${data.track.slug}/`
+	);
+	const pageTitle = `${data.track.name} by ${data.track.artistName} - Faux Fetus`;
+	const pageDescription = `Listen to ${data.track.name} from the album ${data.track.albumName} by ${data.track.artistName} on Faux Fetus.`;
+	const ogTags = ogMeta({
+		title: pageTitle,
+		description: pageDescription,
+		url: pageUrl
+	});
+	const trackLd = jsonLdMusicRecording({
+		name: data.track.name,
+		slug: data.track.slug,
+		artistSlug: data.track.artistSlug,
+		artistName: data.track.artistName,
+		albumSlug: data.track.albumSlug,
+		albumName: data.track.albumName
+	});
+	const breadcrumbLd = jsonLdBreadcrumb(breadcrumbItems);
 </script>
 
 <svelte:head>
-	<title>{data.track.name} by {data.track.artistName} - Faux Fetus</title>
-	<meta
-		name="description"
-		content="Listen to {data.track.name} from the album {data.track.albumName} by {data.track
-			.artistName} on Faux Fetus."
-	/>
+	<title>{pageTitle}</title>
+	<meta name="description" content={pageDescription} />
+	<link rel="canonical" href={pageUrl} />
+	{#each Object.entries(ogTags) as [property, content] (property)}
+		<meta {property} {content} />
+	{/each}
 </svelte:head>
+
+<JsonLd data={trackLd} />
+<JsonLd data={breadcrumbLd} />
 
 <div class="flex flex-col gap-4">
 	<Breadcrumb items={breadcrumbItems} />
-
+	<h1 class="sr-only">{data.track.name}</h1>
 	<MetadataTable metadata={data.track.metadata} />
 </div>

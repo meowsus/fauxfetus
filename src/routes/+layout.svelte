@@ -29,6 +29,7 @@
 		name="description"
 		content="A collection of experimental music you never heard of or even want to listen to made by people you don't care about."
 	/>
+	<meta property="og:site_name" content="Faux Fetus" />
 </svelte:head>
 
 <div class="drawer drawer-end">
