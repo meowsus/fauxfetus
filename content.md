@@ -1,3 +1,7 @@
+## May 07, 2026
+
+I've been playing around with the site's layout today. I ditched the "hamburger" menu in favor of icon links, since there isn't a ton to link to right now. I also moved the icon that controls the player drawer to the bottom right. Just some little spruce-em-ups I've had on the back burner.
+
 ## May 02, 2026
 
 As a follow-up to the fixes that rolled out on April 26, I believe I've actually fixed the issue underlying the weird behavior that was being reported. I'm sure that nobody cares, but the problem was a misconfigured service worker (_classic_, amirite?) that eagerly loaded the entirety of the site's contents into the accessing device. How much content you ask? Oh, well, somewhere in the neighborhood of 8 gigabytes.
