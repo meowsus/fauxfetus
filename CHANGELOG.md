@@ -1,3 +1,10 @@
+# v2.9.0 - May 07, 2026
+
+- Add contact link to the NavBar
+- Move Player drawer trigger to the bottom-right
+- Add close button to Player drawer
+- Replace hamburger menu with icon links
+
 # v2.8.1 - May 06, 2026
 
 - Update PWA iconography
