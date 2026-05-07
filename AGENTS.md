@@ -52,9 +52,8 @@ fauxfetus/
 │       └── services/
 │           └── ValidatorService.ts
 ├── scripts/
-│   ├── data/generate.ts           # pnpm data:generate — runs DataGenerator
-│   ├── deploy.sh                  # Build + rsync deploy
-│   └── release.sh                 # Version bump + release
+│   └── data/generate.ts           # just data-generate — runs DataGenerator
+├── justfile                        # Task runner (just) — source of truth for all scripts
 ├── static/
 │   ├── audio/                     # Source MP3 files (input to generator)
 │   └── data/                      # Generated: catalog.json, tracks.json
@@ -64,7 +63,7 @@ fauxfetus/
 
 # Data Flow
 
-1. `pnpm data:generate` → runs `scripts/data/generate.ts`
+1. `just data-generate` → runs `scripts/data/generate.ts`
 2. `DataGenerator` reads audio files from `static/audio/` via `music-metadata`
 3. Outputs `static/data/catalog.json` and `static/data/tracks.json`
 4. At build time, `+page.server.ts` load functions call `readCatalog()` which reads `static/data/catalog.json`
@@ -84,7 +83,7 @@ fauxfetus/
 
 ## Formatting
 
-- Run `prettier` on individual files that have been modified, or `pnpm format` for all files.
+- Run `prettier` on individual files that have been modified, or `just format` for all files.
 - Config: tabs, single quotes, trailing commas off, 100 char width.
 - Plugins run automatically: `prettier-plugin-svelte`, `prettier-plugin-tailwindcss`, `prettier-plugin-organize-imports`.
 - `tailwindStylesheet: "./src/app.css"` — class sorting uses your actual Tailwind config.
@@ -99,17 +98,28 @@ fauxfetus/
 
 # Commands
 
-| Command              | Purpose                                         | Allowed to run? |
-| -------------------- | ----------------------------------------------- | --------------- |
-| `pnpm dev`           | Start dev server                                | No              |
-| `pnpm build`         | Production build to `./build/`                  | Yes             |
-| `pnpm preview`       | Preview production build locally                | Yes             |
-| `pnpm check`         | Type-check with `svelte-check`                  | Yes             |
-| `pnpm lint`          | Prettier check + ESLint + svelte-check          | Yes             |
-| `pnpm format`        | Format all files with Prettier                  | Yes             |
-| `pnpm data:generate` | Regenerate catalog/tracks JSON from audio files | Yes             |
-| `pnpm deploy:build`  | Build + rsync to server                         | No, never       |
-| `pnpm release`       | Version bump + release                          | No, never       |
+**Task runner**: `just` (installed via `rust-just` devDependency). The `justfile` is the source of truth; `pnpm run` scripts delegate to it.
+
+Run `just --list` to see all available recipes.
+
+| Command                | Purpose                                          | Allowed to run? |
+| ---------------------- | ------------------------------------------------ | --------------- |
+| `just dev`             | Start dev server                                 | No              |
+| `just build`           | Production build to `./build/` (runs lint first) | Yes             |
+| `just preview`         | Preview production build locally (runs build)    | Yes             |
+| `just check`           | Type-check with `svelte-check`                   | Yes             |
+| `just check-watch`     | Type-check in watch mode                         | No              |
+| `just lint`            | Prettier check + ESLint + svelte-check           | Yes             |
+| `just format`          | Format all files with Prettier                   | Yes             |
+| `just data-generate`   | Regenerate catalog/tracks JSON from audio files  | Yes             |
+| `just deploy`          | Build + rsync to server                          | No, never       |
+| `just release <level>` | Version bump + release (patch/minor/major)       | No, never       |
+
+**Dependency graph**:
+
+- `deploy` → `build` → `lint` → `_prettier-check` + `_eslint` + `_svelte-check`
+- `preview` → `build` → (same as above)
+- Private recipes (prefixed `_`) are internal dependencies, not called directly
 
 # Common Tasks
 
