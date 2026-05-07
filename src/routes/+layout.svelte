@@ -3,6 +3,7 @@
 
 	import Navbar from '$lib/components/Navbar/index.svelte';
 	import Player from '$lib/components/Player/index.svelte';
+	import RadioFab from '$lib/components/RadioFab.svelte';
 
 	import { setPlayerContext, type PlayerState } from '$lib/context/player';
 	import { writable } from 'svelte/store';
@@ -38,14 +39,25 @@
 	<div class="drawer-content">
 		<Navbar />
 
-		<div class="container mx-auto flex flex-col gap-4 px-4 py-4">
+		<div class="container mx-auto flex flex-col gap-4 px-4 py-4 pb-20">
 			{@render children()}
 		</div>
 	</div>
 
+	<RadioFab />
+
 	<div class="drawer-side">
 		<label for="player-drawer-toggle" aria-label="close sidebar" class="drawer-overlay"></label>
 		<div class="min-h-full w-[90vw] bg-base-200 p-4 lg:w-[30vw]">
+			<label
+				for="player-drawer-toggle"
+				class="btn absolute top-4 right-4 z-10 btn-circle btn-ghost"
+				aria-label="Close player"
+				title="Close player"
+			>
+				<span class="icon-[line-md--close-circle-twotone]">Close</span>
+			</label>
+
 			<Player />
 		</div>
 	</div>

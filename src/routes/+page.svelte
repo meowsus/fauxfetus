@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import { resolve } from '$app/paths';
 	import {
 		canonicalUrl,
 		jsonLdBreadcrumb,
@@ -39,10 +40,15 @@
 
 <h1 class="sr-only">Faux Fetus</h1>
 
-<article
-	class="prose prose-base max-w-none py-8 md:prose-lg dark:prose-invert prose-headings:text-base-content/80 prose-a:text-primary prose-a:underline prose-a:decoration-primary prose-a:underline-offset-2 prose-a:hover:opacity-80"
->
-	<!-- Server-rendered HTML from trusted markdown -->
-	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-	{@html data.html}
-</article>
+<a href={resolve('/artists/')} class="btn mb-2 btn-secondary">Browse artists &rarr;</a>
+
+<section>
+	<h2 class="sr-only">Latest news</h2>
+	<article
+		class="prose prose-base max-w-none md:prose-lg dark:prose-invert prose-headings:text-base-content/80 prose-a:text-primary prose-a:underline prose-a:decoration-primary prose-a:underline-offset-2 prose-a:hover:opacity-80"
+	>
+		<!-- Server-rendered HTML from trusted markdown -->
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+		{@html data.html}
+	</article>
+</section>
