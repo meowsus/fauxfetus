@@ -1,3 +1,8 @@
+# v2.8.1 - May 06, 2026
+
+- Update PWA iconography
+- Tweak PWA manifest
+
 # v2.8.0 - May 06, 2026
 
 - Shuffle AI crap around
