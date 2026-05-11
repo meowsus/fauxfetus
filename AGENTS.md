@@ -4,7 +4,7 @@ You are working on **fauxfetus**, a static music catalog site for an independent
 
 All site content (artists, albums, tracks) is generated at build time from JSON data files. The homepage also loads `content.md` (a changelog/blog) via `marked`.
 
-# Project Structure
+## Project Structure
 
 ```
 fauxfetus/
@@ -62,7 +62,7 @@ fauxfetus/
 └── package.json                   # v2.7.0, pnpm monorepo
 ```
 
-# Data Flow
+## Data Flow
 
 1. `pnpm data:generate` → runs `scripts/data/generate.ts`
 2. `DataGenerator` reads audio files from `static/audio/` via `music-metadata`
@@ -70,7 +70,7 @@ fauxfetus/
 4. At build time, `+page.server.ts` load functions call `readCatalog()` which reads `static/data/catalog.json`
 5. `adapter-static` prerenders all pages — no runtime server
 
-# Constraints
+## Constraints
 
 - **Static-only site**: No runtime server. All pages are prerendered. Do not add API routes that need a server.
 - **Svelte 5 runes**: Use `$state`, `$derived`, `$effect` — not legacy `$:` reactive syntax. Use `$bindable` for props that need two-way binding.
@@ -80,16 +80,16 @@ fauxfetus/
 - **PWA**: The site is installable as a PWA. The service worker is at `src/service-worker/index.ts`. PWA icons live in `static/icons/` (optional).
 - **No test framework**: There is no test runner configured. Do not add one without explicit direction.
 
-# Code Style
+## Code Style
 
-## Formatting
+### Formatting
 
 - Run `prettier` on individual files that have been modified, or `pnpm format` for all files.
 - Config: tabs, single quotes, trailing commas off, 100 char width.
 - Plugins run automatically: `prettier-plugin-svelte`, `prettier-plugin-tailwindcss`, `prettier-plugin-organize-imports`.
 - `tailwindStylesheet: "./src/app.css"` — class sorting uses your actual Tailwind config.
 
-## Conventions
+### Conventions
 
 - Component style: `<script lang="ts">` with TypeScript.
 - Utility classes: use `cn()` from `$lib/helpers/tailwind` (wraps `clsx` + `tailwind-merge`) when merging or conditionally applying classes. For static class strings with no merging needed, plain string classnames are fine.
@@ -113,29 +113,29 @@ fauxfetus/
 
 # Common Tasks
 
-## Adding a new page route
+### Adding a new page route
 
 1. Create `src/routes/path/+page.svelte` and `+page.server.ts`
 2. If it needs URL params, use `[paramName]` directory (camelCase, matching existing slug convention)
 3. Load functions can use `readCatalog()` from `$lib/helpers/catalog.ts`
 
-## Adding a new component
+### Adding a new component
 
 1. Create `src/lib/components/ComponentName.svelte` (or `ComponentName/index.svelte` for multi-file)
 2. If reusable, export from `src/lib/index.ts`
 
-# Context7 MCP
+## Context7 MCP
 
 You are able to use the Context7 MCP server, which resolves library names to up-to-date, versioned documentation. Use this instead of relying on training data for library APIs, component classes, or framework patterns. It covers Svelte, SvelteKit, daisyUI, Tailwind CSS, and any other library indexed by Context7.
 
-## How to use
+### How to use
 
 1. **Resolve the library ID first** — call `resolve-library-id` with a library name (e.g. `"/sveltejs/kit"`, `"/saadeghi/daisyui"`). This returns a Context7-compatible library ID.
 2. **Fetch docs** — call `get-library-docs` with the resolved ID and an optional topic query to get targeted documentation snippets.
 
 Always resolve before fetching. If you need docs for multiple libraries (e.g. SvelteKit + daisyUI), resolve each separately then fetch what you need.
 
-## Key daisyUI 5 Notes:
+### Key daisyUI 5 Notes
 
 - daisyUI 5 requires Tailwind CSS 4 (`@import "tailwindcss";` + `@plugin "daisyui";` in CSS)
 - Component classes are added directly to HTML elements alongside Tailwind utility classes
