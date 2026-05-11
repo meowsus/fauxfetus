@@ -7,6 +7,7 @@
 		updateMediaSessionPlaybackState,
 		setupMediaSessionActionHandlers
 	} from '$lib/helpers/media-session';
+	import { requestWakeLock, releaseWakeLock } from '$lib/helpers/wake-lock';
 	import { shuffle } from '$lib/helpers';
 	import TrackList from '$lib/components/TrackList.svelte';
 	import CurrentTrackCard from './CurrentTrackCard.svelte';
@@ -62,13 +63,37 @@
 	}
 
 	// Set up Media Session action handlers once we have an audio element.
-	// These enable lock screen controls and, critically, tell Android that
-	// the app is an active media session — which prevents the browser from
-	// suspending audio when the screen turns off.
+	// These enable lock screen controls and tell the OS that the app is an
+	// active media session.
 	$effect(() => {
 		if (audioElement) {
 			setupMediaSessionActionHandlers(playerStore, audioElement);
 		}
+	});
+
+	// Acquire a screen wake lock while audio is playing. This prevents the
+	// browser from throttling or suspending the tab when the screen dims,
+	// which keeps audio playing and the Media Session notification alive.
+	// The lock is re-acquired on visibility change (e.g. after unlocking
+	// the screen) since the OS auto-releases it when the page is hidden.
+	$effect(() => {
+		if (isPlaying) {
+			requestWakeLock();
+		} else {
+			releaseWakeLock();
+		}
+
+		const handleVisibilityChange = () => {
+			if (document.visibilityState === 'visible' && isPlaying) {
+				requestWakeLock();
+			}
+		};
+
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+		return () => {
+			releaseWakeLock();
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
+		};
 	});
 
 	// Update Media Session metadata and playback state whenever the

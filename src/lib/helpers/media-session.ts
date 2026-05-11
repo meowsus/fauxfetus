@@ -1,7 +1,7 @@
-import type { Track } from '@fauxfetus/generator';
 import type { PlayerState } from '$lib/context/player';
+import type { Track } from '@fauxfetus/generator';
 import type { Writable } from 'svelte/store';
-import { incrementCurrentTrackIndex, decrementCurrentTrackIndex } from './player';
+import { decrementCurrentTrackIndex, incrementCurrentTrackIndex } from './player';
 
 const APP_ICON_ARTWORK: MediaImage[] = [
 	{ src: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
