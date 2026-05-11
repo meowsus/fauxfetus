@@ -2,6 +2,11 @@
 	import { untrack } from 'svelte';
 	import { getPlayerContext } from '$lib/context/player';
 	import { incrementCurrentTrackIndex, loadRadioPlaylist } from '$lib/helpers/player';
+	import {
+		updateMediaSessionMetadata,
+		updateMediaSessionPlaybackState,
+		setupMediaSessionActionHandlers
+	} from '$lib/helpers/media-session';
 	import { shuffle } from '$lib/helpers';
 	import TrackList from '$lib/components/TrackList.svelte';
 	import CurrentTrackCard from './CurrentTrackCard.svelte';
@@ -55,6 +60,25 @@
 				: { isPlaying: false })
 		}));
 	}
+
+	// Set up Media Session action handlers once we have an audio element.
+	// These enable lock screen controls and, critically, tell Android that
+	// the app is an active media session — which prevents the browser from
+	// suspending audio when the screen turns off.
+	$effect(() => {
+		if (audioElement) {
+			setupMediaSessionActionHandlers(playerStore, audioElement);
+		}
+	});
+
+	// Update Media Session metadata and playback state whenever the
+	// current track or play state changes.
+	$effect(() => {
+		if (currentTrack) {
+			updateMediaSessionMetadata(currentTrack);
+			updateMediaSessionPlaybackState(isPlaying);
+		}
+	});
 
 	$effect(() => {
 		void playlist;

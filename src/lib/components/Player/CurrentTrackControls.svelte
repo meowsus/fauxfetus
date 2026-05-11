@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { cn } from '$lib/helpers/tailwind';
 	import { getPlayerContext } from '$lib/context/player';
+	import { updateMediaSessionPlaybackState } from '$lib/helpers/media-session';
 
 	import { incrementCurrentTrackIndex, decrementCurrentTrackIndex } from '$lib/helpers/player';
 
@@ -25,9 +26,11 @@
 		if (isPlaying) {
 			audioElement?.pause();
 			playerStore.update((s) => ({ ...s, isPlaying: false }));
+			updateMediaSessionPlaybackState(false);
 		} else {
 			audioElement?.play()?.catch(() => {});
 			playerStore.update((s) => ({ ...s, isPlaying: true }));
+			updateMediaSessionPlaybackState(true);
 		}
 	}
 </script>
