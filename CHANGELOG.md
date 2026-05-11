@@ -1,3 +1,12 @@
+# v2.10.0 - May 11, 2026
+
+- Fix typechecking in the service worker
+- Separate `check` and `lint` commands
+- Add `preview:local` script for sanity checks before deployment
+- Leverage Media Session API for PWA playback
+- Establish wake-lock to help with browser playback
+- Update various markdown dongles
+
 # v2.9.0 - May 07, 2026
 
 - Add contact link to the NavBar
