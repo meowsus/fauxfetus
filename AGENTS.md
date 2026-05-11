@@ -124,16 +124,40 @@ fauxfetus/
 1. Create `src/lib/components/ComponentName.svelte` (or `ComponentName/index.svelte` for multi-file)
 2. If reusable, export from `src/lib/index.ts`
 
-## Context7 MCP
+## Context7 (Documentation Lookup)
 
-You are able to use the Context7 MCP server, which resolves library names to up-to-date, versioned documentation. Use this instead of relying on training data for library APIs, component classes, or framework patterns. It covers Svelte, SvelteKit, daisyUI, Tailwind CSS, and any other library indexed by Context7.
+Use the `ctx7` CLI to fetch current documentation **before writing or modifying any code that uses Svelte, SvelteKit, daisyUI, Tailwind, or any other library** — even if you think you know the API. Your training data may not reflect recent changes (especially Svelte 5 runes, daisyUI 5 classes, Tailwind 4 directives).
 
-### How to use
+### When to use
 
-1. **Resolve the library ID first** — call `resolve-library-id` with a library name (e.g. `"/sveltejs/kit"`, `"/saadeghi/daisyui"`). This returns a Context7-compatible library ID.
-2. **Fetch docs** — call `get-library-docs` with the resolved ID and an optional topic query to get targeted documentation snippets.
+- **Writing or editing any `.svelte` file** → look up Svelte 5 syntax first (runes, snippets, props)
+- **Adding or modifying a route / load function** → look up SvelteKit API first (load, actions, adapters, page options)
+- **Styling with daisyUI classes** → look up daisyUI 5 component docs first (class names changed in v5)
+- **Using Tailwind utilities or directives** → look up Tailwind 4 docs first (v4 uses CSS-based config, not `tailwind.config.js`)
+- **Any task involving a library API, CLI tool, or SDK** → look it up first
 
-Always resolve before fetching. If you need docs for multiple libraries (e.g. SvelteKit + daisyUI), resolve each separately then fetch what you need.
+### When NOT to use
+
+- Refactoring without API changes
+- Writing scripts from scratch with no library dependency
+- Debugging business logic
+- Code review
+- General programming concepts
+
+### Workflow
+
+1. **Resolve the library** — `npx ctx7@latest library <name> "<query>"`
+   - Use the official library name with proper punctuation (e.g. `"Next.js"` not `"nextjs"`, `"Three.js"` not `"threejs"`)
+   - The query is required and directly affects result ranking — use the user's full question as the query
+2. **Pick the best match** from the results by: exact name match, description relevance, code snippet count, source reputation (High/Medium preferred), and benchmark score (higher is better). If results look wrong, try alternate names or rephrased queries.
+3. **Fetch docs** — `npx ctx7@latest docs <libraryId> "<query>"`
+   - Library IDs use `/org/project` format (e.g. `/sveltejs/kit`, `/saadeghi/daisyui`) — the `/` prefix is required
+   - For version-specific docs, use `/org/project/version` from the `library` output (e.g. `/vercel/next.js/v14.3.0`)
+4. **Answer using the fetched docs**
+
+You MUST call `library` first to get a valid ID unless the user provides one directly in `/org/project` format. Do not run more than 3 commands per question. Do not include sensitive information (API keys, passwords, credentials) in queries.
+
+If a command fails with a quota error, inform the user and suggest `npx ctx7@latest login` or setting `CONTEXT7_API_KEY` for higher limits. Do not silently fall back to training data.
 
 ### Key daisyUI 5 Notes
 
