@@ -1,3 +1,9 @@
+## May 11, 2026
+
+I believe I've been able to fix the bugs with audio playback. If you've noticed that your mobile device just stops playing music after a song or two, when your screen eventually turns off, this problem _should_ be fixed.
+
+Have I tested it? No. No, I haven't. Should you expect a follow-up post tonight or tomorrow featuring an apology from yours truly about how the site is unusable and everything sucked but is now fixed? Yes. Yes, you should.
+
 ## May 07, 2026
 
 I've been playing around with the site's layout today. I ditched the "hamburger" menu in favor of icon links, since there isn't a ton to link to right now. I also moved the icon that controls the player drawer to the bottom right. Just some little spruce-em-ups I've had on the back burner.
