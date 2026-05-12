@@ -1,3 +1,19 @@
+# ⚠️ MANDATORY: Post-Task Verification
+
+**After completing any code change, you MUST run all three of the following commands before considering the task done:**
+
+```sh
+pnpm check
+pnpm lint
+pnpm format
+```
+
+- **`pnpm check`** — catches TypeScript and Svelte type errors.
+- **`pnpm lint`** — catches formatting issues and ESLint violations.
+- **`pnpm format`** — auto-fixes formatting with Prettier.
+
+If any command fails, fix the issues and re-run all three until every one passes cleanly. **Do not skip this step. Do not consider a task complete until all three pass.**
+
 # Overview
 
 You are working on **fauxfetus**, a static music catalog site for an independent label/collective. It's built with SvelteKit (Svelte 5) using `@sveltejs/adapter-static`. The production deploy process builds the site to `./build/` and `rsync`'s it to the server — there is **no server-side runtime**.
@@ -84,7 +100,7 @@ fauxfetus/
 
 ### Formatting
 
-- Run `prettier` on individual files that have been modified, or `pnpm format` for all files.
+- See **Mandatory Post-Task Verification** at the top of this file — always run `pnpm format` (alongside `pnpm check` and `pnpm lint`) after changes.
 - Config: tabs, single quotes, trailing commas off, 100 char width.
 - Plugins run automatically: `prettier-plugin-svelte`, `prettier-plugin-tailwindcss`, `prettier-plugin-organize-imports`.
 - `tailwindStylesheet: "./src/app.css"` — class sorting uses your actual Tailwind config.
@@ -118,11 +134,13 @@ fauxfetus/
 1. Create `src/routes/path/+page.svelte` and `+page.server.ts`
 2. If it needs URL params, use `[paramName]` directory (camelCase, matching existing slug convention)
 3. Load functions can use `readCatalog()` from `$lib/helpers/catalog.ts`
+4. **Run `pnpm check && pnpm lint && pnpm format`** and fix any errors
 
 ### Adding a new component
 
 1. Create `src/lib/components/ComponentName.svelte` (or `ComponentName/index.svelte` for multi-file)
 2. If reusable, export from `src/lib/index.ts`
+3. **Run `pnpm check && pnpm lint && pnpm format`** and fix any errors
 
 ## Context7 (Documentation Lookup)
 
