@@ -6,6 +6,8 @@ catalogs:
     fs-extra: ^11.3.2
     '@types/fs-extra': ^11.0.4
 
+strictDepBuilds: true
+
 onlyBuiltDependencies:
   - esbuild
   - '@tailwindcss/oxide'

@@ -1,0 +1,95 @@
+{
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
+	"extends": ["config:recommended", "group:monorepos", ":preserveSemverRanges"],
+
+	"vulnerabilityAlerts": {
+		"enabled": true,
+		"minimumReleaseAge": null,
+		"automerge": true,
+		"automergeType": "pr"
+	},
+
+	"npm": {
+		"ignoreScripts": true
+	},
+
+	"packageRules": [
+		{
+			"description": "Ignore workspace: and catalog: references — these are managed manually",
+			"matchDepTypes": ["workspace", "catalog"],
+			"enabled": false
+		},
+
+		{
+			"description": "npm production dependency patches: auto-merge after quarantine, grouped separately for audit visibility",
+			"matchManagers": ["npm"],
+			"matchDepTypes": ["dependencies"],
+			"matchUpdateTypes": ["patch"],
+			"groupName": "npm production patches",
+			"groupSlug": "npm-production-patches",
+			"minimumReleaseAge": "3 days",
+			"automerge": true,
+			"automergeType": "pr"
+		},
+
+		{
+			"description": "npm dev dependency patches: auto-merge after quarantine",
+			"matchManagers": ["npm"],
+			"matchDepTypes": ["devDependencies"],
+			"matchUpdateTypes": ["patch"],
+			"groupName": "npm dev patches",
+			"groupSlug": "npm-dev-patches",
+			"minimumReleaseAge": "3 days",
+			"automerge": true,
+			"automergeType": "pr"
+		},
+
+		{
+			"description": "npm minor updates (all dep types): require human review, 3-day quarantine, grouped",
+			"matchManagers": ["npm"],
+			"matchUpdateTypes": ["minor"],
+			"groupName": "npm minor updates",
+			"groupSlug": "npm-minor",
+			"minimumReleaseAge": "3 days",
+			"automerge": false
+		},
+
+		{
+			"description": "npm major updates (all dep types): require human review, no auto-merge, each as its own PR",
+			"matchManagers": ["npm"],
+			"matchUpdateTypes": ["major"],
+			"automerge": false,
+			"groupName": null
+		},
+
+		{
+			"description": "GitHub Actions: auto-merge digest/pin updates",
+			"matchManagers": ["github-actions"],
+			"matchUpdateTypes": ["pin", "digest"],
+			"automerge": true,
+			"automergeType": "pr",
+			"groupName": "github-actions digests"
+		},
+
+		{
+			"description": "GitHub Actions major bumps: require review, separate PRs",
+			"matchManagers": ["github-actions"],
+			"matchUpdateTypes": ["major"],
+			"automerge": false,
+			"groupName": null
+		}
+	],
+
+	"timezone": "Etc/UTC",
+	"schedule": ["before 5am on Monday"],
+
+	"prConcurrentLimit": 10,
+	"prHourlyLimit": 2,
+
+	"labels": ["dependencies"],
+
+	"dependencyDashboard": true,
+	"dependencyDashboardTitle": "Dependency Dashboard",
+	"dependencyDashboardLabels": ["dependencies"]
+}
