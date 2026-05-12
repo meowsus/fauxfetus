@@ -1,7 +1,7 @@
 import type { PlayerState } from '$lib/context/player';
 import type { Track } from '@fauxfetus/generator';
 import type { Writable } from 'svelte/store';
-import { shuffle } from '.';
+import { RADIO_PLAYLIST_SIZE, sampleRadioPlaylist } from '.';
 
 export function incrementCurrentTrackIndex(store: Writable<PlayerState>): void {
 	store.update((state) => {
@@ -42,7 +42,7 @@ export async function loadRadioPlaylist(store: Writable<PlayerState>): Promise<v
 			isRadio: true,
 			isLoading: false,
 			allTracks: tracks,
-			playlist: shuffle(tracks).slice(0, 49),
+			playlist: sampleRadioPlaylist(tracks, RADIO_PLAYLIST_SIZE),
 			currentTrackIndex: 0
 		};
 	});

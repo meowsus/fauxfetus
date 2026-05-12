@@ -8,7 +8,7 @@
 		setupMediaSessionActionHandlers
 	} from '$lib/helpers/media-session';
 	import { requestWakeLock, releaseWakeLock } from '$lib/helpers/wake-lock';
-	import { shuffle } from '$lib/helpers';
+	import { sampleRadioPlaylist, RADIO_PLAYLIST_SIZE } from '$lib/helpers';
 	import TrackList from '$lib/components/TrackList.svelte';
 	import CurrentTrackCard from './CurrentTrackCard.svelte';
 
@@ -28,7 +28,7 @@
 			playerStore.update((state) => ({
 				...state,
 				isRadio: true,
-				playlist: shuffle(state.allTracks).slice(0, 49),
+				playlist: sampleRadioPlaylist(state.allTracks, RADIO_PLAYLIST_SIZE),
 				currentTrackIndex: 0
 			}));
 		} else {
@@ -57,7 +57,7 @@
 			...state,
 			currentTrackIndex: 0,
 			...(state.isRadio
-				? { playlist: shuffle(state.allTracks).slice(0, 49) }
+				? { playlist: sampleRadioPlaylist(state.allTracks, RADIO_PLAYLIST_SIZE) }
 				: { isPlaying: false })
 		}));
 	}
