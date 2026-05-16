@@ -1,3 +1,9 @@
+# v2.11.0 - May 16, 2026
+
+- Further robot ranglin'
+- Employ a weighted algorithm for radio track selection
+- Finally, probably fix the stupid idiot audio playback issues
+
 # v2.10.0 - May 11, 2026
 
 - Fix typechecking in the service worker
