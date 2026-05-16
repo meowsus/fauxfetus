@@ -4,6 +4,7 @@
 	import Navbar from '$lib/components/Navbar/index.svelte';
 	import Player from '$lib/components/Player/index.svelte';
 	import RadioFab from '$lib/components/RadioFab.svelte';
+	import UpdateNotification from '$lib/components/UpdateNotification.svelte';
 
 	import {
 		setPlayerContext,
@@ -53,6 +54,7 @@
 	</div>
 
 	<RadioFab />
+	<UpdateNotification />
 
 	<div class="drawer-side">
 		<label for="player-drawer-toggle" aria-label="close sidebar" class="drawer-overlay"></label>

@@ -14,6 +14,9 @@ const ASSETS = [...build, ...files].filter((url) => {
 });
 
 self.addEventListener('install', (event: ExtendableEvent) => {
+	// Activate immediately instead of waiting for existing tabs to close
+	self.skipWaiting();
+
 	async function addFilesToCache() {
 		const cache = await caches.open(CACHE);
 		const results = await Promise.allSettled(ASSETS.map((url) => cache.add(url)));
@@ -29,12 +32,15 @@ self.addEventListener('install', (event: ExtendableEvent) => {
 });
 
 self.addEventListener('activate', (event: ExtendableEvent) => {
-	async function deleteOldCaches() {
+	async function activate() {
+		// Delete old caches from previous versions
 		for (const key of await caches.keys()) {
 			if (key !== CACHE) await caches.delete(key);
 		}
+		// Take control of all open pages immediately so they use the new SW
+		await self.clients.claim();
 	}
-	event.waitUntil(deleteOldCaches());
+	event.waitUntil(activate());
 });
 
 self.addEventListener('fetch', (event: FetchEvent) => {
