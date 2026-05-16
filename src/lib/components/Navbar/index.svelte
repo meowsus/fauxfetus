@@ -1,12 +1,35 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { version } from '$app/environment';
 
 	import InstallAppButton from './InstallAppButton.svelte';
+
+	let longpressTimer: ReturnType<typeof setTimeout> | null = null;
+
+	function handlePointerDown() {
+		longpressTimer = setTimeout(() => {
+			alert(`fauxfetus v${version} (${__GIT_SHA__})`);
+		}, 500);
+	}
+
+	function cancelLongpress() {
+		if (longpressTimer !== null) {
+			clearTimeout(longpressTimer);
+			longpressTimer = null;
+		}
+	}
 </script>
 
 <div class="navbar overflow-x-hidden bg-base-100 shadow-sm">
 	<div class="navbar-start">
-		<a href={resolve('/')} class="px-4 font-mono text-2xl">fauxfetus</a>
+		<a
+			href={resolve('/')}
+			class="px-4 font-mono text-2xl"
+			onpointerdown={handlePointerDown}
+			onpointerup={cancelLongpress}
+			onpointerleave={cancelLongpress}
+			onpointercancel={cancelLongpress}>fauxfetus</a
+		>
 	</div>
 	<div class="navbar-end">
 		<div class="flex items-center gap-1">
