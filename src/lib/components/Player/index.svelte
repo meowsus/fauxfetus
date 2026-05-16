@@ -19,6 +19,13 @@
 
 	let player: Gapless5 | null = $state(null);
 
+	// Fine-grained local $state for high-frequency progress data.
+	// Kept OUT of the shared Writable store so that 37×/sec ticks from
+	// Gapless5 only re-render CurrentTrackProgress — not every store
+	// subscriber like CurrentTrackControls, CurrentTrackCard, etc.
+	let position = $state(0);
+	let duration = $state(0);
+
 	/**
 	 * Map from audio URL path (as known by Gapless5) back to our Track object.
 	 * Keeps our playlist data in sync with Gapless5's internal track list.
@@ -66,10 +73,12 @@
 			isPlaying: false,
 			isRadio: options.isRadio ?? state.isRadio,
 			playlist: tracks,
-			currentTrackIndex: startIndex,
-			position: 0,
-			duration: 0
+			currentTrackIndex: startIndex
 		}));
+
+		// Reset progress state
+		position = 0;
+		duration = 0;
 
 		// Jump to the requested track and start playback
 		player.gotoTrack(startIndex, true);
@@ -130,14 +139,32 @@
 		}
 	}
 
+	// ── High-frequency time updates (rAF-batched) ───────────────────────
+
+	/** Pending time-update payload from Gapless5, awaiting the next paint. */
+	let pendingTimeMs = -1;
+	let pendingTrackIndex = -1;
+	let rafId: number | null = null;
+
 	function handleTimeUpdate(currentTimeMs: number, currentTrackIndex: number): void {
-		const durationMs = player?.currentLength() ?? 0;
-		playerStore.update((state) => ({
-			...state,
-			position: currentTimeMs,
-			duration: durationMs,
-			currentTrackIndex: currentTrackIndex >= 0 ? currentTrackIndex : state.currentTrackIndex
-		}));
+		pendingTimeMs = currentTimeMs;
+		pendingTrackIndex = currentTrackIndex;
+		if (rafId === null) {
+			rafId = requestAnimationFrame(flushTimeUpdate);
+		}
+	}
+
+	function flushTimeUpdate(): void {
+		rafId = null;
+
+		// Update fine-grained local state (only re-renders consumers of these)
+		position = pendingTimeMs;
+		duration = player?.currentLength() ?? 0;
+
+		// Sync track index into the shared store, but only when it actually changed
+		if (pendingTrackIndex >= 0 && pendingTrackIndex !== $playerStore.currentTrackIndex) {
+			playerStore.update((state) => ({ ...state, currentTrackIndex: pendingTrackIndex }));
+		}
 	}
 
 	function handleFinishedAll(): void {
@@ -209,6 +236,7 @@
 		});
 
 		return () => {
+			if (rafId !== null) cancelAnimationFrame(rafId);
 			player?.stop();
 			player?.removeAllTracks();
 		};
@@ -249,7 +277,7 @@
 			<span class="loading loading-xl loading-infinity"></span>
 		</div>
 	{:else}
-		<CurrentTrackCard />
+		<CurrentTrackCard {position} {duration} />
 	{/if}
 
 	{#if playlist}

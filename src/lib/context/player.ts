@@ -11,10 +11,6 @@ export type PlayerState = {
 	playlist: Track[];
 
 	currentTrackIndex: number | null;
-
-	// Progress state, synced from Gapless5 via callbacks
-	position: number; // current playback position in ms
-	duration: number; // current track total duration in ms
 };
 
 /**

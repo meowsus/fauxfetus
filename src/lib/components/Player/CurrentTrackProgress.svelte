@@ -1,8 +1,5 @@
 <script lang="ts">
-	import { getPlayerContext } from '$lib/context/player';
-
-	const playerStore = getPlayerContext();
-	const { position, duration } = $derived($playerStore);
+	let { position = 0, duration = 0 }: { position: number; duration: number } = $props();
 
 	let progress = $derived(duration > 0 ? (position / duration) * 100 : 0);
 </script>

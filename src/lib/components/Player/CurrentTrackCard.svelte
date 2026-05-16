@@ -7,6 +7,8 @@
 	import CurrentTrackControls from './CurrentTrackControls.svelte';
 	import CurrentTrackProgress from './CurrentTrackProgress.svelte';
 
+	let { position = 0, duration = 0 }: { position: number; duration: number } = $props();
+
 	const playerStore = getPlayerContext();
 	const { currentTrackIndex, playlist } = $derived($playerStore);
 
@@ -38,7 +40,7 @@
 				<CurrentTrackControls />
 			</div>
 
-			<CurrentTrackProgress />
+			<CurrentTrackProgress {position} {duration} />
 		</div>
 	</div>
 {/if}

@@ -19,9 +19,7 @@
 		isRadio: false,
 		allTracks: [],
 		playlist: [],
-		currentTrackIndex: null,
-		position: 0,
-		duration: 0
+		currentTrackIndex: null
 	});
 
 	const playerActionsStore = writable(defaultPlayerActions);
