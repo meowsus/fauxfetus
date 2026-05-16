@@ -55,4 +55,7 @@ git tag "v$VERSION"
 git push
 git push origin "v$VERSION"
 
-echo "✨ Release v$VERSION created."
+echo "✓ Release v$VERSION created."
+
+echo "Building and deploying v$VERSION..."
+./scripts/deploy.sh
