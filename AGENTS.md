@@ -1,6 +1,6 @@
 # ⚠️ MANDATORY: Post-Task Verification
 
-**After completing any code change, you MUST run all three of the following commands before considering the task done:**
+**After completing any code change, you MUST run the following commands before considering the task done:**
 
 ```sh
 pnpm check
@@ -12,7 +12,9 @@ pnpm format
 - **`pnpm lint`** — catches formatting issues and ESLint violations.
 - **`pnpm format`** — auto-fixes formatting with Prettier.
 
-If any command fails, fix the issues and re-run all three until every one passes cleanly. **Do not skip this step. Do not consider a task complete until all three pass.**
+**Do not run `pnpm build` after every change** — it's slow (30+ seconds) and only needed for SSR/prerender verification or pre-deploy. See the **Build Verification** section below for when it's appropriate.
+
+If any of the three mandatory commands fails, fix the issues and re-run all three until every one passes cleanly. **Do not skip this step. Do not consider a task complete until all three pass.**
 
 # Overview
 
@@ -113,19 +115,32 @@ fauxfetus/
 - Data access: always go through `readCatalog()` in `$lib/helpers/catalog.ts` — it memoizes and reads from `static/data/catalog.json`.
 - Type imports: `Artist`, `Album`, `Track`, etc. come from `@fauxfetus/generator`.
 
-# Commands
+## Build Verification
 
-| Command              | Purpose                                                       | Allowed to run? |
-| -------------------- | ------------------------------------------------------------- | --------------- |
-| `pnpm dev`           | Start dev server                                              | No              |
-| `pnpm build`         | Production build to `./build/`                                | Yes             |
-| `pnpm preview`       | Preview production build locally                              | Yes             |
-| `pnpm check`         | Type-check with `svelte-check` + `tsc` (incl. service-worker) | Yes             |
-| `pnpm lint`          | Prettier check + ESLint                                       | Yes             |
-| `pnpm format`        | Format all files with Prettier                                | Yes             |
-| `pnpm data:generate` | Regenerate catalog/tracks JSON from audio files               | Yes             |
-| `pnpm deploy:build`  | Build + rsync to server                                       | No, never       |
-| `pnpm release`       | Version bump + release                                        | No, never       |
+- **`pnpm check`** is the primary verification after code changes — it catches TypeScript and Svelte type errors.
+- **`pnpm build`** is slow (30+ seconds) and only needed to verify SSR/prerendering issues (e.g., `window` references during SSR) or before deployment. Do not run it after every code change — `pnpm check` is sufficient for routine changes.
+- **`pnpm lint`** and **`pnpm format`** should still be run after changes.
+
+| Scenario                                                         | Run `pnpm build`?              |
+| ---------------------------------------------------------------- | ------------------------------ |
+| Routine code change (components, helpers, etc.)                  | No — `pnpm check` is enough    |
+| Adding/modifying a library that references `window`/browser APIs | Yes — verify SSR doesn't break |
+| Changing SvelteKit config, adapters, or prerendering             | Yes                            |
+| Before deployment                                                | Yes                            |
+
+## Commands
+
+| Command              | Purpose                                         | When to run                       | Allowed?  |
+| -------------------- | ----------------------------------------------- | --------------------------------- | --------- |
+| `pnpm dev`           | Start dev server                                | —                                 | No        |
+| `pnpm build`         | Production build to `./build/`                  | SSR/prerender changes, pre-deploy | Yes       |
+| `pnpm preview`       | Preview production build locally                | —                                 | Yes       |
+| `pnpm check`         | Type-check with `svelte-check` + `tsc`          | After every code change           | Yes       |
+| `pnpm lint`          | Prettier check + ESLint                         | After every code change           | Yes       |
+| `pnpm format`        | Format all files with Prettier                  | After every code change           | Yes       |
+| `pnpm data:generate` | Regenerate catalog/tracks JSON from audio files | —                                 | Yes       |
+| `pnpm deploy:build`  | Build + rsync to server                         | —                                 | No, never |
+| `pnpm release`       | Version bump + release                          | —                                 | No, never |
 
 # Common Tasks
 
