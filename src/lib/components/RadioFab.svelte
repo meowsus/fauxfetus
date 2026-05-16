@@ -4,12 +4,28 @@
 	import { sampleRadioPlaylist, RADIO_PLAYLIST_SIZE } from '$lib/helpers';
 	import { cn } from '$lib/helpers/tailwind';
 	import type { Track } from '@fauxfetus/generator';
+	import { version } from '$app/environment';
 
 	const playerStore = getPlayerContext();
 	const actionsStore = getPlayerActions();
 	const actions = $derived($actionsStore);
 
 	const { isPlaying } = $derived($playerStore);
+
+	let longpressTimer: ReturnType<typeof setTimeout> | null = null;
+
+	function handlePointerDown() {
+		longpressTimer = setTimeout(() => {
+			alert(`fauxfetus v${version} (${__GIT_SHA__})`);
+		}, 500);
+	}
+
+	function cancelLongpress() {
+		if (longpressTimer !== null) {
+			clearTimeout(longpressTimer);
+			longpressTimer = null;
+		}
+	}
 
 	function handleClick() {
 		togglePlayerDrawer();
@@ -44,6 +60,10 @@
 		isPlaying && 'animate-pulse-slow'
 	)}
 	onclick={handleClick}
+	onpointerdown={handlePointerDown}
+	onpointerup={cancelLongpress}
+	onpointerleave={cancelLongpress}
+	onpointercancel={cancelLongpress}
 	title="Toggle radio"
 	aria-label="Toggle radio"
 >
