@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { getPlayerContext } from '$lib/context/player';
+	import { getPlayerContext, getPlayerActions } from '$lib/context/player';
 	import { togglePlayerDrawer } from '$lib/helpers/player';
 	import { cn } from '$lib/helpers/tailwind';
 	import type { Track } from '@fauxfetus/generator';
@@ -36,6 +36,8 @@
 	}: Props = $props();
 
 	const playerStore = getPlayerContext();
+	const actionsStore = getPlayerActions();
+	const actions = $derived($actionsStore);
 
 	const currentTrack = $derived.by(() => {
 		const { currentTrackIndex, playlist } = $playerStore;
@@ -47,15 +49,12 @@
 	}
 
 	function handlePlayButtonClick(index: number) {
-		playerStore.update((state) => ({
-			...state,
-			isPlaying: true,
-			playlist: tracks,
-			currentTrackIndex: index
-		}));
+		// Use PlayerActions to delegate to Gapless5 for playback
+		actions.loadPlaylist(tracks, index, {
+			isRadio: shouldDisableRadioMode ? false : $playerStore.isRadio
+		});
 
 		if (shouldTogglePlayerDrawer) togglePlayerDrawer();
-		if (shouldDisableRadioMode) playerStore.update((state) => ({ ...state, isRadio: false }));
 	}
 </script>
 

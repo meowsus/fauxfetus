@@ -17,6 +17,9 @@ importers:
 
   .:
     dependencies:
+      '@regosen/gapless-5':
+        specifier: ^1.6.2
+        version: 1.6.2
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -422,6 +425,9 @@ packages:
 
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
+
+  '@regosen/gapless-5@1.6.2':
+    resolution: {integrity: sha512-dUTy8vkebZD9q8thcNJEw6Ca69ZtUMSl1GMzgf9dgdCI+jC0gfNYrWaERWMqCXzjN/yrydfeve6EYnoYimu5iA==}
 
   '@rollup/rollup-android-arm-eabi@4.53.2':
     resolution: {integrity: sha512-yDPzwsgiFO26RJA4nZo8I+xqzh7sJTZIWQOxn+/XOdPE31lAvLIYCKqjV+lNH/vxE2L2iH3plKxDCRK6i+CwhA==}
@@ -1941,6 +1947,8 @@ snapshots:
       fastq: 1.19.1
 
   '@polka/url@1.0.0-next.29': {}
+
+  '@regosen/gapless-5@1.6.2': {}
 
   '@rollup/rollup-android-arm-eabi@4.53.2':
     optional: true

@@ -1,198 +1,241 @@
 <script lang="ts">
-	import { untrack } from 'svelte';
-	import { getPlayerContext } from '$lib/context/player';
-	import { incrementCurrentTrackIndex, loadRadioPlaylist } from '$lib/helpers/player';
+	import { onMount } from 'svelte';
+	import { SvelteMap } from 'svelte/reactivity';
+	import { getPlayerContext, getPlayerActions } from '$lib/context/player';
+	import type { PlayerActions } from '$lib/context/player';
+	import { sampleRadioPlaylist, RADIO_PLAYLIST_SIZE } from '$lib/helpers';
 	import {
 		updateMediaSessionMetadata,
-		updateMediaSessionPlaybackState,
-		setupMediaSessionActionHandlers
+		updateMediaSessionPlaybackState
 	} from '$lib/helpers/media-session';
-	import { sampleRadioPlaylist, RADIO_PLAYLIST_SIZE } from '$lib/helpers';
 	import type { Track } from '@fauxfetus/generator';
+	import type { Gapless5 } from '@regosen/gapless-5';
 	import TrackList from '$lib/components/TrackList.svelte';
 	import CurrentTrackCard from './CurrentTrackCard.svelte';
 
 	const playerStore = getPlayerContext();
-	const { isLoading, isPlaying, isRadio, playlist, allTracks } = $derived($playerStore);
+	const playerActionsStore = getPlayerActions();
+	const { isLoading, isRadio, playlist, allTracks } = $derived($playerStore);
 
-	let audioElement: HTMLAudioElement | null = $state(null);
+	let player: Gapless5 | null = $state(null);
+
+	/**
+	 * Map from audio URL path (as known by Gapless5) back to our Track object.
+	 * Keeps our playlist data in sync with Gapless5's internal track list.
+	 */
+	let trackMap = new SvelteMap<string, Track>();
 
 	const currentTrack = $derived.by(() => {
 		const { currentTrackIndex, playlist } = $playerStore;
 		return currentTrackIndex != null ? playlist[currentTrackIndex] : null;
 	});
 
-	/**
-	 * Flag to prevent the reactive track-loading effect from double-loading
-	 * a track that was already switched synchronously inside the 'ended'
-	 * event handler or a Media Session action handler.
-	 *
-	 * Mobile browsers grant "transient activation" only during the
-	 * synchronous execution of media events (ended, play, pause, etc.).
-	 * If we defer audio.play() to a reactive effect or setTimeout, the
-	 * browser will reject it as autoplay when the screen is off, causing
-	 * playback to silently stop between tracks.
-	 */
-	let skipTrackLoad = false;
-
-	/** Build the audio URL for a track. */
+	/** Build the audio URL for a track — the path Gapless5 uses. */
 	function getAudioUrl(track: Track): string {
 		return `/audio/${track.audioUrl}`;
 	}
 
+	// ── PlayerActions implementation ────────────────────────────────────
+
 	/**
-	 * Synchronously set the audio source and begin playback. This MUST be
-	 * called within the synchronous call stack of a user-gesture or media
-	 * event to preserve the browser's transient activation, which is required
-	 * for play() to succeed without a user gesture on mobile.
+	 * Replace Gapless5's playlist with new tracks and jump to startIndex.
+	 * This is the single entry point for changing what's playing.
 	 */
-	function playTrackSynchronously(track: Track): void {
-		if (!audioElement) return;
-		audioElement.src = getAudioUrl(track);
-		audioElement.play().catch(() => {});
-		skipTrackLoad = true;
+	function loadPlaylist(
+		tracks: Track[],
+		startIndex: number,
+		options: { isRadio?: boolean } = {}
+	): void {
+		if (!player) return;
+
+		// Stop current playback before swapping tracks
+		player.stop();
+		player.removeAllTracks();
+
+		// Rebuild track map
+		trackMap.clear();
+		for (const track of tracks) {
+			const url = getAudioUrl(track);
+			trackMap.set(url, track);
+			player.addTrack(url);
+		}
+
+		// Update store
+		playerStore.update((state) => ({
+			...state,
+			isPlaying: false,
+			isRadio: options.isRadio ?? state.isRadio,
+			playlist: tracks,
+			currentTrackIndex: startIndex,
+			position: 0,
+			duration: 0
+		}));
+
+		// Jump to the requested track and start playback
+		player.gotoTrack(startIndex, true);
 	}
 
-	const handleRadioButtonClick = () => {
-		if (allTracks.length > 0) {
-			playerStore.update((state) => ({
-				...state,
-				isRadio: true,
-				playlist: sampleRadioPlaylist(state.allTracks, RADIO_PLAYLIST_SIZE),
-				currentTrackIndex: 0
-			}));
-		} else {
-			playerStore.update((state) => ({
-				...state,
-				isLoading: true
-			}));
-
-			loadRadioPlaylist(playerStore);
-		}
+	const actions: PlayerActions = {
+		loadPlaylist,
+		play: () => player?.play(),
+		pause: () => player?.pause(),
+		togglePlay: () => player?.playpause(),
+		prev: () => player?.prevtrack(),
+		next: () => player?.next(null, null, null)
 	};
 
-	/**
-	 * When a track finishes, synchronously advance to the next one.
-	 *
-	 * CRITICAL: Mobile browsers only allow play() without a user gesture
-	 * during "transient activation" — a brief window that starts with the
-	 * 'ended' event and expires as soon as JavaScript yields. If we defer
-	 * play() to a reactive effect, setTimeout, or any async operation, the
-	 * browser will reject it when the screen is off, causing playback to
-	 * silently stop between tracks.
-	 *
-	 * Therefore, we MUST set the new src and call play() synchronously
-	 * here, BEFORE updating the Svelte store (which triggers async
-	 * reactive effects). See:
-	 * - https://github.com/nickvdp/nickvdp/issues/557 (monochrome-music)
-	 * - https://bugs.webkit.org/show_bug.cgi?id=173332
-	 * - https://stackoverflow.com/questions/75279290
-	 */
-	function handleAudioElementEnded() {
-		const { currentTrackIndex, playlist, isRadio, allTracks } = $playerStore;
-		const atEndOfPlaylist = playlist.length > 0 && currentTrackIndex === playlist.length - 1;
+	// ── Gapless5 callbacks → store sync ────────────────────────────────
 
-		if (!atEndOfPlaylist) {
-			const nextIndex = currentTrackIndex == null ? 0 : currentTrackIndex + 1;
-			const nextTrack = playlist[nextIndex];
+	function handlePlay(trackPath: string): void {
+		const track = trackMap.get(trackPath);
+		const index = track ? $playerStore.playlist.indexOf(track) : (player?.getIndex() ?? -1);
 
-			if (nextTrack) {
-				playTrackSynchronously(nextTrack);
-			}
+		playerStore.update((state) => ({
+			...state,
+			isPlaying: true,
+			currentTrackIndex: index >= 0 ? index : state.currentTrackIndex
+		}));
+		updateMediaSessionPlaybackState(true);
+	}
 
-			incrementCurrentTrackIndex(playerStore);
-			return;
+	function handlePause(): void {
+		playerStore.update((state) => ({ ...state, isPlaying: false }));
+		updateMediaSessionPlaybackState(false);
+	}
+
+	function handleStop(): void {
+		playerStore.update((state) => ({ ...state, isPlaying: false }));
+		updateMediaSessionPlaybackState(false);
+	}
+
+	function handleNext(fromPath: string): void {
+		const fromTrack = trackMap.get(fromPath);
+		const fromIndex = fromTrack
+			? $playerStore.playlist.indexOf(fromTrack)
+			: (player?.getIndex() ?? -1);
+		const nextIndex = fromIndex >= 0 ? fromIndex + 1 : -1;
+
+		// The next track is playing, advance our index
+		if (nextIndex >= 0 && nextIndex < $playerStore.playlist.length) {
+			playerStore.update((state) => ({ ...state, currentTrackIndex: nextIndex }));
 		}
+	}
 
-		// At the end of the playlist:
-		if (isRadio) {
+	function handlePrev(_fromPath: string, toPath: string): void {
+		const toTrack = trackMap.get(toPath);
+		const toIndex = toTrack ? $playerStore.playlist.indexOf(toTrack) : (player?.getIndex() ?? -1);
+
+		if (toIndex >= 0) {
+			playerStore.update((state) => ({ ...state, currentTrackIndex: toIndex }));
+		}
+	}
+
+	function handleTimeUpdate(currentTimeMs: number, currentTrackIndex: number): void {
+		const durationMs = player?.currentLength() ?? 0;
+		playerStore.update((state) => ({
+			...state,
+			position: currentTimeMs,
+			duration: durationMs,
+			currentTrackIndex: currentTrackIndex >= 0 ? currentTrackIndex : state.currentTrackIndex
+		}));
+	}
+
+	function handleFinishedAll(): void {
+		const { isRadio, allTracks } = $playerStore;
+
+		if (isRadio && allTracks.length > 0) {
+			// Auto-continue radio: generate fresh playlist and keep playing
 			const newPlaylist = sampleRadioPlaylist(allTracks, RADIO_PLAYLIST_SIZE);
-			const nextTrack = newPlaylist[0];
-
-			if (nextTrack) {
-				playTrackSynchronously(nextTrack);
-			}
-
-			playerStore.update((state) => ({
-				...state,
-				currentTrackIndex: 0,
-				playlist: newPlaylist
-			}));
+			loadPlaylist(newPlaylist, 0, { isRadio: true });
 		} else {
-			audioElement?.pause();
 			playerStore.update((state) => ({ ...state, isPlaying: false }));
 			updateMediaSessionPlaybackState(false);
 		}
 	}
 
-	// Set up Media Session action handlers.
-	// These enable lock screen controls and MUST also switch tracks
-	// synchronously to preserve transient activation on mobile.
-	$effect(() => {
-		if (audioElement) {
-			setupMediaSessionActionHandlers(playerStore, audioElement, playTrackSynchronously);
-		}
+	// ── Media Session setup ────────────────────────────────────────────
+
+	function setupMediaSession(): void {
+		if (!('mediaSession' in navigator) || !player) return;
+
+		navigator.mediaSession.setActionHandler('play', () => {
+			player!.play();
+		});
+
+		navigator.mediaSession.setActionHandler('pause', () => {
+			player!.pause();
+		});
+
+		navigator.mediaSession.setActionHandler('previoustrack', () => {
+			player!.prevtrack();
+		});
+
+		navigator.mediaSession.setActionHandler('nexttrack', () => {
+			player!.next(null, null, null);
+		});
+	}
+
+	// ── Lifecycle ──────────────────────────────────────────────────────
+
+	onMount(() => {
+		import('@regosen/gapless-5').then(({ Gapless5 }) => {
+			player = new Gapless5({
+				useWebAudio: true,
+				useHTML5Audio: true,
+				loop: false,
+				startingTrack: 0,
+				shuffle: false,
+				shuffleButton: false,
+				logLevel: 2 // Info
+			});
+
+			player.onplay = handlePlay;
+			player.onpause = handlePause;
+			player.onstop = handleStop;
+			player.onnext = handleNext;
+			player.onprev = handlePrev;
+			player.ontimeupdate = handleTimeUpdate;
+			player.onfinishedall = handleFinishedAll;
+
+			// Replace the no-op defaults with real Gapless5-bound actions
+			playerActionsStore.set(actions);
+
+			setupMediaSession();
+		});
+
+		return () => {
+			player?.stop();
+			player?.removeAllTracks();
+		};
 	});
 
-	// Update Media Session metadata whenever the current track or play
-	// state changes.
+	// Sync Media Session metadata when current track changes
 	$effect(() => {
 		if (currentTrack) {
 			updateMediaSessionMetadata(currentTrack);
-			updateMediaSessionPlaybackState(isPlaying);
 		}
 	});
 
-	// Load a track when currentTrack changes from a user-initiated action
-	// (clicking a track, pressing play, initial load, etc.). This effect
-	// is SKIPPED when we've already handled the switch synchronously via
-	// playTrackSynchronously() to prevent double-loading.
-	$effect(() => {
-		void currentTrack;
+	// ── UI event handlers ──────────────────────────────────────────────
 
-		if (skipTrackLoad) {
-			skipTrackLoad = false;
-			return;
+	const handleRadioButtonClick = () => {
+		if (allTracks.length > 0) {
+			const newPlaylist = sampleRadioPlaylist(allTracks, RADIO_PLAYLIST_SIZE);
+			loadPlaylist(newPlaylist, 0, { isRadio: true });
+		} else {
+			playerStore.update((state) => ({ ...state, isLoading: true }));
+			fetch('/data/tracks.json')
+				.then((r) => r.json())
+				.then((tracks: Track[]) => {
+					playerStore.update((state) => ({ ...state, allTracks: tracks }));
+					const newPlaylist = sampleRadioPlaylist(tracks, RADIO_PLAYLIST_SIZE);
+					loadPlaylist(newPlaylist, 0, { isRadio: true });
+				})
+				.finally(() => {
+					playerStore.update((state) => ({ ...state, isLoading: false }));
+				});
 		}
-
-		if (audioElement && currentTrack) {
-			audioElement.src = getAudioUrl(currentTrack);
-
-			if (untrack(() => isPlaying)) {
-				audioElement.play().catch(() => {});
-			}
-		}
-	});
-
-	// Preload the next track when the current one is near its end, so
-	// the browser has the audio data cached before the 'ended' event
-	// fires. This is especially important on mobile where the network
-	// may be throttled when the screen is off.
-	let nextTrackPreloaded: string | null = null;
-
-	function handleTimeUpdate() {
-		if (!audioElement || !audioElement.duration) return;
-
-		const remaining = audioElement.duration - audioElement.currentTime;
-		const nearEnd =
-			remaining < 20 ||
-			(audioElement.duration > 0 && audioElement.currentTime / audioElement.duration > 0.8);
-
-		if (nearEnd) {
-			const { currentTrackIndex, playlist } = $playerStore;
-			const nextIndex = currentTrackIndex == null ? 0 : currentTrackIndex + 1;
-
-			if (nextIndex < playlist.length) {
-				const nextTrack = playlist[nextIndex];
-				const url = getAudioUrl(nextTrack);
-
-				if (nextTrackPreloaded !== url) {
-					nextTrackPreloaded = url;
-					fetch(url).catch(() => {});
-				}
-			}
-		}
-	}
+	};
 </script>
 
 <div class="absolute inset-4 flex flex-col gap-4 overflow-hidden">
@@ -201,7 +244,7 @@
 			<span class="loading loading-xl loading-infinity"></span>
 		</div>
 	{:else}
-		<CurrentTrackCard {audioElement} />
+		<CurrentTrackCard />
 	{/if}
 
 	{#if playlist}
@@ -222,14 +265,3 @@
 		</button>
 	{/if}
 </div>
-
-<!-- Always render the audio element in the DOM. Conditionally removing it
-     destroys the browser's media session context and loses buffered data,
-     which prevents seamless track transitions on mobile. -->
-<audio
-	class="hidden w-full"
-	bind:this={audioElement}
-	onended={handleAudioElementEnded}
-	ontimeupdate={handleTimeUpdate}
-	preload="auto"
-></audio>

@@ -51,6 +51,7 @@
 		"vite-plugin-devtools-json": "^1.0.0"
 	},
 	"dependencies": {
+		"@regosen/gapless-5": "^1.6.2",
 		"clsx": "^2.1.1",
 		"tailwind-merge": "^3.4.0"
 	},
