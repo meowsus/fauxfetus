@@ -180,12 +180,17 @@
 	onMount(() => {
 		import('@regosen/gapless-5').then(({ Gapless5 }) => {
 			player = new Gapless5({
-				useWebAudio: true,
-				useHTML5Audio: true,
+				// WebAudio (AudioContext/AudioBufferSourceNode) is suspended by mobile
+				// browsers when the screen is off, causing clicks/pops and eventual
+				// silence.  The reference demo uses useWebAudio: false for seamless
+				// album playback — pure HTML5 <audio> elements are managed by the
+				// OS media pipeline and continue playing correctly with screen off.
+				useWebAudio: false,
 				loop: false,
 				startingTrack: 0,
 				shuffle: false,
 				shuffleButton: false,
+				loadLimit: 2,
 				logLevel: 2 // Info
 			});
 
