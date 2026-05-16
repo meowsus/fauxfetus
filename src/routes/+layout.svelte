@@ -5,7 +5,12 @@
 	import Player from '$lib/components/Player/index.svelte';
 	import RadioFab from '$lib/components/RadioFab.svelte';
 
-	import { setPlayerContext, type PlayerState } from '$lib/context/player';
+	import {
+		setPlayerContext,
+		setPlayerActions,
+		type PlayerState,
+		defaultPlayerActions
+	} from '$lib/context/player';
 	import { writable } from 'svelte/store';
 
 	const playerStore = writable<PlayerState>({
@@ -14,10 +19,15 @@
 		isRadio: false,
 		allTracks: [],
 		playlist: [],
-		currentTrackIndex: null
+		currentTrackIndex: null,
+		position: 0,
+		duration: 0
 	});
 
+	const playerActionsStore = writable(defaultPlayerActions);
+
 	setPlayerContext(playerStore);
+	setPlayerActions(playerActionsStore);
 
 	let { children } = $props();
 </script>

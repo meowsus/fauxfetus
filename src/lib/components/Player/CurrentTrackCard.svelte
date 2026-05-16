@@ -7,12 +7,6 @@
 	import CurrentTrackControls from './CurrentTrackControls.svelte';
 	import CurrentTrackProgress from './CurrentTrackProgress.svelte';
 
-	interface Props {
-		audioElement: HTMLAudioElement | null;
-	}
-
-	let { audioElement }: Props = $props();
-
 	const playerStore = getPlayerContext();
 	const { currentTrackIndex, playlist } = $derived($playerStore);
 
@@ -41,10 +35,10 @@
 			</p>
 
 			<div class="card-actions justify-end">
-				<CurrentTrackControls {audioElement} />
+				<CurrentTrackControls />
 			</div>
 
-			<CurrentTrackProgress {audioElement} />
+			<CurrentTrackProgress />
 		</div>
 	</div>
 {/if}

@@ -1,22 +1,39 @@
 <script lang="ts">
-	import { get } from 'svelte/store';
-
-	import { getPlayerContext } from '$lib/context/player';
-	import { loadRadioPlaylist, togglePlayerDrawer } from '$lib/helpers/player';
+	import { getPlayerContext, getPlayerActions } from '$lib/context/player';
+	import { togglePlayerDrawer } from '$lib/helpers/player';
+	import { sampleRadioPlaylist, RADIO_PLAYLIST_SIZE } from '$lib/helpers';
 	import { cn } from '$lib/helpers/tailwind';
+	import type { Track } from '@fauxfetus/generator';
 
 	const playerStore = getPlayerContext();
+	const actionsStore = getPlayerActions();
+	const actions = $derived($actionsStore);
 
 	const { isPlaying } = $derived($playerStore);
 
 	function handleClick() {
 		togglePlayerDrawer();
 
-		const player = get(playerStore);
+		const { playlist } = $playerStore;
 
-		if (player.playlist.length === 0) {
+		// If no playlist is loaded yet, fetch tracks and start radio
+		if (playlist.length === 0) {
 			playerStore.update((s) => ({ ...s, isLoading: true }));
-			loadRadioPlaylist(playerStore);
+			fetch('/data/tracks.json')
+				.then((r) => r.json())
+				.then((tracks: Track[]) => {
+					const radioPlaylist = sampleRadioPlaylist(tracks, RADIO_PLAYLIST_SIZE);
+					playerStore.update((s) => ({ ...s, allTracks: tracks, isLoading: false }));
+					actions.loadPlaylist(radioPlaylist, 0, { isRadio: true });
+				});
+			return;
+		}
+
+		// Playlist exists — toggle play/pause
+		if (isPlaying) {
+			actions.pause();
+		} else {
+			actions.play();
 		}
 	}
 </script>

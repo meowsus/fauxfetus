@@ -1,45 +1,19 @@
 <script lang="ts">
 	import { cn } from '$lib/helpers/tailwind';
-	import { getPlayerContext } from '$lib/context/player';
-	import { updateMediaSessionPlaybackState } from '$lib/helpers/media-session';
-
-	import { incrementCurrentTrackIndex, decrementCurrentTrackIndex } from '$lib/helpers/player';
-
-	interface Props {
-		audioElement: HTMLAudioElement | null;
-	}
-
-	let { audioElement }: Props = $props();
+	import { getPlayerContext, getPlayerActions } from '$lib/context/player';
 
 	const playerStore = getPlayerContext();
+	const actionsStore = getPlayerActions();
+	const actions = $derived($actionsStore);
+
 	const { isPlaying } = $derived($playerStore);
-
-	function handlePrevious() {
-		decrementCurrentTrackIndex(playerStore);
-	}
-
-	function handleNext() {
-		incrementCurrentTrackIndex(playerStore);
-	}
-
-	function handlePlay() {
-		if (isPlaying) {
-			audioElement?.pause();
-			playerStore.update((s) => ({ ...s, isPlaying: false }));
-			updateMediaSessionPlaybackState(false);
-		} else {
-			audioElement?.play()?.catch(() => {});
-			playerStore.update((s) => ({ ...s, isPlaying: true }));
-			updateMediaSessionPlaybackState(true);
-		}
-	}
 </script>
 
-<button class="btn btn-square btn-ghost" onclick={handlePrevious}>
+<button class="btn btn-square btn-ghost" onclick={() => actions.prev()}>
 	<span class="icon-[line-md--chevron-small-double-left]">Previous</span>
 </button>
 
-<button class="btn btn-square btn-ghost" onclick={handlePlay}>
+<button class="btn btn-square btn-ghost" onclick={() => actions.togglePlay()}>
 	<span
 		class={cn(
 			isPlaying ? 'icon-[line-md--play-filled-to-pause-transition]' : 'icon-[line-md--play-twotone]'
@@ -48,6 +22,6 @@
 	>
 </button>
 
-<button class="btn btn-square btn-ghost" onclick={handleNext}>
+<button class="btn btn-square btn-ghost" onclick={() => actions.next()}>
 	<span class="icon-[line-md--chevron-small-double-right]">Next</span>
 </button>
