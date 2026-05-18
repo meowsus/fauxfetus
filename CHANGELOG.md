@@ -1,3 +1,7 @@
+# v2.12.1 - May 17, 2026
+
+- I have to go to the store. Please let me release this crap!
+
 # v2.12.0 - May 17, 2026
 
 - Add Voices in the Mist by The Night Owl
