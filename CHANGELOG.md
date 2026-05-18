@@ -1,3 +1,11 @@
+# v2.12.0 - May 17, 2026
+
+- Add Voices in the Mist by The Night Owl
+- Various dependency updates
+- Add easter egg to radio fab
+- Add deployment to release script
+- Add update toast that probably doesn't work
+
 # v2.11.0 - May 16, 2026
 
 - Further robot ranglin'
