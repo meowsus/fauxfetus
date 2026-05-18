@@ -8,36 +8,36 @@ set -euo pipefail
 
 # Ensure version bump type was provided
 if [ $# -ne 1 ]; then
-  echo "❌ Missing argument."
-  echo "Usage: $0 <patch|minor|major>"
-  exit 1
+	echo "❌ Missing argument."
+	echo "Usage: $0 <patch|minor|major>"
+	exit 1
 fi
 
 BUMP=$1
 
 # Validate the argument
 if [[ ! "$BUMP" =~ ^(patch|minor|major)$ ]]; then
-  echo "❌ Invalid release type: '$BUMP'"
-  echo "Valid options: patch, minor, major"
-  exit 1
+	echo "❌ Invalid release type: '$BUMP'"
+	echo "Valid options: patch, minor, major"
+	exit 1
 fi
 
 # Ensure clean working tree except CHANGELOG.md
 if ! git diff --quiet -- . ':!CHANGELOG.md' || ! git diff --cached --quiet -- . ':!CHANGELOG.md'; then
-  echo "❌ Commit or stash your changes before releasing (except CHANGELOG.md)."
-  exit 1
+	echo "❌ Commit or stash your changes before releasing (except CHANGELOG.md)."
+	exit 1
 fi
 
 # Ensure CHANGELOG.md has modifications
 if git diff --quiet -- CHANGELOG.md && git diff --cached --quiet -- CHANGELOG.md; then
-  echo "❌ CHANGELOG.md has not been updated. Please update it before releasing."
-  exit 1
+	echo "❌ CHANGELOG.md has not been updated. Please update it before releasing."
+	exit 1
 fi
 
 echo "✓ CHANGELOG.md updated."
 
 # Bump version without auto-commit or auto-tag
-pnpm version $BUMP --no-git-tag-version
+pnpm version $BUMP --no-git-tag-version --no-git-checks
 
 VERSION=$(jq -r '.version' package.json)
 

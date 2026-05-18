@@ -15,7 +15,7 @@
 		"data:generate": "tsx ./scripts/data/generate.ts",
 		"preview:local": "vite build && vite preview",
 		"deploy:build": "./scripts/deploy.sh",
-		"release": "./scripts/release.sh"
+		"bump": "./scripts/release.sh"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.4.0",

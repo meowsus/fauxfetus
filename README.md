@@ -75,5 +75,5 @@ pnpm deploy:build
 You'll need to update the `CHANGELOG.md` before running
 
 ```
-pnpm release [patch|minor|major]
+pnpm bump [patch|minor|major]
 ```
