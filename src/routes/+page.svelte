@@ -40,7 +40,7 @@
 
 <h1 class="sr-only">Faux Fetus</h1>
 
-<a href={resolve('/artists/')} class="btn mb-2 btn-secondary">Browse artists &rarr;</a>
+<a href={resolve('/artists/')} class="btn mb-2 mb-8 btn-secondary">Browse artists &rarr;</a>
 
 <section>
 	<h2 class="sr-only">Latest news</h2>
