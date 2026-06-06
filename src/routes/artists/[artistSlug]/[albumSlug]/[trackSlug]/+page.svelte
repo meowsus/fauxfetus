@@ -2,6 +2,7 @@
 	import type { PageData } from './$types';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import MetadataTable from '$lib/components/MetadataTable.svelte';
+	import TrackRow from '$lib/components/TrackRow.svelte';
 	import {
 		canonicalUrl,
 		jsonLdBreadcrumb,
@@ -60,5 +61,15 @@
 <div class="flex flex-col gap-4">
 	<Breadcrumb items={breadcrumbItems} />
 	<h1 class="sr-only">{data.track.name}</h1>
+
+	<ul class="list rounded-box bg-base-100 shadow-md">
+		<TrackRow
+			track={data.track}
+			index={data.startIndex}
+			playlist={data.playlist}
+			shouldDisableRadioMode={true}
+		/>
+	</ul>
+
 	<MetadataTable metadata={data.track.metadata} />
 </div>

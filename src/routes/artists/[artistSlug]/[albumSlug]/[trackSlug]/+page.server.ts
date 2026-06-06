@@ -31,9 +31,11 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	if (!album) throw error(404, 'Album not found');
 
-	const fullTrack = album.tracks.find((track) => track.slug === trackSlug);
+	const trackIndex = album.tracks.findIndex((track) => track.slug === trackSlug);
 
-	if (!fullTrack) throw error(404, 'Track not found');
+	if (trackIndex === -1) throw error(404, 'Track not found');
+
+	const fullTrack = album.tracks[trackIndex];
 
 	const track = {
 		slug: fullTrack.slug,
@@ -48,5 +50,5 @@ export const load: PageServerLoad = async ({ params }) => {
 		metadata: fullTrack.metadata
 	};
 
-	return { track };
+	return { track, playlist: album.tracks, startIndex: trackIndex };
 };
