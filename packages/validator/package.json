@@ -1,7 +1,7 @@
 {
-	"name": "@fauxfetus/generator",
+	"name": "@fauxfetus/validator",
 	"version": "1.0.0",
-	"description": "Data generator for fauxfetus",
+	"description": "Audio directory validation for fauxfetus",
 	"main": "index.ts",
 	"type": "module",
 	"scripts": {
@@ -11,9 +11,11 @@
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
-		"@fauxfetus/validator": "workspace:",
 		"@types/fs-extra": "catalog:fs-extra",
+		"@types/klaw": "^3.0.7",
 		"fs-extra": "catalog:fs-extra",
-		"slugify": "^1.6.6"
+		"klaw": "^4.1.0",
+		"music-metadata": "^11.10.0",
+		"zod": "^4.1.12"
 	}
 }

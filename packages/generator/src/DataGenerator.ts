@@ -1,22 +1,14 @@
+import {
+	ApeTag,
+	Validator,
+	type IAudioMetadata,
+	type PathMetadataTuple
+} from '@fauxfetus/validator';
 import fs from 'fs-extra';
-import klaw from 'klaw';
-import { parseBuffer, type IAudioMetadata } from 'music-metadata';
 import path from 'path';
 import slugify from 'slugify';
-import { ValidatorService } from './services/ValidatorService';
 
-const SKIP_DIR_PATTERN = /^_RETIRED/;
-
-export type PathMetadataTuple = [audioUrl: string, metadata: IAudioMetadata];
-
-type MetadataDictionary = {
-	[artistName: string]: {
-		[albumName: string]: {
-			audioUrl: string;
-			metadata: IAudioMetadata;
-		}[];
-	};
-};
+export type { PathMetadataTuple };
 
 export interface Track {
 	slug: string;
@@ -53,20 +45,24 @@ export interface Artist {
 	albums: Album[];
 }
 
-export enum ApeTag {
-	Artist = 'ARTIST',
-	Album = 'ALBUM',
-	Title = 'TITLE',
-	Compilation = 'COMPILATION'
-}
-
 const createSlug = (str: string) => slugify(str, { lower: true, strict: true });
 
-const findAPEv2TagValue = (metadata: IAudioMetadata, tagId: ApeTag) => {
+/**
+ * Look up an APEv2 tag value in a metadata block.
+ *
+ * Throws if the tag is missing or its value isn't a string. This is treated
+ * as an *invariant* by the rest of this module: the validator's
+ * `validateApeTags` check has already guaranteed the tag exists and is a
+ * string before we get here, so any throw is a real bug (validation
+ * regressed or was bypassed), not a user-facing validation error.
+ */
+const findAPEv2TagValue = (metadata: IAudioMetadata, tagId: ApeTag): string => {
 	const tag = metadata.native.APEv2.find((tag) => tag.id === tagId);
 
-	if (!tag) throw new Error(`${tagId} not found`);
-	if (typeof tag.value !== 'string') throw new Error(`${tagId} not a string`);
+	if (!tag) throw new Error(`Invariant violated: ${tagId} tag missing after validation`);
+	if (typeof tag.value !== 'string') {
+		throw new Error(`Invariant violated: ${tagId} value is not a string after validation`);
+	}
 
 	return tag.value;
 };
@@ -81,13 +77,44 @@ export class DataGenerator {
 	private metadataDictionary: MetadataDictionary = {};
 	private catalog: Artist[] = [];
 
-	private validatorService: ValidatorService;
-
-	constructor(readPath: string, writePath: string) {
+	private constructor(readPath: string, writePath: string) {
 		this.readPath = readPath;
 		this.writePath = writePath;
+	}
 
-		this.validatorService = new ValidatorService();
+	/**
+	 * Build a DataGenerator. The audio directory at `readPath` is validated
+	 * as a prerequisite — if any file is malformed, the full failure report
+	 * is printed and an error is thrown before any instance is returned.
+	 * Use this instead of `new DataGenerator(...)` (the constructor is
+	 * private) so the prerequisite check is unavoidable.
+	 */
+	static async create(readPath: string, writePath: string): Promise<DataGenerator> {
+		const { tuples, summary } = await Validator.readAndValidate(readPath);
+
+		if (summary.failures.length > 0) {
+			Validator.printReport(summary, readPath);
+
+			const fileCount = new Set(summary.failures.map((f) => f.path)).size;
+			throw new Error(
+				`Cannot generate data: ${summary.failures.length} validation error(s) across ${fileCount} file(s). ` +
+					`Run \`pnpm data:validate\` for full details.`
+			);
+		}
+
+		const generator = new DataGenerator(readPath, writePath);
+
+		// Partition the validated tuples. Safe to read APEv2 directly here
+		// because the validator already verified the structure.
+		for (const [relativePath, metadata] of tuples) {
+			const isCompilation = metadata.native.APEv2.some((item) => item.id === ApeTag.Compilation);
+			(isCompilation ? generator.compilationsMp3Metadata : generator.mp3Metadata).push([
+				relativePath,
+				metadata
+			]);
+		}
+
+		return generator;
 	}
 
 	/** Build a Track from validated metadata. Single place for IAudioMetadata → Track. */
@@ -140,31 +167,6 @@ export class DataGenerator {
 		await fs.emptyDir(this.writePath);
 	}
 
-	private async buildMp3Metadata(): Promise<void> {
-		for await (const file of klaw(this.readPath)) {
-			const relativePath = path.relative(this.readPath, file.path);
-
-			if (!relativePath.endsWith('.mp3')) continue;
-			if (SKIP_DIR_PATTERN.test(relativePath)) continue;
-
-			const buffer = await fs.readFile(file.path);
-			const metadata = await parseBuffer(buffer, { mimeType: 'audio/mpeg' });
-
-			const isCompilation = metadata.native.APEv2.some((item) => item.id === ApeTag.Compilation);
-
-			if (isCompilation) {
-				this.compilationsMp3Metadata.push([relativePath, metadata]);
-			} else {
-				this.mp3Metadata.push([relativePath, metadata]);
-			}
-		}
-	}
-
-	private async validateMp3Metadata(): Promise<void> {
-		this.validatorService.run(this.mp3Metadata);
-		this.validatorService.run(this.compilationsMp3Metadata);
-	}
-
 	private async sortMp3MetadataByPath(): Promise<void> {
 		this.mp3Metadata.sort((a, b) => {
 			return a[0].localeCompare(b[0]);
@@ -175,8 +177,8 @@ export class DataGenerator {
 		});
 	}
 
-	// We can make assumptions about the presence and typing of data here
-	// because this has already been passed through the validator.
+	// Safe to assume APEv2 tags are well-formed here — the validator's
+	// prerequisite check has already guaranteed it.
 	private async buildMetadataDictionary(): Promise<void> {
 		for (const [audioUrl, metadata] of this.mp3Metadata) {
 			const artistName = findAPEv2TagValue(metadata, ApeTag.Artist);
@@ -198,8 +200,7 @@ export class DataGenerator {
 		}
 	}
 
-	// We can make assumptions about the presence and typing of data here
-	// because this has already been passed through the validator.
+	// Safe to assume APEv2 tags are well-formed here — see buildMetadataDictionary.
 	private async backfillCompilations(): Promise<void> {
 		//  First, we group our array of compilation tuples by the *globally unique* compilation
 		//  name, so that we can access the metadata per grouping individually
@@ -334,8 +335,6 @@ export class DataGenerator {
 	async run(): Promise<void> {
 		await this.ensurePathsExist();
 		await this.emptyWritePath();
-		await this.buildMp3Metadata();
-		await this.validateMp3Metadata();
 		await this.sortMp3MetadataByPath();
 		await this.buildMetadataDictionary();
 		await this.backfillCompilations();
@@ -345,3 +344,12 @@ export class DataGenerator {
 		await this.writeTracksJson();
 	}
 }
+
+type MetadataDictionary = {
+	[artistName: string]: {
+		[albumName: string]: {
+			audioUrl: string;
+			metadata: IAudioMetadata;
+		}[];
+	};
+};

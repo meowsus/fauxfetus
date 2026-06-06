@@ -66,11 +66,17 @@ fauxfetus/
 ├── packages/generator/            # @fauxfetus/generator workspace package
 │   ├── index.ts
 │   └── src/
-│       ├── DataGenerator.ts       # Reads audio files, outputs JSON
-│       └── services/
-│           └── ValidatorService.ts
+│       └── DataGenerator.ts       # Reads audio metadata, builds catalog/tracks JSON
+├── packages/validator/            # @fauxfetus/validator workspace package
+│   ├── index.ts
+│   └── src/
+│       ├── ApeTag.ts              # APEv2 tag ID enum
+│       ├── Validator.ts           # Validator class (mirrors DataGenerator shape) + static validate(tuples)
+│       ├── types.ts               # Shared PathMetadataTuple
+│       └── walk.ts                # readAudioMetadata() — klaw walker
 ├── scripts/
 │   ├── data/generate.ts           # pnpm data:generate — runs DataGenerator
+│   ├── data/validate.ts           # pnpm data:validate — runs validateAudio
 │   ├── deploy.sh                  # Build + rsync deploy
 │   └── release.sh                 # Version bump + release
 ├── static/
@@ -82,11 +88,15 @@ fauxfetus/
 
 ## Data Flow
 
-1. `pnpm data:generate` → runs `scripts/data/generate.ts`
-2. `DataGenerator` reads audio files from `static/audio/` via `music-metadata`
+1. `pnpm data:validate` → runs `scripts/data/validate.ts` → `Validator` (in `@fauxfetus/validator`) walks `static/audio/`, parses metadata, and returns a `ValidationSummary` (collecting all errors, no throw-on-first)
+2. `pnpm data:generate` → runs `scripts/data/generate.ts` → `DataGenerator.create()` (in `@fauxfetus/generator`) calls `Validator.readAndValidate()` from `@fauxfetus/validator` as a constructor-time prerequisite. If any audio file is invalid, the full failure report is printed and an error is thrown — the generator object is never returned, so `run()` cannot be called. If validation passes, `run()` builds the catalog and writes JSON with no further validation.
 3. Outputs `static/data/catalog.json` and `static/data/tracks.json`
 4. At build time, `+page.server.ts` load functions call `readCatalog()` which reads `static/data/catalog.json`
 5. `adapter-static` prerenders all pages — no runtime server
+
+**Package dependency direction:** `generator` depends on `validator`. `validator` knows nothing about `generator`. This matches the natural relationship: "the audio directory has this contract" is a validator concern; "given valid audio, build a navigable catalog" is a generator concern.
+
+**CLI script shape:** both `scripts/data/generate.ts` and `scripts/data/validate.ts` are thin shims — they define `READ_PATH` (and `WRITE_PATH` for generate), instantiate the package's main class, and call `run()`. The only CLI concerns that live in the scripts (rather than the packages) are `process.exit()` based on the result and any output formatting that requires the exit code.
 
 ## Constraints
 
@@ -139,6 +149,7 @@ fauxfetus/
 | `pnpm lint`          | Prettier check + ESLint                         | After every code change           | Yes       |
 | `pnpm format`        | Format all files with Prettier                  | After every code change           | Yes       |
 | `pnpm data:generate` | Regenerate catalog/tracks JSON from audio files | —                                 | Yes       |
+| `pnpm data:validate` | Validate audio files against schema/format/tags | —                                 | Yes       |
 | `pnpm deploy:build`  | Build + rsync to server                         | —                                 | No, never |
 | `pnpm release`       | Version bump + release                          | —                                 | No, never |
 
