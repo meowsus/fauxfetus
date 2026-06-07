@@ -209,6 +209,18 @@ export class Validator {
 		} else if (compilation.length === 1 && typeof compilation[0].value !== 'string') {
 			throw new ApeTagValidationError(path, 'Compilation value not a string', tags);
 		}
+
+		const composer = tags.filter((item) => item.id === 'COMPOSER');
+
+		if (composer.length === 0) {
+			throw new ApeTagValidationError(path, 'No composer', tags);
+		}
+
+		for (const item of composer) {
+			if (typeof item.value !== 'string') {
+				throw new ApeTagValidationError(path, 'Composer not a string', tags);
+			}
+		}
 	}
 
 	/**

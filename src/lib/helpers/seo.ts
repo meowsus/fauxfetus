@@ -99,6 +99,39 @@ export function jsonLdMusicGroup(artist: {
 	return ld;
 }
 
+/**
+ * ItemList JSON-LD describing artists related to the current one, in
+ * order from strongest to weakest relationship. Each entry is a MusicGroup
+ * ListItem; `about` ties the list back to the source artist so search
+ * engines understand the relationship rather than treating it as a
+ * generic ranked list.
+ */
+export function jsonLdRelatedArtists(
+	sourceArtist: { name: string; slug: string },
+	relatedArtists: Array<{ name: string; slug: string }>
+) {
+	return {
+		'@context': 'https://schema.org',
+		'@type': 'ItemList',
+		name: `Artists related to ${sourceArtist.name}`,
+		about: {
+			'@type': 'MusicGroup',
+			name: sourceArtist.name,
+			url: canonicalUrl(`/artists/${sourceArtist.slug}/`)
+		},
+		numberOfItems: relatedArtists.length,
+		itemListElement: relatedArtists.map((artist, index) => ({
+			'@type': 'ListItem',
+			position: index + 1,
+			item: {
+				'@type': 'MusicGroup',
+				name: artist.name,
+				url: canonicalUrl(`/artists/${artist.slug}/`)
+			}
+		}))
+	};
+}
+
 /** MusicAlbum schema for an album page. */
 export function jsonLdMusicAlbum(album: {
 	name: string;

@@ -2,10 +2,12 @@
 	import type { PageData } from './$types';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import AlbumList from '$lib/components/AlbumList.svelte';
+	import RelatedArtistList from '$lib/components/RelatedArtistList.svelte';
 	import {
 		canonicalUrl,
 		jsonLdBreadcrumb,
 		jsonLdMusicGroup,
+		jsonLdRelatedArtists,
 		jsonLdScript,
 		ogMeta
 	} from '$lib/helpers/seo';
@@ -36,6 +38,13 @@
 		}))
 	});
 	const breadcrumbLd = jsonLdBreadcrumb(breadcrumbItems);
+	const relatedArtistsLd =
+		data.recommendedArtists.length > 0
+			? jsonLdRelatedArtists(
+					{ name: data.artist.name, slug: data.artist.slug },
+					data.recommendedArtists
+				)
+			: null;
 </script>
 
 <svelte:head>
@@ -49,9 +58,19 @@
 
 <JsonLd html={jsonLdScript(musicGroupLd)} />
 <JsonLd html={jsonLdScript(breadcrumbLd)} />
+{#if relatedArtistsLd}
+	<JsonLd html={jsonLdScript(relatedArtistsLd)} />
+{/if}
 
-<div class="flex flex-col gap-2">
-	<Breadcrumb items={breadcrumbItems} />
+<div class="flex flex-col gap-2 md:grid md:grid-cols-3 md:gap-4">
+	<div class="md:col-span-3">
+		<Breadcrumb items={breadcrumbItems} />
+	</div>
 	<h1 class="sr-only">{data.artist.name}</h1>
-	<AlbumList albums={data.artist.albums} />
+	<div class="md:col-span-2">
+		<AlbumList albums={data.artist.albums} />
+	</div>
+	<div class="md:col-span-1">
+		<RelatedArtistList artists={data.recommendedArtists} />
+	</div>
 </div>

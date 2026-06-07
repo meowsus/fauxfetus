@@ -10,6 +10,8 @@ import slugify from 'slugify';
 
 export type { PathMetadataTuple };
 
+export type Recommendations = Record<string, string[]>;
+
 export interface Track {
 	slug: string;
 	name: string;
@@ -332,6 +334,106 @@ export class DataGenerator {
 		await fs.writeJson(path.join(this.writePath, 'tracks.json'), tracks);
 	}
 
+	/**
+	 * Build the per-artist composer set from the catalog. Compilation-album
+	 * tracks are excluded because their COMPOSER values are one-off cross-
+	 * artist credits, not "band members" of any single artist. The literal
+	 * 'Unknown' (case-insensitive) is filtered out as a placeholder for
+	 * members whose name wasn't recorded. The set is normalized to a sorted
+	 * array for stable, deterministic output.
+	 */
+	private buildComposerSets(): Map<string, string[]> {
+		const sets = new Map<string, string[]>();
+		const isUnknown = (name: string) => name.trim().toLowerCase() === 'unknown';
+
+		for (const artist of this.catalog) {
+			const composers = new Set<string>();
+
+			for (const album of artist.albums) {
+				if (album.isCompilation) continue;
+
+				for (const track of album.tracks) {
+					const apeTags = track.metadata?.native.APEv2 ?? [];
+					for (const tag of apeTags) {
+						if (tag.id !== 'COMPOSER') continue;
+						if (typeof tag.value !== 'string') continue;
+						if (isUnknown(tag.value)) continue;
+						composers.add(tag.value);
+					}
+				}
+			}
+
+			sets.set(artist.slug, [...composers].sort());
+		}
+
+		return sets;
+	}
+
+	/**
+	 * Build the recommendations graph. For each artist, recommend other
+	 * artists ordered by:
+	 *   1. sharedCount desc — size of the COMPOSER intersection
+	 *   2. extrasCount asc — how many extra composers the candidate has
+	 *      (so an exact-member match outranks a superset)
+	 *   3. artistSlug asc — deterministic tiebreaker
+	 * Self-recommendations and zero-overlap candidates are omitted.
+	 */
+	private buildRecommendations(composerSets: Map<string, string[]>): Recommendations {
+		const graph: Recommendations = {};
+
+		for (const [sourceSlug, sourceComposers] of composerSets) {
+			const sourceSet = new Set(sourceComposers);
+
+			if (sourceSet.size === 0) {
+				graph[sourceSlug] = [];
+				continue;
+			}
+
+			const candidates: {
+				artistSlug: string;
+				sharedCount: number;
+				extrasCount: number;
+				shared: string[];
+			}[] = [];
+
+			for (const [candidateSlug, candidateComposers] of composerSets) {
+				if (candidateSlug === sourceSlug) continue;
+				if (candidateComposers.length === 0) continue;
+
+				const candidateSet = new Set(candidateComposers);
+				const shared: string[] = [];
+				for (const name of candidateComposers) {
+					if (sourceSet.has(name)) shared.push(name);
+				}
+				if (shared.length === 0) continue;
+
+				candidates.push({
+					artistSlug: candidateSlug,
+					sharedCount: shared.length,
+					extrasCount: candidateSet.size - shared.length,
+					shared: shared.sort()
+				});
+			}
+
+			candidates.sort((a, b) => {
+				if (b.sharedCount !== a.sharedCount) return b.sharedCount - a.sharedCount;
+				if (a.extrasCount !== b.extrasCount) return a.extrasCount - b.extrasCount;
+				return a.artistSlug.localeCompare(b.artistSlug);
+			});
+
+			graph[sourceSlug] = candidates.map((c) => c.artistSlug);
+		}
+
+		return graph;
+	}
+
+	private async writeRecommendationsJson(): Promise<void> {
+		const composerSets = this.buildComposerSets();
+		const graph = this.buildRecommendations(composerSets);
+
+		await fs.writeJson(path.join(this.writePath, 'recommendations.json'), graph);
+	}
+
 	async run(): Promise<void> {
 		await this.ensurePathsExist();
 		await this.emptyWritePath();
@@ -342,6 +444,7 @@ export class DataGenerator {
 		await this.sortCatalog();
 		await this.writeCatalogJson();
 		await this.writeTracksJson();
+		await this.writeRecommendationsJson();
 	}
 }
 

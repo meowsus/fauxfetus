@@ -1,4 +1,5 @@
 import { readCatalog } from '$lib/helpers/catalog.js';
+import { readRecommendations } from '$lib/helpers/recommendations.js';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
@@ -13,7 +14,7 @@ export const entries = async () => {
 export const load: PageServerLoad = async ({ params }) => {
 	const { artistSlug } = params;
 
-	const catalog = await readCatalog();
+	const [catalog, recommendations] = await Promise.all([readCatalog(), readRecommendations()]);
 	const fullArtist = catalog.find((artist) => artist.slug === artistSlug);
 
 	if (!fullArtist) {
@@ -31,5 +32,16 @@ export const load: PageServerLoad = async ({ params }) => {
 		}))
 	};
 
-	return { artist };
+	// Resolve recommended slugs to display names. Drop any that aren't in
+	// the catalog (defensive — recommendations.json could in theory name
+	// a stale slug after a rename).
+	const namesBySlug = new Map(catalog.map((a) => [a.slug, a.name]));
+	const recommendedArtists = (recommendations[artistSlug] ?? [])
+		.map((slug) => {
+			const name = namesBySlug.get(slug);
+			return name ? { slug, name } : null;
+		})
+		.filter((entry): entry is { slug: string; name: string } => entry !== null);
+
+	return { artist, recommendedArtists };
 };

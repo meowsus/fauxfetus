@@ -2,5 +2,6 @@ export enum ApeTag {
 	Artist = 'ARTIST',
 	Album = 'ALBUM',
 	Title = 'TITLE',
-	Compilation = 'COMPILATION'
+	Compilation = 'COMPILATION',
+	Composer = 'COMPOSER'
 }
