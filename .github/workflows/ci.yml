@@ -20,10 +20,11 @@ jobs:
 
       # setup-node MUST run before pnpm/action-setup. pnpm 11 self-installs via
       # Node and requires Node >=22.13; the runner's default is Node 20.
+      # Note: do NOT set `cache: pnpm` here — setup-node tries to invoke pnpm to
+      # compute the cache key, and pnpm isn't on PATH yet at this step.
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-          cache: pnpm
 
       - uses: pnpm/action-setup@v4
         with:
@@ -44,7 +45,6 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-          cache: pnpm
 
       - uses: pnpm/action-setup@v4
         with:
@@ -63,7 +63,6 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-          cache: pnpm
 
       - uses: pnpm/action-setup@v4
         with:
