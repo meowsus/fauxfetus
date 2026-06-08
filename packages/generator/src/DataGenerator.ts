@@ -12,6 +12,45 @@ export type { PathMetadataTuple };
 
 export type Recommendations = Record<string, string[]>;
 
+/**
+ * Subset of `IAudioMetadata` actually consumed by the site's
+ * `MetadataTable` component. The full metadata block (format, common,
+ * native APEv2 tags) is large because the validator permits embedded
+ * cover art as `Uint8Array` values inside `native.APEv2`, which
+ * `JSON.stringify` then blows up into a 225 MB wall of `{"0":255,...}`.
+ *
+ * At generation time we collapse the per-track metadata down to just
+ * the fields `MetadataTable` reads and write the result to
+ * `static/data/track-metadata.json`, keyed by `audioUrl`. The catalog
+ * (read by every page server load function) carries *no* metadata at
+ * all — only the track page's server load function consults this
+ * smaller sidecar. Adding a new field to `MetadataTable` is a
+ * one-place change in `pruneTrackMetadata`.
+ */
+export interface PrunedMetadata {
+	format: {
+		container: string | undefined;
+		codec: string | undefined;
+		codecProfile: string | undefined;
+		bitrate: number | undefined;
+		sampleRate: number | undefined;
+		numberOfChannels: number | undefined;
+		duration: number | undefined;
+		lossless: boolean | undefined;
+	};
+	common: {
+		title: string | undefined;
+		artist: string | undefined;
+		album: string | undefined;
+		track: { no: number | null; of: number | null } | undefined;
+		disk: { no: number | null; of: number | null } | undefined;
+	};
+	/** String-valued APEv2 tags. Object-valued (cover art) tags are dropped. */
+	native: { APEv2: Array<{ id: string; value: string }> };
+}
+
+export type TrackMetadataLookup = Record<string, PrunedMetadata>;
+
 export interface Track {
 	slug: string;
 	name: string;
@@ -323,7 +362,88 @@ export class DataGenerator {
 	}
 
 	private async writeCatalogJson(): Promise<void> {
-		await fs.writeJson(path.join(this.writePath, 'catalog.json'), this.catalog);
+		// The catalog is read by every page's server load function
+		// (artists, [artistSlug], [artistSlug]/[albumSlug],
+		// [artistSlug]/[albumSlug]/[trackSlug]). None of them read the
+		// per-track `metadata` field — that lives in `track-metadata.json`
+		// and is only consulted by the track page. Stripping it here
+		// drops catalog.json from ~330 MB to ~1 MB.
+		const stripped: Artist[] = this.catalog.map((artist) => ({
+			slug: artist.slug,
+			name: artist.name,
+			albums: artist.albums.map((album) => ({
+				slug: album.slug,
+				name: album.name,
+				artistSlug: album.artistSlug,
+				artistName: album.artistName,
+				isCompilation: album.isCompilation,
+				tracks: album.tracks.map((track) => ({
+					slug: track.slug,
+					name: track.name,
+					number: track.number,
+					artistSlug: track.artistSlug,
+					artistName: track.artistName,
+					albumSlug: track.albumSlug,
+					albumName: track.albumName,
+					isCompilation: track.isCompilation,
+					audioUrl: track.audioUrl
+				}))
+			}))
+		}));
+
+		await fs.writeJson(path.join(this.writePath, 'catalog.json'), stripped);
+	}
+
+	/**
+	 * Collapse a single track's `IAudioMetadata` down to the fields the
+	 * site's `MetadataTable` component actually renders. Anything not
+	 * listed here is dead weight on the wire and on disk. Cover art
+	 * (`{ description, data: Uint8Array }` shapes inside `native.APEv2`)
+	 * is dropped — it's not displayed and it's the bulk of the bloat.
+	 */
+	private pruneTrackMetadata(metadata: IAudioMetadata): PrunedMetadata {
+		const nativeApev2 = (metadata.native?.APEv2 ?? []).filter(
+			(tag): tag is { id: string; value: string } => typeof tag.value === 'string'
+		);
+
+		const trackNo = metadata.common?.track?.no ?? null;
+		const trackOf = metadata.common?.track?.of ?? null;
+		const diskNo = metadata.common?.disk?.no ?? null;
+		const diskOf = metadata.common?.disk?.of ?? null;
+
+		return {
+			format: {
+				container: metadata.format?.container,
+				codec: metadata.format?.codec,
+				codecProfile: metadata.format?.codecProfile,
+				bitrate: metadata.format?.bitrate,
+				sampleRate: metadata.format?.sampleRate,
+				numberOfChannels: metadata.format?.numberOfChannels,
+				duration: metadata.format?.duration,
+				lossless: metadata.format?.lossless
+			},
+			common: {
+				title: metadata.common?.title,
+				artist: metadata.common?.artist,
+				album: metadata.common?.album,
+				track: trackNo != null || trackOf != null ? { no: trackNo, of: trackOf } : undefined,
+				disk: diskNo != null || diskOf != null ? { no: diskNo, of: diskOf } : undefined
+			},
+			native: { APEv2: nativeApev2 }
+		};
+	}
+
+	private async writeTrackMetadataJson(): Promise<void> {
+		const lookup: TrackMetadataLookup = {};
+
+		for (const [audioUrl, metadata] of this.mp3Metadata) {
+			lookup[audioUrl] = this.pruneTrackMetadata(metadata);
+		}
+		for (const [audioUrl, metadata] of this.compilationsMp3Metadata) {
+			lookup[audioUrl] = this.pruneTrackMetadata(metadata);
+		}
+
+		await fs.writeJson(path.join(this.writePath, 'track-metadata.json'), lookup);
 	}
 
 	private async writeTracksJson(): Promise<void> {
@@ -443,6 +563,7 @@ export class DataGenerator {
 		await this.buildCatalog();
 		await this.sortCatalog();
 		await this.writeCatalogJson();
+		await this.writeTrackMetadataJson();
 		await this.writeTracksJson();
 		await this.writeRecommendationsJson();
 	}

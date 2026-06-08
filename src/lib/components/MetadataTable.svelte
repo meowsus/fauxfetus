@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { Track } from '@fauxfetus/generator';
+	import type { PrunedMetadata } from '@fauxfetus/generator';
 
 	interface Props {
-		metadata: Track['metadata'];
+		metadata: PrunedMetadata | undefined;
 	}
 
 	let { metadata }: Props = $props();

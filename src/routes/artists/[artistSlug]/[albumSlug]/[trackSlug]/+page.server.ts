@@ -1,4 +1,5 @@
 import { readCatalog } from '$lib/helpers/catalog.js';
+import { readTrackMetadata } from '$lib/helpers/track-metadata.js';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
@@ -46,9 +47,16 @@ export const load: PageServerLoad = async ({ params }) => {
 		albumName: fullTrack.albumName,
 		isCompilation: fullTrack.isCompilation,
 		audioUrl: fullTrack.audioUrl,
-		number: fullTrack.number,
-		metadata: fullTrack.metadata
+		number: fullTrack.number
 	};
 
-	return { track, playlist: album.tracks, startIndex: trackIndex };
+	// Metadata lives in a separate sidecar (track-metadata.json) keyed
+	// by audioUrl. Catalog.json no longer carries it — the playlist
+	// rows don't render metadata, and only this page's <MetadataTable>
+	// needs it. Passing audioUrl to the page (rather than looking up
+	// the metadata here) would also work, but the lookup is O(1) and
+	// avoids leaking the sidecar shape to the client-side component.
+	const metadata = await readTrackMetadata(fullTrack.audioUrl);
+
+	return { track, playlist: album.tracks, startIndex: trackIndex, metadata };
 };

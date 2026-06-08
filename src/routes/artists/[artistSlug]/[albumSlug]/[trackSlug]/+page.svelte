@@ -71,5 +71,5 @@
 		/>
 	</ul>
 
-	<MetadataTable metadata={data.track.metadata} />
+	<MetadataTable metadata={data.metadata} />
 </div>
