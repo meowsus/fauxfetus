@@ -1,3 +1,21 @@
+## June 8, 2026
+
+I had some time this weekend to fix a few things that were nagging at me.
+
+First, the radio algorithm was adjusted again. When I created the radio player initially it would randomize the entire catalog, which would favor prolific artists higher than artists who had only a few tracks. On it's second iteration I released it a version which would give fairer playtime to all artists, but that actually ended up favoring the least prolific artists. Now, thanks to some fancy math that I don't truly understand, we should have a good dispersion of tracks. I know that no one cares, but I care.
+
+Second, I threw a play button on the track pages. Now you can launch the player if you happened to land on one of the track pages. This caused the build time to generate the site to go from forty-five seconds up to eight and a half minutes. After a good amount of research into that I was able to cut the build time down to twenty seconds or so by segmenting out the data responsible for rendering the track metadata into its own file.
+
+Third, I added a new data validator which forces me to add "composer" data to the APEv2 ID3 tags that are responsible for building out the entire site. Years ago, I spent a ton of time hunting down the names of everyone who has contributed music to the site. I've lost touch with some people and have completely forgotten their names, and with newer submissions I've become lazy and haven't been maintaining this data. Now, with the new validator, I'm unable to build the site without first adding these names.
+
+Third and a half: the aforementioned validator allows me to accurately link artists together. During generation I'm now determining which artists are related to other artists on the site by collating their band members, which are stored in the "composer" data, to be able to produce a map linking each artist together. In other words, if Biff Smithington played drums in both Dog Boil and Smithington's Revenge, each artist page would reference the other's page, provided I've spelled everyone's name correctly. Now you can start to see just how incestuous some of the bands were over the years, and who doesn't _love_ incest?
+
+Third and three-quarters: I also did a bit of decoupling between data _generation_ and _validation_ so that I can more easily validate data without having to generate simultaneously.
+
+And, finally fourthfully: I made some visual "improvements" to the artists list and album list components. I'm not fully happy with it, but it's a step in the right direction. The next big push I want to do is to add album art which does not exist for 90% of the catalog. The new grid layout for artists is immediately more difficult to grok, in my opinion, so I may iterate a bit more in the coming days.
+
+Enjoy it, kiddos.
+
 ## May 17, 2026
 
 The audio player updates have definitely made some kind of positive impact, but I'm still not fully satisfied. I'm in the process of writing an external audio engine library which should help, but we're limping along at least.
