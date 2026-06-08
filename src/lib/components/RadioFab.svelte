@@ -10,7 +10,7 @@
 	const actionsStore = getPlayerActions();
 	const actions = $derived($actionsStore);
 
-	const { isPlaying } = $derived($playerStore);
+	const { isPlaying, playlist } = $derived($playerStore);
 
 	let longpressTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -27,12 +27,18 @@
 		}
 	}
 
+	/**
+	 * The FAB only toggles drawer visibility — it intentionally does NOT
+	 * pause/resume audio. Closing the drawer hides the UI via CSS but the
+	 * <Player> component stays mounted, so the Gapless5 engine and audio
+	 * playback continue unaffected. Play/pause lives on the drawer's own
+	 * controls (CurrentTrackControls).
+	 *
+	 * The one exception is the very first tap, when no playlist is loaded
+	 * yet — in that case we fetch tracks and start the radio so the drawer
+	 * has something to show.
+	 */
 	function handleClick() {
-		togglePlayerDrawer();
-
-		const { playlist } = $playerStore;
-
-		// If no playlist is loaded yet, fetch tracks and start radio
 		if (playlist.length === 0) {
 			playerStore.update((s) => ({ ...s, isLoading: true }));
 			fetch('/data/tracks.json')
@@ -42,15 +48,9 @@
 					playerStore.update((s) => ({ ...s, allTracks: tracks, isLoading: false }));
 					actions.loadPlaylist(radioPlaylist, 0, { isRadio: true });
 				});
-			return;
 		}
 
-		// Playlist exists — toggle play/pause
-		if (isPlaying) {
-			actions.pause();
-		} else {
-			actions.play();
-		}
+		togglePlayerDrawer();
 	}
 </script>
 
@@ -64,8 +64,8 @@
 	onpointerup={cancelLongpress}
 	onpointerleave={cancelLongpress}
 	onpointercancel={cancelLongpress}
-	title="Toggle radio"
-	aria-label="Toggle radio"
+	title="Toggle player"
+	aria-label="Toggle player"
 >
 	<span
 		class={cn(

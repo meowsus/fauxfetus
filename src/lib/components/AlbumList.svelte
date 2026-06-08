@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { avatarColorClass, clickableCardClass, initialsFromName } from '$lib/helpers/avatar';
 
 	let {
 		albums
@@ -13,21 +14,32 @@
 	} = $props();
 </script>
 
-<ul class="list rounded-box bg-base-100 shadow-md">
-	<li class="p-4 pb-2 text-xs tracking-wide opacity-60">Albums</li>
+<div class="rounded-box bg-base-100 shadow-md">
+	<div class="p-4 pb-2 text-xs tracking-wide opacity-60">Albums</div>
 
-	{#each albums as album (album.slug)}
-		<li class="list-row">
-			<div class="flex items-center gap-2">
-				<a
-					href={resolve(`/artists/${album.artistSlug}/${album.slug}`)}
-					class="hover:link-primary/80 link text-lg link-primary">{album.name}</a
-				>
+	<div class="p-4 pt-2">
+		<div class="flex flex-col gap-2">
+			{#each albums as album (album.slug)}
+				<a href={resolve(`/artists/${album.artistSlug}/${album.slug}`)} class={clickableCardClass}>
+					<div class="card-body flex-row items-center gap-3 p-4">
+						<div class="avatar avatar-placeholder shrink-0">
+							<div class="{avatarColorClass(album.slug)} w-12 rounded-full">
+								<span class="text-sm">{initialsFromName(album.name)}</span>
+							</div>
+						</div>
 
-				{#if album.isCompilation}
-					<span class="badge badge-outline badge-sm badge-info">Compilation</span>
-				{/if}
-			</div>
-		</li>
-	{/each}
-</ul>
+						<div class="line-clamp-2 grow text-sm font-medium">
+							{album.name}
+						</div>
+
+						{#if album.isCompilation}
+							<div class="flex shrink-0 justify-end">
+								<span class="badge badge-outline badge-sm badge-info">Compilation</span>
+							</div>
+						{/if}
+					</div>
+				</a>
+			{/each}
+		</div>
+	</div>
+</div>

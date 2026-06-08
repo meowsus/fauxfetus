@@ -67,10 +67,12 @@
 		<Breadcrumb items={breadcrumbItems} />
 	</div>
 	<h1 class="sr-only">{data.artist.name}</h1>
-	<div class="md:col-span-2">
+	<div class={data.recommendedArtists.length > 0 ? 'md:col-span-2' : 'md:col-span-3'}>
 		<AlbumList albums={data.artist.albums} />
 	</div>
-	<div class="md:col-span-1">
-		<RelatedArtistList artists={data.recommendedArtists} />
-	</div>
+	{#if data.recommendedArtists.length > 0}
+		<div class="md:col-span-1">
+			<RelatedArtistList artists={data.recommendedArtists} />
+		</div>
+	{/if}
 </div>
