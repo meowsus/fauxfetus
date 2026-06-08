@@ -11,6 +11,14 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# pnpm 11 self-installs via Node and requires Node >=22.13. The runner's
+# default Node for JS actions is currently Node 20, which is too old. Setting
+# this forces JS actions (including pnpm/action-setup) onto Node 24. This flag
+# becomes unnecessary once GitHub makes Node 24 the default for JS actions
+# (June 16th, 2026 per the deprecation notice).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   lint:
     name: lint
