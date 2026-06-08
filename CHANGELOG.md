@@ -1,3 +1,12 @@
+# v2.13.0 - June 8, 2026
+
+- Update homepage spacing
+- Add real radio play algorithm
+- Decouple validation from generation
+- Add related artists
+- Drastically reduce build time
+- Munge artists and albums UIs
+
 # v2.12.1 - May 17, 2026
 
 - I have to go to the store. Please let me release this crap!
