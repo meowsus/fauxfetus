@@ -1,0 +1,19 @@
+{
+	"name": "@fauxfetus/ripper",
+	"version": "1.0.0",
+	"description": "CD ripper CLI for fauxfetus",
+	"main": "index.ts",
+	"type": "module",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@inquirer/prompts": "^7.0.0",
+		"@types/fs-extra": "catalog:fs-extra",
+		"fs-extra": "catalog:fs-extra",
+		"slugify": "^1.6.6"
+	}
+}
