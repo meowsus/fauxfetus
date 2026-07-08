@@ -1,3 +1,9 @@
+# v2.14.0 - July 5, 2026
+
+- Add @fauxfetus/ripper package
+- Add higher quality rips from old CD archive
+- Add F's An Adonis, MACOS Live at the Boro, and Wolfenschnitzeltron
+
 # v2.13.0 - June 8, 2026
 
 - Update homepage spacing
