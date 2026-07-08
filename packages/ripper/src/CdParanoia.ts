@@ -1,4 +1,8 @@
 import { execFile } from 'node:child_process';
+import type { DiscToc } from './types';
+
+/** CD frames per second (cdparanoia reports lengths in frames). */
+const CD_FRAMES_PER_SECOND = 75;
 
 /**
  * Wrapper around `cdparanoia`. Used in two modes:
@@ -17,22 +21,23 @@ export class CdParanoia {
 	}
 
 	/**
-	 * Query the disc and return the number of audio tracks. Throws if the
-	 * device is unavailable or cdparanoia reports no tracks.
+	 * Query the disc and return its table of contents (track count + per-track
+	 * lengths in seconds). Throws if the device is unavailable or cdparanoia
+	 * reports no tracks.
 	 */
-	async getTrackCount(): Promise<number> {
+	async getToc(): Promise<DiscToc> {
 		const { stdout, stderr } = await this.exec(['-Q', '-d', this.device]);
 		const output = `${stdout}\n${stderr}`;
-		const tracks = this.parseTrackCount(output);
+		const toc = this.parseToc(output);
 
-		if (tracks <= 0) {
+		if (toc.trackCount <= 0) {
 			throw new Error(
 				`No audio tracks found on ${this.device}.\n` +
 					`cdparanoia output:\n${output.trim() || '(empty)'}`
 			);
 		}
 
-		return tracks;
+		return toc;
 	}
 
 	/**
@@ -65,22 +70,36 @@ export class CdParanoia {
 	}
 
 	/**
-	 * Parse the track count from `cdparanoia -Q` output. The TOC lists one
-	 * numbered row per track, e.g. `  1.    12653 [02:48.53] 0 [00:00.00] ...`.
-	 * Some versions instead print `Track N:` summary lines, so we accept both
-	 * shapes. We take the maximum track number seen — robust against header,
-	 * `TOTAL`, and separator noise lines (none of which start with a bare
-	 * number followed by `.` or `:`).
+	 * Parse `cdparanoia -Q` output into a disc TOC. The primary TOC row shape
+	 * is `  N.  <length-frames> [mm:ss.ff] <begin-frames> [mm:ss.ff] ...`, so we
+	 * extract the per-track length in frames (÷ 75 → seconds). Some versions
+	 * instead print `Track N:` summary lines (no length); for those we still
+	 * recover the track count but leave lengths at 0, which means duration-based
+	 * matching against existing rips simply won't find a match (a safe no-op).
 	 */
-	private parseTrackCount(output: string): number {
-		let max = 0;
+	private parseToc(output: string): DiscToc {
+		let maxTrack = 0;
+		const lengths: number[] = [];
+
 		for (const line of output.split('\n')) {
-			const match = /^\s*(?:Track\s+)?(\d+)\s*[.:]/i.exec(line);
+			let match = /^\s*(\d+)\.\s+(\d+)\s+\[/i.exec(line);
 			if (match) {
 				const n = Number.parseInt(match[1], 10);
-				if (n > max) max = n;
+				const frames = Number.parseInt(match[2], 10);
+				if (n > maxTrack) maxTrack = n;
+				while (lengths.length < n) lengths.push(0);
+				lengths[n - 1] = frames / CD_FRAMES_PER_SECOND;
+				continue;
+			}
+
+			match = /^\s*Track\s+(\d+)\s*:/i.exec(line);
+			if (match) {
+				const n = Number.parseInt(match[1], 10);
+				if (n > maxTrack) maxTrack = n;
 			}
 		}
-		return max;
+
+		while (lengths.length < maxTrack) lengths.push(0);
+		return { trackCount: maxTrack, trackLengthsSeconds: lengths.slice(0, maxTrack) };
 	}
 }

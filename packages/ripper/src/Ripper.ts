@@ -5,21 +5,24 @@ import path from 'node:path';
 import { Apev2Writer } from './Apev2Writer';
 import { CdParanoia } from './CdParanoia';
 import { CdTextReader, type CdTextData } from './CdTextReader';
+import { ExistingAlbumMatcher, type ExistingAlbumMatch } from './ExistingAlbumMatcher';
 import { LameEncoder } from './LameEncoder';
 import { createSlug } from './Slugify';
-import type { AlbumMetadata, RipperConfig, TrackMetadata } from './types';
+import type { AlbumDefaults, AlbumMetadata, DiscToc, RipperConfig, TrackMetadata } from './types';
 
 /**
  * Orchestrates the full interactive CD-rip flow:
  *
- *  1. query the disc for a track count
+ *  1. query the disc TOC (track count + per-track lengths)
  *  2. read CD-TEXT for prompt defaults (best-effort)
- *  3. prompt for album + per-track metadata
- *  4. check for an existing album and offer to replace it
- *  5. rip each track to a temp dir (WAV → MP3 → APEv2 tags)
- *  6. verify all expected MP3s were produced
- *  7. place files into the audio dir (replacing the old album if asked)
- *  8. print a summary with the next-step reminder
+ *  3. if CD-TEXT is absent, match the disc TOC against existing rips in the
+ *     generated catalog and use that album's tags as defaults
+ *  4. prompt for album + per-track metadata (defaults pre-filled from above)
+ *  5. check for an existing album directory and offer to replace it
+ *  6. rip each track to a temp dir (WAV → MP3 → APEv2 tags)
+ *  7. verify all expected MP3s were produced
+ *  8. place files into the audio dir (replacing the old album if asked)
+ *  9. print a summary with the next-step reminder
  *
  * The temp-first strategy means a failed rip never touches the existing
  * album: old files are only deleted after the new files verify.
@@ -27,6 +30,7 @@ import type { AlbumMetadata, RipperConfig, TrackMetadata } from './types';
 export class Ripper {
 	private readonly cdParanoia: CdParanoia;
 	private readonly cdTextReader: CdTextReader;
+	private readonly matcher: ExistingAlbumMatcher;
 	private readonly lame: LameEncoder = new LameEncoder();
 	private readonly config: RipperConfig;
 
@@ -34,17 +38,21 @@ export class Ripper {
 		this.config = config;
 		this.cdParanoia = new CdParanoia(config.cdDevice);
 		this.cdTextReader = new CdTextReader(config.cdDevice);
+		// The generated catalog/track-metadata live in `static/data`, the sibling
+		// of the audio dir. Deriving it from `audioDir` avoids a new env var.
+		this.matcher = new ExistingAlbumMatcher(path.join(path.dirname(config.audioDir), 'data'));
 	}
 
 	/** Run the full interactive rip flow. Returns a process exit code. */
 	async run(): Promise<number> {
-		const trackCount = await this.queryDisc();
-		if (trackCount === null) return 1;
+		const toc = await this.queryDisc();
+		if (toc === null) return 1;
 
 		const cdText = await this.cdTextReader.read();
+		const defaults = await this.buildDefaults(toc, cdText);
 
-		const album = await this.promptAlbumMetadata(cdText);
-		const tracks = await this.promptTrackTitles(trackCount, cdText);
+		const album = await this.promptAlbumMetadata(defaults);
+		const tracks = await this.promptTrackTitles(toc.trackCount, defaults);
 
 		const replacing = await this.checkExistingAlbum(album);
 		if (replacing === 'abort') return 0;
@@ -64,66 +72,104 @@ export class Ripper {
 		return 0;
 	}
 
-	/** Step 1: query the disc and return the track count, or null on error. */
-	private async queryDisc(): Promise<number | null> {
+	/** Step 1: query the disc TOC, or null on error. */
+	private async queryDisc(): Promise<DiscToc | null> {
 		try {
-			const count = await this.cdParanoia.getTrackCount();
-			console.log(`✓ Found ${count} track${count === 1 ? '' : 's'} on ${this.config.cdDevice}.`);
-			return count;
+			const toc = await this.cdParanoia.getToc();
+			console.log(
+				`✓ Found ${toc.trackCount} track${toc.trackCount === 1 ? '' : 's'} on ${this.config.cdDevice}.`
+			);
+			return toc;
 		} catch (error) {
 			console.error(error instanceof Error ? error.message : String(error));
 			return null;
 		}
 	}
 
-	/** Step 3a: prompt for album-level metadata, pre-filled from CD-TEXT. */
-	private async promptAlbumMetadata(cdText: CdTextData): Promise<AlbumMetadata> {
-		const albumTitle = await this.promptRequired('Album title:', cdText.albumTitle);
-		const artistName = await this.promptRequired('Artist name:', cdText.artistName);
-		const composer = await this.promptComposers(cdText);
+	/**
+	 * Step 2–3: assemble prompt defaults. CD-TEXT is favored; when CD-TEXT is
+	 * empty we attempt to match the disc TOC against existing rips in the
+	 * generated catalog and fill defaults from the matched album. Each field
+	 * falls back to null/empty if neither source provides it.
+	 */
+	private async buildDefaults(toc: DiscToc, cdText: CdTextData): Promise<AlbumDefaults> {
+		let existing: ExistingAlbumMatch | null = null;
+		if (this.isCdTextEmpty(cdText)) {
+			existing = await this.matcher.findMatch(toc);
+			if (existing) {
+				console.log(
+					`✓ Matched existing rip: ${existing.artistName} / ${existing.albumTitle} — using its tags as defaults.`
+				);
+			}
+		}
+
+		const trackTitles: (string | null)[] = [];
+		for (let i = 0; i < toc.trackCount; i++) {
+			trackTitles.push(cdText.trackTitles[i] ?? existing?.trackTitles[i] ?? null);
+		}
+
+		return {
+			albumTitle: cdText.albumTitle ?? existing?.albumTitle ?? null,
+			artistName: cdText.artistName ?? existing?.artistName ?? null,
+			composers: cdText.composer ? [cdText.composer] : (existing?.composers ?? []),
+			trackTitles
+		};
+	}
+
+	/** Whether CD-TEXT yielded any usable field at all. */
+	private isCdTextEmpty(cdText: CdTextData): boolean {
+		return (
+			!cdText.albumTitle &&
+			!cdText.artistName &&
+			!cdText.composer &&
+			cdText.trackTitles.every((t) => !t)
+		);
+	}
+
+	/** Step 4a: prompt for album-level metadata, pre-filled from merged defaults. */
+	private async promptAlbumMetadata(defaults: AlbumDefaults): Promise<AlbumMetadata> {
+		const albumTitle = await this.promptRequired('Album title:', defaults.albumTitle);
+		const artistName = await this.promptRequired('Artist name:', defaults.artistName);
+		const composer = await this.promptComposers(defaults.composers);
 
 		return { albumTitle, artistName, composer };
 	}
 
 	/**
-	 * Step 3a (composers): collect one or more composer names, one per prompt.
-	 * The first is pre-filled from CD-TEXT if available; subsequent prompts are
-	 * blank-by-default and a blank entry ends the list. The final list is joined
-	 * The collected names are joined with a null byte (`\x00`) for the APEv2
-	 * COMPOSER tag — this is the APEv2-native multi-value separator and matches
-	 * how Kid3 writes multi-composers. `music-metadata` splits on `\x00`, so each
-	 * composer becomes a distinct COMPOSER entry (which is what the generator's
-	 * `buildComposerSets` expects). An empty list falls back to "Unknown".
+	 * Step 4a (composers): collect one or more composer names, one per prompt.
+	 * Each prompt is pre-filled with the corresponding default composer (from
+	 * CD-TEXT or an existing-rip match); once defaults run out, prompts are blank
+	 * and a blank entry ends the list. The collected names are joined with a null
+	 * byte (`\x00`) for the APEv2 COMPOSER tag — this is the APEv2-native
+	 * multi-value separator and matches how Kid3 writes multi-composers.
+	 * `music-metadata` splits on `\x00`, so each composer becomes a distinct
+	 * COMPOSER entry (which is what the generator's `buildComposerSets` expects).
+	 * An empty list falls back to "Unknown".
 	 */
-	private async promptComposers(cdText: CdTextData): Promise<string> {
+	private async promptComposers(composerDefaults: string[]): Promise<string> {
 		const composers: string[] = [];
-		const first = await input({
-			message: 'Composer (blank for Unknown):',
-			default: cdText.composer ?? ''
-		});
-		const firstTrim = first.trim();
-		if (firstTrim) {
-			composers.push(firstTrim);
-			while (true) {
-				const next = await input({
-					message: 'Add another composer (blank to finish):',
-					default: ''
-				});
-				const t = next.trim();
-				if (!t) break;
-				composers.push(t);
-			}
+		let i = 0;
+		while (true) {
+			const next = await input({
+				message:
+					i === 0 ? 'Composer (blank for Unknown):' : 'Add another composer (blank to finish):',
+				default: i < composerDefaults.length ? composerDefaults[i] : ''
+			});
+			const t = next.trim();
+			if (!t) break;
+			composers.push(t);
+			i++;
 		}
 		return composers.length > 0 ? composers.join('\x00') : 'Unknown';
 	}
 
-	/** Step 3b: prompt for each track title, pre-filled from CD-TEXT. If the
-	 * album has no track titles, skip the per-track prompts and use
+	/** Step 4b: prompt for each track title, pre-filled from merged defaults.
+	 * If the album has no track titles, skip the per-track prompts and use
 	 * "Untitled" for every track.
 	 */
 	private async promptTrackTitles(
 		trackCount: number,
-		cdText: CdTextData
+		defaults: AlbumDefaults
 	): Promise<TrackMetadata[]> {
 		const hasTitles = await confirm({
 			message: 'Does this album have track titles?',
@@ -135,7 +181,7 @@ export class Ripper {
 			const title = hasTitles
 				? await input({
 						message: `Track ${pad(n)} title (blank for Untitled):`,
-						default: cdText.trackTitles[n - 1] ?? ''
+						default: defaults.trackTitles[n - 1] ?? ''
 					})
 				: '';
 			tracks.push({ number: n, title: title.trim() || 'Untitled' });
@@ -262,10 +308,10 @@ export class Ripper {
 	 * Prompt for a required (non-empty) text value. Re-prompts on blank
 	 * input. `cdTextDefault` is used as the pre-filled default if present.
 	 */
-	private async promptRequired(message: string, cdTextDefault: string | null): Promise<string> {
+	private async promptRequired(message: string, defaultValue: string | null): Promise<string> {
 		return input({
 			message,
-			default: cdTextDefault ?? '',
+			default: defaultValue ?? '',
 			validate: (value) => (value.trim().length > 0 ? true : 'This field is required.')
 		});
 	}
