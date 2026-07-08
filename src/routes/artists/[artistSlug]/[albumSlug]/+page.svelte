@@ -13,34 +13,44 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const artistHref: `/artists/${string}` = `/artists/${data.album.artistSlug}`;
-	const breadcrumbItems = [
+	// All of the following depend on `data`, which SvelteKit updates in place
+	// when navigating between albums under the same artist (or otherwise
+	// reusing this page component). A plain `const` would capture the first
+	// album's data and go stale, so these must be `$derived`.
+	const artistHref = $derived(`/artists/${data.album.artistSlug}` as const);
+	const breadcrumbItems = $derived([
 		{ name: 'Home', href: '/' as const },
 		{ name: 'Artists', href: '/artists' as const },
 		{ name: data.album.artistName, href: artistHref },
 		{ name: data.album.name }
-	];
+	]);
 
-	const pageUrl = canonicalUrl(`/artists/${data.album.artistSlug}/${data.album.slug}/`);
-	const pageTitle = `${data.album.name} by ${data.album.artistName} - Faux Fetus`;
-	const pageDescription = `Listen to tracks from the album ${data.album.name} by ${data.album.artistName} on Faux Fetus.`;
-	const ogTags = ogMeta({
-		title: pageTitle,
-		description: pageDescription,
-		url: pageUrl
-	});
-	const albumLd = jsonLdMusicAlbum({
-		name: data.album.name,
-		slug: data.album.slug,
-		artistSlug: data.album.artistSlug,
-		artistName: data.album.artistName,
-		tracks: data.album.tracks.map((t) => ({
-			name: t.name,
-			slug: t.slug,
-			number: t.number
-		}))
-	});
-	const breadcrumbLd = jsonLdBreadcrumb(breadcrumbItems);
+	const pageUrl = $derived(canonicalUrl(`/artists/${data.album.artistSlug}/${data.album.slug}/`));
+	const pageTitle = $derived(`${data.album.name} by ${data.album.artistName} - Faux Fetus`);
+	const pageDescription = $derived(
+		`Listen to tracks from the album ${data.album.name} by ${data.album.artistName} on Faux Fetus.`
+	);
+	const ogTags = $derived(
+		ogMeta({
+			title: pageTitle,
+			description: pageDescription,
+			url: pageUrl
+		})
+	);
+	const albumLd = $derived(
+		jsonLdMusicAlbum({
+			name: data.album.name,
+			slug: data.album.slug,
+			artistSlug: data.album.artistSlug,
+			artistName: data.album.artistName,
+			tracks: data.album.tracks.map((t) => ({
+				name: t.name,
+				slug: t.slug,
+				number: t.number
+			}))
+		})
+	);
+	const breadcrumbLd = $derived(jsonLdBreadcrumb(breadcrumbItems));
 </script>
 
 <svelte:head>

@@ -14,36 +14,46 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const artistHref: `/artists/${string}` = `/artists/${data.track.artistSlug}`;
-	const albumHref: `/artists/${string}/${string}` = `${artistHref}/${data.track.albumSlug}`;
+	// All of the following depend on `data`, which SvelteKit updates in place
+	// when navigating between tracks under the same album/artist (or
+	// otherwise reusing this page component). A plain `const` would capture
+	// the first track's data and go stale, so these must be `$derived`.
+	const artistHref = $derived(`/artists/${data.track.artistSlug}` as const);
+	const albumHref = $derived(`${artistHref}/${data.track.albumSlug}` as const);
 
-	const breadcrumbItems = [
+	const breadcrumbItems = $derived([
 		{ name: 'Home', href: '/' as const },
 		{ name: 'Artists', href: '/artists' as const },
 		{ name: data.track.artistName, href: artistHref },
 		{ name: data.track.albumName, href: albumHref },
 		{ name: data.track.name }
-	];
+	]);
 
-	const pageUrl = canonicalUrl(
-		`/artists/${data.track.artistSlug}/${data.track.albumSlug}/${data.track.slug}/`
+	const pageUrl = $derived(
+		canonicalUrl(`/artists/${data.track.artistSlug}/${data.track.albumSlug}/${data.track.slug}/`)
 	);
-	const pageTitle = `${data.track.name} by ${data.track.artistName} - Faux Fetus`;
-	const pageDescription = `Listen to ${data.track.name} from the album ${data.track.albumName} by ${data.track.artistName} on Faux Fetus.`;
-	const ogTags = ogMeta({
-		title: pageTitle,
-		description: pageDescription,
-		url: pageUrl
-	});
-	const trackLd = jsonLdMusicRecording({
-		name: data.track.name,
-		slug: data.track.slug,
-		artistSlug: data.track.artistSlug,
-		artistName: data.track.artistName,
-		albumSlug: data.track.albumSlug,
-		albumName: data.track.albumName
-	});
-	const breadcrumbLd = jsonLdBreadcrumb(breadcrumbItems);
+	const pageTitle = $derived(`${data.track.name} by ${data.track.artistName} - Faux Fetus`);
+	const pageDescription = $derived(
+		`Listen to ${data.track.name} from the album ${data.track.albumName} by ${data.track.artistName} on Faux Fetus.`
+	);
+	const ogTags = $derived(
+		ogMeta({
+			title: pageTitle,
+			description: pageDescription,
+			url: pageUrl
+		})
+	);
+	const trackLd = $derived(
+		jsonLdMusicRecording({
+			name: data.track.name,
+			slug: data.track.slug,
+			artistSlug: data.track.artistSlug,
+			artistName: data.track.artistName,
+			albumSlug: data.track.albumSlug,
+			albumName: data.track.albumName
+		})
+	);
+	const breadcrumbLd = $derived(jsonLdBreadcrumb(breadcrumbItems));
 </script>
 
 <svelte:head>

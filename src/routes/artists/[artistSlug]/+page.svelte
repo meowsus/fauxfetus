@@ -15,36 +15,45 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const breadcrumbItems = [
+	// These must be derived from `data` so they refresh when SvelteKit swaps
+	// in new data for a same-route navigation (e.g. clicking a related
+	// artist). A plain `const` would capture the first artist's data and
+	// never update, leaving the breadcrumbs/SEO/JSON-LD stale.
+	const breadcrumbItems = $derived([
 		{ name: 'Home', href: '/' as const },
 		{ name: 'Artists', href: '/artists' as const },
 		{ name: data.artist.name }
-	];
+	]);
 
-	const pageUrl = canonicalUrl(`/artists/${data.artist.slug}/`);
-	const pageTitle = `${data.artist.name} - Faux Fetus`;
-	const pageDescription = `Browse albums by ${data.artist.name} on Faux Fetus.`;
-	const ogTags = ogMeta({
-		title: pageTitle,
-		description: pageDescription,
-		url: pageUrl
-	});
-	const musicGroupLd = jsonLdMusicGroup({
-		name: data.artist.name,
-		slug: data.artist.slug,
-		albums: data.artist.albums.map((a) => ({
-			name: a.name,
-			slug: a.slug
-		}))
-	});
-	const breadcrumbLd = jsonLdBreadcrumb(breadcrumbItems);
-	const relatedArtistsLd =
+	const pageUrl = $derived(canonicalUrl(`/artists/${data.artist.slug}/`));
+	const pageTitle = $derived(`${data.artist.name} - Faux Fetus`);
+	const pageDescription = $derived(`Browse albums by ${data.artist.name} on Faux Fetus.`);
+	const ogTags = $derived(
+		ogMeta({
+			title: pageTitle,
+			description: pageDescription,
+			url: pageUrl
+		})
+	);
+	const musicGroupLd = $derived(
+		jsonLdMusicGroup({
+			name: data.artist.name,
+			slug: data.artist.slug,
+			albums: data.artist.albums.map((a) => ({
+				name: a.name,
+				slug: a.slug
+			}))
+		})
+	);
+	const breadcrumbLd = $derived(jsonLdBreadcrumb(breadcrumbItems));
+	const relatedArtistsLd = $derived(
 		data.recommendedArtists.length > 0
 			? jsonLdRelatedArtists(
 					{ name: data.artist.name, slug: data.artist.slug },
 					data.recommendedArtists
 				)
-			: null;
+			: null
+	);
 </script>
 
 <svelte:head>
