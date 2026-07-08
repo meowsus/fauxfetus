@@ -1,3 +1,22 @@
+## July 5, 2026
+
+You wouldn't believe it, but I found a box in my kids' mom's basement containing my old Faux Fetus CDs. As a result I've re-ripped a few things to be in higher quality:
+
+- [Nuclear Family Holocaust](/artists/nuclear-family-holocaust)'s [NFH #1](/artists/nuclear-family-holocaust/nfh-1) & [NFH #2](/artists/nuclear-family-holocaust/nfh-2)
+- [Chamomile](/artists/chamomile)'s [A Womb With A View](/artists/chamomile/a-womb-with-a-view)
+- [The Most Amazing Century Of Science](/artists/the-most-amazing-century-of-science)'s [Live At The Springwater](/artists/the-most-amazing-century-of-science/live-at-the-springwater)
+- [Pink Panzer](/artists/pink-panzer)'s [Idiot Mambo](/artists/pink-panzer/idiot-mambo) & [Dearth](/artists/pink-panzer/dearth)
+- [Aunt Vivian's Revengence](/artists/aunt-vivians-revengence)'s [Sorry, Bud](/artists/aunt-vivians-revengence/sorry-bud)
+- [The Night Owl](/artists/the-night-owl)'s [Voices In The Mist](/artists/the-night-owl/voices-in-the-mist)
+
+And some new things that have probably always should have been here:
+
+- [F](/artists/f)'s [An Adonis](/artists/f/an-adonis)
+- [The Most Amazing Century Of Science](/artists/the-most-amazing-century-of-science)'s [Live At The Boro](/artists/the-most-amazing-century-of-science/live-at-the-boro)
+- [Wolfenschnitzeltron](/artists/wolfenschnitzeltron)'s [Wolfenschnitzeltron](/artists/wolfenschnitzeltron/wolfenschnitzeltron)
+
+This was made possible by a little CLI that I wrote up that will let me toss a CD into my computer and run a single command to rip albums quickly. It's a great little utility, but I don't have any more CDs to rip. If you do, feel free to reach out and send me your copies so I can get better quality audio on here. I really should surface which albums are in crappier quality at some point...
+
 ## June 8, 2026
 
 I had some time this weekend to fix a few things that were nagging at me.
