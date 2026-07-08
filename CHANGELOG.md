@@ -1,3 +1,7 @@
+# v2.14.1 - July 8, 2026
+
+- Fix breadcrumbs & SEO reactivity problems
+
 # v2.14.0 - July 5, 2026
 
 - Add @fauxfetus/ripper package
