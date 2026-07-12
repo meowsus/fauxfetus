@@ -43,7 +43,7 @@
 		"marked": "^15.0.0",
 		"prettier": "^3.6.2",
 		"prettier-plugin-organize-imports": "^4.3.0",
-		"prettier-plugin-svelte": "^3.4.0",
+		"prettier-plugin-svelte": "^4.0.0",
 		"prettier-plugin-tailwindcss": "^0.7.1",
 		"svelte": "^5.41.0",
 		"svelte-check": "^4.3.4",
