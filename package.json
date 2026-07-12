@@ -20,7 +20,7 @@
 		"bump": "./scripts/release.sh"
 	},
 	"devDependencies": {
-		"@eslint/compat": "^1.4.0",
+		"@eslint/compat": "^2.0.0",
 		"@eslint/js": "^9.38.0",
 		"@fauxfetus/data-generator": "workspace:",
 		"@fauxfetus/ripper": "workspace:",
