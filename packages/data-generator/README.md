@@ -1,6 +1,6 @@
-# @fauxfetus/generator
+# @fauxfetus/data-generator
 
-This package contains a `DataGenerator` class, whose `run()` method is called from the main project in `scripts/data/generate.mts` and via `pnpm data:generate`.
+This package contains a `DataGenerator` class, whose `run()` method is called from the main project in `scripts/data/generate.ts` and via `pnpm generate:data`.
 
 The purpose of this class is to create the massive dump of files found in `static/data/`.
 

@@ -281,7 +281,7 @@ export class Ripper {
 	private printSummary(album: AlbumMetadata, trackCount: number): void {
 		const rel = path.relative(process.cwd(), this.albumDir(album));
 		console.log(`✓ Ripped ${trackCount} track${trackCount === 1 ? '' : 's'} to ${rel}/`);
-		console.log('Run `pnpm data:validate` then `pnpm data:generate` to update the site.');
+		console.log('Run `pnpm data:validate` then `pnpm generate:data` to update the site.');
 	}
 
 	/** Build the APEv2 tag map for a single track. */

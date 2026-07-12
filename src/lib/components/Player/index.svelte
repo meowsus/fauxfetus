@@ -8,7 +8,7 @@
 		updateMediaSessionMetadata,
 		updateMediaSessionPlaybackState
 	} from '$lib/helpers/media-session';
-	import type { Track } from '@fauxfetus/generator';
+	import type { Track } from '@fauxfetus/data-generator';
 	import type { Gapless5 } from '@regosen/gapless-5';
 	import TrackList from '$lib/components/TrackList.svelte';
 	import CurrentTrackCard from './CurrentTrackCard.svelte';

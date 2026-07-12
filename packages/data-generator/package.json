@@ -1,5 +1,5 @@
 {
-	"name": "@fauxfetus/generator",
+	"name": "@fauxfetus/data-generator",
 	"version": "1.0.0",
 	"description": "Data generator for fauxfetus",
 	"main": "index.ts",

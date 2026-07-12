@@ -1,4 +1,4 @@
-import type { PrunedMetadata, TrackMetadataLookup } from '@fauxfetus/generator';
+import type { PrunedMetadata, TrackMetadataLookup } from '@fauxfetus/data-generator';
 import fs from 'fs-extra';
 import { join } from 'path';
 
@@ -32,7 +32,7 @@ const loadLookup = async (): Promise<TrackMetadataLookup> => {
 		})
 		.catch((err) => {
 			// Allow retry on next call if the read failed (e.g. first call
-			// raced with data:generate in dev).
+			// raced with generate:data in dev).
 			lookupPromise = null;
 			throw err;
 		});
@@ -44,7 +44,7 @@ const loadLookup = async (): Promise<TrackMetadataLookup> => {
  * Look up the pruned metadata for a single track by its `audioUrl`.
  * Returns `undefined` if the track has no entry in the sidecar
  * (which can happen for stale slugs after a rename, or before
- * `pnpm data:generate` has been run).
+ * `pnpm generate:data` has been run).
  */
 export const readTrackMetadata = async (audioUrl: string): Promise<PrunedMetadata | undefined> => {
 	const lookup = await loadLookup();

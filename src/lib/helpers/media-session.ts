@@ -1,4 +1,4 @@
-import type { Track } from '@fauxfetus/generator';
+import type { Track } from '@fauxfetus/data-generator';
 
 const APP_ICON_ARTWORK: MediaImage[] = [
 	{ src: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },

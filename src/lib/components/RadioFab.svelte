@@ -3,7 +3,7 @@
 	import { togglePlayerDrawer } from '$lib/helpers/player';
 	import { sampleRadioPlaylist, RADIO_PLAYLIST_SIZE } from '$lib/helpers';
 	import { cn } from '$lib/helpers/tailwind';
-	import type { Track } from '@fauxfetus/generator';
+	import type { Track } from '@fauxfetus/data-generator';
 	import { version } from '$app/environment';
 
 	const playerStore = getPlayerContext();

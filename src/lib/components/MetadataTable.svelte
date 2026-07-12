@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PrunedMetadata } from '@fauxfetus/generator';
+	import type { PrunedMetadata } from '@fauxfetus/data-generator';
 
 	interface Props {
 		metadata: PrunedMetadata | undefined;

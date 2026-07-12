@@ -1,4 +1,4 @@
-import type { Recommendations } from '@fauxfetus/generator';
+import type { Recommendations } from '@fauxfetus/data-generator';
 import fs from 'fs-extra';
 import { join } from 'path';
 

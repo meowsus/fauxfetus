@@ -1,4 +1,4 @@
-import type { Track } from '@fauxfetus/generator';
+import type { Track } from '@fauxfetus/data-generator';
 import { createContext } from 'svelte';
 import type { Writable } from 'svelte/store';
 

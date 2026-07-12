@@ -8,7 +8,7 @@ This project has seen many iterations. It's current form is a static site genera
 
 ## Packages
 
-- The [generator](./packages/generator/) package generates the site data from the MP3 files
+- The [generator](./packages/data-generator/) package generates the site data from the MP3 files
 
 ## Development
 
@@ -37,7 +37,7 @@ pnpm preview:local
 If you change any audio, ensure you regenerate the data files with
 
 ```
-pnpm data:generate
+pnpm generate:data
 ```
 
 ### Code guardrails

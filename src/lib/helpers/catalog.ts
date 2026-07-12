@@ -1,4 +1,4 @@
-import type { Artist } from '@fauxfetus/generator';
+import type { Artist } from '@fauxfetus/data-generator';
 import fs from 'fs-extra';
 import { join } from 'path';
 

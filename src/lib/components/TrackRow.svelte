@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import type { Track } from '@fauxfetus/generator';
+	import type { Track } from '@fauxfetus/data-generator';
 	import { getPlayerContext, getPlayerActions } from '$lib/context/player';
 	import { togglePlayerDrawer } from '$lib/helpers/player';
 	import { cn } from '$lib/helpers/tailwind';

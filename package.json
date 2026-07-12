@@ -12,7 +12,7 @@
 		"check:watch": "svelte-kit sync && tsc -p tsconfig.sw.json --noEmit && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
-		"data:generate": "tsx ./scripts/data/generate.ts",
+		"generate:data": "tsx ./scripts/data/generate.ts",
 		"data:validate": "tsx ./scripts/data/validate.ts",
 		"rip": "tsx ./scripts/rip.ts",
 		"preview:local": "vite build && vite preview",
@@ -22,7 +22,7 @@
 	"devDependencies": {
 		"@eslint/compat": "^1.4.0",
 		"@eslint/js": "^9.38.0",
-		"@fauxfetus/generator": "workspace:",
+		"@fauxfetus/data-generator": "workspace:",
 		"@fauxfetus/ripper": "workspace:",
 		"@fauxfetus/validator": "workspace:",
 		"@iconify-json/line-md": "^1.2.14",

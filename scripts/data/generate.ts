@@ -1,4 +1,4 @@
-import { DataGenerator } from '@fauxfetus/generator';
+import { DataGenerator } from '@fauxfetus/data-generator';
 import path from 'path';
 
 const CWD = process.cwd();
