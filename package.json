@@ -40,7 +40,7 @@
 		"eslint-plugin-svelte": "^3.12.4",
 		"fs-extra": "catalog:fs-extra",
 		"globals": "^16.4.0",
-		"marked": "^15.0.0",
+		"marked": "^18.0.0",
 		"prettier": "^3.6.2",
 		"prettier-plugin-organize-imports": "^4.3.0",
 		"prettier-plugin-svelte": "^3.4.0",

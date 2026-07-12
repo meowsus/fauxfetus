@@ -88,8 +88,8 @@ importers:
         specifier: ^16.4.0
         version: 16.5.0
       marked:
-        specifier: ^15.0.0
-        version: 15.0.12
+        specifier: ^18.0.0
+        version: 18.0.6
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
@@ -1457,9 +1457,9 @@ packages:
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
-  marked@15.0.12:
-    resolution: {integrity: sha512-8dD6FusOQSrpv9Z1rdNMdlSgQOIP880DHqnohobOmYLElGEqAL/JvxvuxZO16r4HtjTlfPRDC1hbvxC9dPN2nA==}
-    engines: {node: '>= 18'}
+  marked@18.0.6:
+    resolution: {integrity: sha512-MrV5puXBfuiy6wl6DLaq3BtIJQAJToAd5zt/ZKhRfGRAuFPALE7/4Y7jnxRQoEgK/pBgurGqLyAuRgZ2xOjr6w==}
+    engines: {node: '>= 20'}
     hasBin: true
 
   mdn-data@2.0.28:
@@ -3123,7 +3123,7 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  marked@15.0.12: {}
+  marked@18.0.6: {}
 
   mdn-data@2.0.28: {}
 
