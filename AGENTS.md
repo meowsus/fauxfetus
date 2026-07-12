@@ -67,7 +67,7 @@ fauxfetus/
 │   ├── index.ts
 │   └── src/
 │       └── DataGenerator.ts       # Reads audio metadata, builds catalog/tracks JSON
-├── packages/validator/            # @fauxfetus/validator workspace package
+├── packages/data-validator/      # @fauxfetus/data-validator workspace package
 │   ├── index.ts
 │   └── src/
 │       ├── ApeTag.ts              # APEv2 tag ID enum
@@ -76,7 +76,7 @@ fauxfetus/
 │       └── walk.ts                # readAudioMetadata() — klaw walker
 ├── scripts/
 │   ├── data/generate.ts           # pnpm generate:data — runs DataGenerator
-│   ├── data/validate.ts           # pnpm data:validate — runs validateAudio
+│   ├── data/validate.ts           # pnpm validate:data — runs validateAudio
 │   ├── deploy.sh                  # Build + rsync deploy
 │   └── release.sh                 # Version bump + release
 ├── static/
@@ -88,8 +88,8 @@ fauxfetus/
 
 ## Data Flow
 
-1. `pnpm data:validate` → runs `scripts/data/validate.ts` → `Validator` (in `@fauxfetus/validator`) walks `static/audio/`, parses metadata, and returns a `ValidationSummary` (collecting all errors, no throw-on-first)
-2. `pnpm generate:data` → runs `scripts/data/generate.ts` → `DataGenerator.create()` (in `@fauxfetus/data-generator`) calls `Validator.readAndValidate()` from `@fauxfetus/validator` as a constructor-time prerequisite. If any audio file is invalid, the full failure report is printed and an error is thrown — the generator object is never returned, so `run()` cannot be called. If validation passes, `run()` builds the catalog and writes JSON with no further validation.
+1. `pnpm validate:data` → runs `scripts/data/validate.ts` → `Validator` (in `@fauxfetus/data-validator`) walks `static/audio/`, parses metadata, and returns a `ValidationSummary` (collecting all errors, no throw-on-first)
+2. `pnpm generate:data` → runs `scripts/data/generate.ts` → `DataGenerator.create()` (in `@fauxfetus/data-generator`) calls `Validator.readAndValidate()` from `@fauxfetus/data-validator` as a constructor-time prerequisite. If any audio file is invalid, the full failure report is printed and an error is thrown — the generator object is never returned, so `run()` cannot be called. If validation passes, `run()` builds the catalog and writes JSON with no further validation.
 3. Outputs `static/data/catalog.json` and `static/data/tracks.json`
 4. At build time, `+page.server.ts` load functions call `readCatalog()` which reads `static/data/catalog.json`
 5. `adapter-static` prerenders all pages — no runtime server
@@ -149,7 +149,7 @@ fauxfetus/
 | `pnpm lint`          | Prettier check + ESLint                         | After every code change           | Yes       |
 | `pnpm format`        | Format all files with Prettier                  | After every code change           | Yes       |
 | `pnpm generate:data` | Regenerate catalog/tracks JSON from audio files | —                                 | Yes       |
-| `pnpm data:validate` | Validate audio files against schema/format/tags | —                                 | Yes       |
+| `pnpm validate:data` | Validate audio files against schema/format/tags | —                                 | Yes       |
 | `pnpm deploy:build`  | Build + rsync to server                         | —                                 | No, never |
 | `pnpm release`       | Version bump + release                          | —                                 | No, never |
 

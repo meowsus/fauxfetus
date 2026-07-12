@@ -1,5 +1,5 @@
 {
-	"name": "@fauxfetus/validator",
+	"name": "@fauxfetus/data-validator",
 	"version": "1.0.0",
 	"description": "Audio directory validation for fauxfetus",
 	"main": "index.ts",

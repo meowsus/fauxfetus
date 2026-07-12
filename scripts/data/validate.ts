@@ -1,4 +1,4 @@
-import { Validator } from '@fauxfetus/validator';
+import { Validator } from '@fauxfetus/data-validator';
 import path from 'path';
 
 const CWD = process.cwd();

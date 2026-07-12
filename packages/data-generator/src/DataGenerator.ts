@@ -3,7 +3,7 @@ import {
 	Validator,
 	type IAudioMetadata,
 	type PathMetadataTuple
-} from '@fauxfetus/validator';
+} from '@fauxfetus/data-validator';
 import fs from 'fs-extra';
 import path from 'path';
 import slugify from 'slugify';
@@ -139,7 +139,7 @@ export class DataGenerator {
 			const fileCount = new Set(summary.failures.map((f) => f.path)).size;
 			throw new Error(
 				`Cannot generate data: ${summary.failures.length} validation error(s) across ${fileCount} file(s). ` +
-					`Run \`pnpm data:validate\` for full details.`
+					`Run \`pnpm validate:data\` for full details.`
 			);
 		}
 

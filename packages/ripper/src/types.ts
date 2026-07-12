@@ -1,6 +1,6 @@
 /**
  * Tags written to each ripped MP3 file. Mirrors the `ApeTag` enum in
- * `@fauxfetus/validator` so the ripper and validator agree on field names.
+ * `@fauxfetus/data-validator` so the ripper and validator agree on field names.
  */
 export interface TrackTags {
 	ARTIST: string;
