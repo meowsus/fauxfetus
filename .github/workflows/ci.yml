@@ -33,7 +33,7 @@ jobs:
       # cache key, but pnpm isn't on PATH yet at this step.
       - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: 24
           package-manager-cache: false
 
       - uses: pnpm/action-setup@v4
@@ -54,7 +54,7 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: 24
           package-manager-cache: false
 
       - uses: pnpm/action-setup@v4
