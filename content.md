@@ -1,3 +1,16 @@
+## July 16, 2026
+
+I convinced MCB to let me drop most of the rest of the albums he sent to me nearly two decades ago. A fresh batch of CD rips brings four new artists into the fold, plus a heap of new albums for an existing one:
+
+- [Kreemy F.F.U.P.](/artists/kreemy-ffup)'s [Live 2004](/artists/kreemy-ffup/live-2004)
+- [Mucid Cuspidor](/artists/mucid-cuspidor)'s [Live Radio](/artists/mucid-cuspidor/live-radio)
+- [Mystery Brinkman](/artists/mystery-brinkman)'s [Brinkmangler](/artists/mystery-brinkman/brinkmangler)
+- [SYNB](/artists/synb) — [Blanks](/artists/synb/blanks), [Channel 10](/artists/synb/channel-10), [Double Dungeon: Level I](/artists/synb/double-dungeon-level-i), [Double Dungeon: Level II](/artists/synb/double-dungeon-level-ii), & [Echo Sound Loaf](/artists/synb/echo-sound-loaf)
+
+[Mix Ape](/artists/mix-ape) was previously only represented by [Silver / MXD](/artists/mix-ape/silver-mxd), but now gets five more: [060503](/artists/mix-ape/060503), [Found In The Streets Vol. 1](/artists/mix-ape/found-in-the-streets-vol-1), [Found In The Streets Vol. 4](/artists/mix-ape/found-in-the-streets-vol-4), [Found In The Streets Vol. 5](/artists/mix-ape/found-in-the-streets-vol-5), & [Here Come The Mixes](/artists/mix-ape/here-come-the-mixes). The Found In The Streets volumes were previously misattributed to [ZZ Pot](/artists/zz-pot) and have since been corrected.
+
+I did my best with the categorization but, to be honest, a lot of these releases are super confusing to understand who did what and even what some of the album or artist names are. I'll update their placement if I ever get more information. Until then, enjoy!
+
 ## July 5, 2026
 
 You wouldn't believe it, but I found a box in my kids' mom's basement containing my old Faux Fetus CDs. As a result I've re-ripped a few things to be in higher quality:
