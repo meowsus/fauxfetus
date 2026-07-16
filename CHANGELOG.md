@@ -1,3 +1,7 @@
+# v2.15.0 - July 16, 2026
+
+- Add yuge MCB dump
+
 # v2.14.1 - July 8, 2026
 
 - Fix breadcrumbs & SEO reactivity problems
