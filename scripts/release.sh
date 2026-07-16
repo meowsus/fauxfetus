@@ -36,6 +36,16 @@ fi
 
 echo "✓ CHANGELOG.md updated."
 
+# Validate source data before touching version/commit/tag.
+# A failure here aborts the release before any state is created.
+echo "Validating data..."
+pnpm run validate:data
+
+echo "Generating data..."
+pnpm run generate:data
+
+echo "✓ Data validated and generated."
+
 # Bump version without auto-commit or auto-tag
 pnpm version $BUMP --no-git-tag-version --no-git-checks
 
