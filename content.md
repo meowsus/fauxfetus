@@ -1,3 +1,12 @@
+## August 9, 2026
+
+Two new, slightly related artists appear in the distance:
+
+- [Used Friends](/artists/used-friends)
+- [Assistant Manager](/artists/assistant-manager)
+
+Assistant Manager was formed after a horrible accident caused the premature demise of Used Friends. Personally, I never thought the Used Friends EP would see the light of day, but I am glad to admit that I am very wrong about that.
+
 ## July 16, 2026
 
 I convinced MCB to let me drop most of the rest of the albums he sent to me nearly two decades ago. A fresh batch of CD rips brings four new artists into the fold, plus a heap of new albums for an existing one:
