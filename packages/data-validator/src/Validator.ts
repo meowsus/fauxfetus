@@ -257,7 +257,15 @@ export class Validator {
 		for (const [filePath, fileErrors] of grouped) {
 			out.error(`\n  ${filePath}`);
 			for (const error of fileErrors) {
-				const message = error.message.split('\n').slice(0, 2).join('\n    ');
+				// `ValidationError` prepends the file path as the first line of
+				// `error.message`, but we already print it as the group header
+				// above — drop the duplicate so it doesn't eat the line budget.
+				// Without this, `Schema validation failed:` would be the only line
+				// shown and the actual Zod error (which lives on the *next* line)
+				// would be cut off, producing a blank-looking report.
+				const lines = error.message.split('\n');
+				if (lines[0] === filePath) lines.shift();
+				const message = lines.join('\n    ');
 				out.error(`    - ${message}`);
 			}
 		}
