@@ -1,3 +1,8 @@
+# v2.16.0 - August 9, 2026
+
+- Fix validation messaging
+- Add Used Friends & Assistant Manager
+
 # v2.15.0 - July 16, 2026
 
 - Add yuge MCB dump
