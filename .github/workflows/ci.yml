@@ -31,7 +31,7 @@ jobs:
       # Note: do NOT enable caching here. setup-node v5 defaults to
       # `package-manager-cache: true` and tries to invoke pnpm to compute the
       # cache key, but pnpm isn't on PATH yet at this step.
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           package-manager-cache: false
@@ -52,7 +52,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           package-manager-cache: false
