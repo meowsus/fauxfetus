@@ -1,3 +1,7 @@
+# v2.16.1 - August 17, 2026
+
+- Bump various dependencies
+
 # v2.16.0 - August 9, 2026
 
 - Fix validation messaging
