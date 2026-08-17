@@ -24,7 +24,7 @@ jobs:
     name: lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       # setup-node MUST run before pnpm/action-setup. pnpm 11 self-installs via
       # Node and requires Node >=22.13; the runner's default is Node 20.
@@ -50,7 +50,7 @@ jobs:
     name: check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v7
         with:
