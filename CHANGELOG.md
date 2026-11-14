@@ -1,3 +1,7 @@
+# v2.17.0 - November 14, 2026
+
+- Friggin album & track downloads
+
 # v2.16.1 - August 17, 2026
 
 - Bump various dependencies
