@@ -10,6 +10,8 @@
 		ogMeta
 	} from '$lib/helpers/seo';
 	import JsonLd from '$lib/components/JsonLd.svelte';
+	import { albumZipPath } from '$lib/helpers/downloads.js';
+	import { asset } from '$app/paths';
 
 	let { data }: { data: PageData } = $props();
 
@@ -18,6 +20,7 @@
 	// reusing this page component). A plain `const` would capture the first
 	// album's data and go stale, so these must be `$derived`.
 	const artistHref = $derived(`/artists/${data.album.artistSlug}` as const);
+	const zipPath = $derived(albumZipPath(data.album.artistSlug, data.album.slug));
 	const breadcrumbItems = $derived([
 		{ name: 'Home', href: '/' as const },
 		{ name: 'Artists', href: '/artists' as const },
@@ -68,5 +71,13 @@
 <div class="flex flex-col gap-2">
 	<Breadcrumb items={breadcrumbItems} />
 	<h1 class="sr-only">{data.album.name}</h1>
+
+	<div class="flex justify-end">
+		<a href={asset(zipPath)} download rel="nofollow" class="btn btn-sm btn-neutral">
+			<span class="icon-[line-md--download-twotone]"></span>
+			Download ZIP
+		</a>
+	</div>
+
 	<TrackList tracks={data.album.tracks} shouldDisableRadioMode={true} />
 </div>

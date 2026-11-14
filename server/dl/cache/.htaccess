@@ -1,0 +1,5 @@
+# Generated album zips - served statically by Apache (Range/resume OK).
+# Cache dir exists only on the server (rsync-excluded); index.php manages
+# its contents: version-hashed file names, pruned on regeneration.
+Options -Indexes
+AddType application/zip .zip

@@ -16,6 +16,9 @@ const config = {
 			handleHttpError: ({ path, message }) => {
 				// PWA icons are optional; user adds them to static/icons/
 				if (path.startsWith('/icons/')) return;
+				// The dl/ sidecar exists only on the deployed server; download
+				// buttons link there but nothing serves it during prerendering.
+				if (path.startsWith('/dl/')) return;
 				throw new Error(message);
 			}
 		}

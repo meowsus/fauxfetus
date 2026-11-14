@@ -5,12 +5,22 @@
 
 import { build, files, version } from '$service-worker';
 
+// SAFETY: inside a service worker, globalThis is the
+// ServiceWorkerGlobalScope per spec; the lib references above type it.
 const self = globalThis as unknown as ServiceWorkerGlobalScope;
 const CACHE = `cache-${version}`;
 
 const ASSETS = [...build, ...files].filter((url) => {
 	const pathname = new URL(url, self.location.origin).pathname;
-	return !pathname.startsWith('/audio') && pathname !== '/data/catalog.json';
+	// Exclude the bulky audio files and the generated data sidecar (too
+	// big to cache), plus the dl/ zip sidecar namespace: its requests are
+	// generated on demand and its redirect targets must never be
+	// intercepted or cached.
+	return (
+		!pathname.startsWith('/audio') &&
+		!pathname.startsWith('/dl') &&
+		pathname !== '/data/catalog.json'
+	);
 });
 
 self.addEventListener('install', (event: ExtendableEvent) => {
@@ -46,9 +56,18 @@ self.addEventListener('activate', (event: ExtendableEvent) => {
 self.addEventListener('fetch', (event: FetchEvent) => {
 	if (event.request.method !== 'GET') return;
 
-	const url = new URL(event.request.url);
+	let url: URL;
+	try {
+		url = new URL(event.request.url);
+	} catch {
+		return; // malformed request URL — leave it to the browser
+	}
 
-	if (url.pathname.startsWith('/audio') || url.pathname === '/data/catalog.json') {
+	if (
+		url.pathname.startsWith('/audio') ||
+		url.pathname.startsWith('/dl') ||
+		url.pathname === '/data/catalog.json'
+	) {
 		return;
 	}
 

@@ -1,3 +1,7 @@
 # allow crawling everything by default
 User-agent: *
 Disallow:
+
+# dl/ is the album-zip sidecar (on-demand generation + generated cache),
+# not site content. Longest-match wins, so /dl/ is still excluded.
+Disallow: /dl/

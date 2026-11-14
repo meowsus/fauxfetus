@@ -1,0 +1,12 @@
+# Album-zip sidecar directory (see plans/audio-downloads.md).
+Options -Indexes
+
+# /dl/{artistSlug}/{albumSlug}/ -> index.php?a=...&b=...
+# (The SvelteKit side links with resolve()'d path URLs; queries are
+# avoided entirely because they play poorly with route paths.)
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule ^([a-z0-9-]+)/([a-z0-9-]+)/?$ index.php?a=$1&b=$2 [L]
+</IfModule>

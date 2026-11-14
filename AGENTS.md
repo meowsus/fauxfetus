@@ -18,7 +18,7 @@ If any of the three mandatory commands fails, fix the issues and re-run all thre
 
 # Overview
 
-You are working on **fauxfetus**, a static music catalog site for an independent label/collective. It's built with SvelteKit (Svelte 5) using `@sveltejs/adapter-static`. The production deploy process builds the site to `./build/` and `rsync`'s it to the server — there is **no server-side runtime**.
+You are working on **fauxfetus**, a static music catalog site for an independent label/collective. It's built with SvelteKit (Svelte 5) using `@sveltejs/adapter-static`. The production deploy process builds the site to `./build/` and `rsync`'s it to the server — there is **no server-side runtime for the site itself**. The only server-side code is the album-zip sidecar in `server/dl/` (PHP, excluded from the SvelteKit build and rsync'ed separately — see "Album-zip sidecar" below).
 
 All site content (artists, albums, tracks) is generated at build time from JSON data files. The homepage also loads `content.md` (a changelog/blog) via `marked`.
 
@@ -77,8 +77,13 @@ fauxfetus/
 ├── scripts/
 │   ├── data/generate.ts           # pnpm generate:data — runs DataGenerator
 │   ├── data/validate.ts           # pnpm validate:data — runs validateAudio
-│   ├── deploy.sh                  # Build + rsync deploy
+│   ├── deploy.sh                  # Build + rsync deploy (site + dl/ sidecar)
 │   └── release.sh                 # Version bump + release
+├── server/
+│   └── dl/                        # Album-zip sidecar (PHP) → fauxfetus.net/dl/
+│       ├── index.php              #   Lazy zip generation; 302 to static cache file
+│       ├── .htaccess              #   No indexes; /dl/{artistSlug}/{albumSlug}/ → index.php
+│       └── cache/.htaccess        #   dl/cache/ exists only on the server (rsync-excluded)
 ├── static/
 │   ├── audio/                     # Source MP3 files (input to generator)
 │   └── data/                      # Generated: catalog.json, tracks.json
@@ -97,6 +102,23 @@ fauxfetus/
 **Package dependency direction:** `data-generator` depends on `validator`. `validator` knows nothing about `data-generator`. This matches the natural relationship: "the audio directory has this contract" is a validator concern; "given valid audio, build a navigable catalog" is a generator concern.
 
 **CLI script shape:** both `scripts/data/generate.ts` and `scripts/data/validate.ts` are thin shims — they define `READ_PATH` (and `WRITE_PATH` for generate), instantiate the package's main class, and call `run()`. The only CLI concerns that live in the scripts (rather than the packages) are `process.exit()` based on the result and any output formatting that requires the exit code.
+
+## Album-zip sidecar (dl/)
+
+`fauxfetus.net/dl/` is a dependency-free PHP endpoint (see `server/README.md` and `plans/audio-downloads.md`):
+
+1. `GET /dl/{artistSlug}/{albumSlug}/` validates the pair against the deployed `data/catalog.json`
+2. Cache hit → `302` to `/dl/cache/{artistSlug}--{albumSlug}--{hash8}.zip` (Apache serves the static file, Range/resume included)
+3. Cache miss → ZipArchive builds the zip (STORE compression), atomic rename, prune superseded versions, then 302
+
+Invariants to keep when touching this area:
+
+- `deploy.sh` rsyncs `server/dl/ → fauxfetus.net/dl/` excluding `cache/`; the main site rsync uses `--exclude '/dl/'` so the sidecar + generated zips survive `--delete`.
+- Cache file names embed a version hash (audio size+mtime ⊕ catalog md5); new content ⇒ new URL ⇒ no stale browser/proxy caches. Superseded versions are pruned at generation time.
+- No user input reaches the filesystem — GET params only select an album; every archived path comes from `catalog.json` and is re-validated server-side.
+- Frontend links: `albumZipPath()` in `$lib/helpers/downloads.ts` (browser-safe module — `catalog.ts` has Node imports and must stay server-only) wrapped in `asset()` from `$app/paths` (typed routes reject `resolve()` with non-route paths; `asset()` is the sanctioned static-file API and passes `svelte/no-navigation-without-resolve`).
+- The sidecar only exists on the deployed server — download buttons 404 on local dev/preview by design.
+- The service worker must never intercept `/dl` (see its fetch-handler exclusion list).
 
 ## Constraints
 

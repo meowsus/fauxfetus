@@ -10,6 +10,7 @@
 		jsonLdScript,
 		ogMeta
 	} from '$lib/helpers/seo';
+	import { asset } from '$app/paths';
 	import JsonLd from '$lib/components/JsonLd.svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -20,6 +21,7 @@
 	// the first track's data and go stale, so these must be `$derived`.
 	const artistHref = $derived(`/artists/${data.track.artistSlug}` as const);
 	const albumHref = $derived(`${artistHref}/${data.track.albumSlug}` as const);
+	const audioFilename = $derived(data.track.audioUrl.split('/').pop() || 'track.mp3');
 
 	const breadcrumbItems = $derived([
 		{ name: 'Home', href: '/' as const },
@@ -80,6 +82,18 @@
 			shouldDisableRadioMode={true}
 		/>
 	</ul>
+
+	<div class="flex justify-end">
+		<a
+			href={asset(`/audio/${data.track.audioUrl}`)}
+			download={audioFilename}
+			rel="nofollow"
+			class="btn btn-sm btn-neutral"
+		>
+			<span class="icon-[line-md--download-twotone]"></span>
+			Download MP3
+		</a>
+	</div>
 
 	<MetadataTable metadata={data.metadata} />
 </div>
