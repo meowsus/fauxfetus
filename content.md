@@ -1,3 +1,11 @@
+## November 14, 2026
+
+I bet y'all thought that I forgot about y'all.
+
+I've got some fun things in the works, but more on that soon. For now, you can download zips of every album or individual tracks from the track pages.
+
+Unbelievable, I know...
+
 ## August 9, 2026
 
 Two new, slightly related artists appear in the distance:
