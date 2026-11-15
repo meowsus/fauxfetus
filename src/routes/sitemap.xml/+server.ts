@@ -2,6 +2,13 @@ import type { Artist } from '@fauxfetus/data-generator';
 import fs from 'fs-extra';
 import { join } from 'path';
 
+// Without this export the route is dynamic and adapter-static ships no
+// sitemap artifact at all — a pre-existing gap: this file prerendered on
+// neither main nor any earlier build (only robots.txt, a static file,
+// made it into build/). With it, `build/sitemap.xml` is emitted as a
+// plain file the host serves directly.
+export const prerender = true;
+
 export async function GET() {
 	const baseUrl = 'https://fauxfetus.net';
 
@@ -17,6 +24,9 @@ export async function GET() {
 
 	// Artists listing
 	urls.push(urlEntry(`${baseUrl}/artists/`, today, 'daily', '0.9'));
+
+	// Albums listing (all-albums index)
+	urls.push(urlEntry(`${baseUrl}/albums/`, today, 'daily', '0.9'));
 
 	// Artist, album, and track pages
 	for (const artist of artists) {
