@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { updated } from '$app/stores';
+	import { updated } from '$app/state';
 
 	function refresh() {
 		window.location.reload();
@@ -19,7 +19,7 @@
 	});
 </script>
 
-{#if $updated}
+{#if updated.current}
 	<div role="alert">
 		<span>A new version is available</span>
 		<button type="button" onclick={refresh}>Update</button>
