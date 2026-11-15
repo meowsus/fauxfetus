@@ -40,11 +40,13 @@
 	<meta property="og:site_name" content="Faux Fetus" />
 </svelte:head>
 
+<a class="skip-link" href="#main">Skip to content</a>
+
 <header>
 	<Navbar />
 </header>
 
-<main>
+<main id="main" tabindex="-1">
 	{@render children()}
 </main>
 

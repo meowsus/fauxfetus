@@ -85,6 +85,7 @@
 	<p>No metadata available.</p>
 {:else if tableRows.length > 0}
 	<table>
+		<caption>Metadata</caption>
 		<thead>
 			<tr>
 				<th>Metadata</th>

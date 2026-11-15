@@ -55,5 +55,11 @@
 		{track.name}
 	</a>
 
-	<button type="button" onclick={handlePlayButtonClick}>Play</button>
+	<button
+		type="button"
+		aria-label={`Play ${track.name} by ${track.artistName}`}
+		onclick={handlePlayButtonClick}
+	>
+		Play
+	</button>
 </li>

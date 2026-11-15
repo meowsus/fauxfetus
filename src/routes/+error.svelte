@@ -27,6 +27,6 @@
 	{/each}
 </svelte:head>
 
-<h1>{status}</h1>
+<h1>{pageTitle}</h1>
 <p>{message}</p>
 <p><a href={resolve('/')}>Go Home</a></p>

@@ -19,6 +19,8 @@
 			<li>
 				{#if item.href && index < items.length - 1}
 					<a href={resolve(item.href)}>{item.name}</a>
+				{:else if index === items.length - 1}
+					<span aria-current="page">{item.name}</span>
 				{:else}
 					<span>{item.name}</span>
 				{/if}

@@ -10,18 +10,7 @@
 		<li><a href={resolve('/')}>Home</a></li>
 		<li><a href={resolve('/artists/')}>Artists</a></li>
 		<li><a href="https://github.com/meowsus/fauxfetus">GitHub</a></li>
-		<li>
-			<button
-				type="button"
-				onclick={() => {
-					const u = 'curt';
-					const d = 'fauxfetus.net';
-					window.location.href = `mailto:${u}@${d}`;
-				}}
-			>
-				Email
-			</button>
-		</li>
+		<li><a href="mailto:curt@fauxfetus.net">Email</a></li>
 		<li><InstallAppButton /></li>
 	</ul>
 </nav>

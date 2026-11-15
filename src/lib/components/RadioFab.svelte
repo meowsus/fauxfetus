@@ -38,11 +38,20 @@
 		if (playlist.length === 0) {
 			playerStore.update((s) => ({ ...s, isLoading: true }));
 			fetch('/data/tracks.json')
-				.then((r) => r.json())
+				.then((r) => {
+					if (!r.ok) throw new Error(`HTTP ${r.status}`);
+					return r.json();
+				})
 				.then((tracks: Track[]) => {
 					const radioPlaylist = sampleRadioPlaylist(tracks, RADIO_PLAYLIST_SIZE);
-					playerStore.update((s) => ({ ...s, allTracks: tracks, isLoading: false }));
+					playerStore.update((s) => ({ ...s, allTracks: tracks }));
 					actions.loadPlaylist(radioPlaylist, 0, { isRadio: true });
+				})
+				.catch((err) => {
+					console.error('Radio failed to start:', err);
+				})
+				.finally(() => {
+					playerStore.update((s) => ({ ...s, isLoading: false }));
 				});
 		}
 	}

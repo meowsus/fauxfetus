@@ -258,11 +258,17 @@
 		} else {
 			playerStore.update((state) => ({ ...state, isLoading: true }));
 			fetch('/data/tracks.json')
-				.then((r) => r.json())
+				.then((r) => {
+					if (!r.ok) throw new Error(`HTTP ${r.status}`);
+					return r.json();
+				})
 				.then((tracks: Track[]) => {
 					playerStore.update((state) => ({ ...state, allTracks: tracks }));
 					const newPlaylist = sampleRadioPlaylist(tracks, RADIO_PLAYLIST_SIZE);
 					loadPlaylist(newPlaylist, 0, { isRadio: true });
+				})
+				.catch((err) => {
+					console.error('Radio failed to start:', err);
 				})
 				.finally(() => {
 					playerStore.update((state) => ({ ...state, isLoading: false }));
@@ -277,7 +283,7 @@
 	<CurrentTrackCard {position} {duration} />
 {/if}
 
-{#if playlist}
+{#if playlist.length}
 	<TrackList tracks={playlist} shouldUseIndexAsTrackNumber={isRadio} shouldHideArtist={isRadio} />
 {/if}
 
