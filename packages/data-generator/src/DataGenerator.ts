@@ -86,6 +86,25 @@ export interface Artist {
 	albums: Album[];
 }
 
+/**
+ * One entry of the client-side search index (search-index.json): a lean
+ * name-and-location record with none of the heavy catalog payload (no
+ * audio URLs, no metadata, no track lists). The global header search
+ * fetches this file once per session on first use.
+ */
+export interface SearchIndexEntry {
+	type: 'artist' | 'album' | 'track';
+	name: string;
+	slug: string;
+
+	/** Album/track placement (albumSlug is the placement's parent album, not
+	 * the track's own canonical album when it comes from a compilation). */
+	artistSlug?: string;
+	artistName?: string;
+	albumSlug?: string;
+	albumName?: string;
+}
+
 const createSlug = (str: string) => slugify(str, { lower: true, strict: true });
 
 /**
@@ -547,6 +566,45 @@ export class DataGenerator {
 		return graph;
 	}
 
+	/**
+	 * Lean client-side search index for the global header search: one entry
+	 * per artist, album, and (album, track) placement, names + slugs only.
+	 * Already sorted (catalog sorting ran before this), artists → albums →
+	 * tracks, so client-side filtering can take the top matches without
+	 * re-ranking.
+	 */
+	private async writeSearchIndexJson(): Promise<void> {
+		const entries: SearchIndexEntry[] = [];
+
+		for (const artist of this.catalog) {
+			entries.push({ type: 'artist', name: artist.name, slug: artist.slug });
+
+			for (const album of artist.albums) {
+				entries.push({
+					type: 'album',
+					name: album.name,
+					slug: album.slug,
+					artistSlug: album.artistSlug,
+					artistName: album.artistName
+				});
+
+				for (const track of album.tracks) {
+					entries.push({
+						type: 'track',
+						name: track.name,
+						slug: track.slug,
+						artistSlug: track.artistSlug,
+						artistName: track.artistName,
+						albumSlug: track.albumSlug,
+						albumName: track.albumName
+					});
+				}
+			}
+		}
+
+		await fs.writeJson(path.join(this.writePath, 'search-index.json'), entries);
+	}
+
 	private async writeRecommendationsJson(): Promise<void> {
 		const composerSets = this.buildComposerSets();
 		const graph = this.buildRecommendations(composerSets);
@@ -565,6 +623,7 @@ export class DataGenerator {
 		await this.writeCatalogJson();
 		await this.writeTrackMetadataJson();
 		await this.writeTracksJson();
+		await this.writeSearchIndexJson();
 		await this.writeRecommendationsJson();
 	}
 }
