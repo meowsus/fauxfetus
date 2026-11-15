@@ -1,6 +1,4 @@
 <script lang="ts">
-	import '../app.css';
-
 	import Navbar from '$lib/components/Navbar/index.svelte';
 	import Player from '$lib/components/Player/index.svelte';
 	import RadioFab from '$lib/components/RadioFab.svelte';

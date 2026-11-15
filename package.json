@@ -25,16 +25,11 @@
 		"@fauxfetus/data-generator": "workspace:",
 		"@fauxfetus/data-validator": "workspace:",
 		"@fauxfetus/ripper": "workspace:",
-		"@iconify-json/line-md": "^1.2.14",
-		"@iconify/tailwind4": "^1.2.1",
 		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.47.1",
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",
-		"@tailwindcss/typography": "^0.5.19",
-		"@tailwindcss/vite": "^4.1.14",
 		"@types/fs-extra": "catalog:fs-extra",
 		"@types/node": "^24.0.0",
-		"daisyui": "^5.5.5",
 		"eslint": "^10.0.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.20.0",
@@ -44,10 +39,8 @@
 		"prettier": "^3.9.5",
 		"prettier-plugin-organize-imports": "^4.3.0",
 		"prettier-plugin-svelte": "^4.0.0",
-		"prettier-plugin-tailwindcss": "^0.8.0",
 		"svelte": "^5.41.0",
 		"svelte-check": "^4.3.4",
-		"tailwindcss": "^4.1.14",
 		"tsx": "^4.20.6",
 		"typescript": "^6.0.2",
 		"typescript-eslint": "^8.63.0",
@@ -55,9 +48,7 @@
 		"vite-plugin-devtools-json": "^1.0.0"
 	},
 	"dependencies": {
-		"@regosen/gapless-5": "^1.6.2",
-		"clsx": "^2.1.1",
-		"tailwind-merge": "^3.4.0"
+		"@regosen/gapless-5": "^1.6.2"
 	},
 	"packageManager": "pnpm@11.21.0+sha512.521705bce689924eac72f5a3587122f362689ef6571e55ba80076fd637c11132ecffada26fad4ea79c485bfddbfd3d5a2a5b05805a77e893de71ec8a6cca3bb1"
 }
