@@ -15,7 +15,7 @@
 
 	const playerStore = getPlayerContext();
 	const playerActionsStore = getPlayerActions();
-	const { isLoading, isRadio, playlist, allTracks } = $derived($playerStore);
+	const { isLoading, isRadio, playlist } = $derived($playerStore);
 
 	let player: Gapless5 | null = $state(null);
 
@@ -250,31 +250,9 @@
 	});
 
 	// ── UI event handlers ──────────────────────────────────────────────
-
-	const handleRadioButtonClick = () => {
-		if (allTracks.length > 0) {
-			const newPlaylist = sampleRadioPlaylist(allTracks, RADIO_PLAYLIST_SIZE);
-			loadPlaylist(newPlaylist, 0, { isRadio: true });
-		} else {
-			playerStore.update((state) => ({ ...state, isLoading: true }));
-			fetch('/data/tracks.json')
-				.then((r) => {
-					if (!r.ok) throw new Error(`HTTP ${r.status}`);
-					return r.json();
-				})
-				.then((tracks: Track[]) => {
-					playerStore.update((state) => ({ ...state, allTracks: tracks }));
-					const newPlaylist = sampleRadioPlaylist(tracks, RADIO_PLAYLIST_SIZE);
-					loadPlaylist(newPlaylist, 0, { isRadio: true });
-				})
-				.catch((err) => {
-					console.error('Radio failed to start:', err);
-				})
-				.finally(() => {
-					playerStore.update((state) => ({ ...state, isLoading: false }));
-				});
-		}
-	};
+	// Radio entry points are startRadio() in $lib/helpers, invoked from the
+	// navbar Radio button; the in-player "Radio Mode" button was removed
+	// in the IA rework (one global trigger, available on every page).
 </script>
 
 {#if isLoading}
@@ -285,8 +263,4 @@
 
 {#if playlist.length}
 	<TrackList tracks={playlist} shouldUseIndexAsTrackNumber={isRadio} shouldHideArtist={isRadio} />
-{/if}
-
-{#if !isRadio}
-	<button type="button" onclick={handleRadioButtonClick}>Radio Mode</button>
 {/if}

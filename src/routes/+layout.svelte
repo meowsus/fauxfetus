@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Navbar from '$lib/components/Navbar/index.svelte';
 	import Player from '$lib/components/Player/index.svelte';
-	import RadioFab from '$lib/components/RadioFab.svelte';
 	import UpdateNotification from '$lib/components/UpdateNotification.svelte';
+	import Footer from '$lib/components/Footer/index.svelte';
 
 	import {
 		setPlayerContext,
@@ -52,7 +52,8 @@
 
 <aside aria-label="Player">
 	<Player />
-	<RadioFab />
 </aside>
+
+<Footer />
 
 <UpdateNotification />

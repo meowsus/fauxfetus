@@ -1,7 +1,15 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { getPlayerActions, getPlayerContext } from '$lib/context/player';
+	import Search from '$lib/components/Search.svelte';
+	import { startRadio } from '$lib/helpers';
 
-	import InstallAppButton from './InstallAppButton.svelte';
+	const playerStore = getPlayerContext();
+	const playerActionsStore = getPlayerActions();
+
+	function handleRadioStart(): void {
+		startRadio(playerStore, $playerActionsStore);
+	}
 </script>
 
 <nav aria-label="Main">
@@ -9,8 +17,10 @@
 	<ul>
 		<li><a href={resolve('/')}>Home</a></li>
 		<li><a href={resolve('/artists/')}>Artists</a></li>
-		<li><a href="https://github.com/meowsus/fauxfetus">GitHub</a></li>
+		<li><a href={resolve('/albums/')}>Albums</a></li>
+		<li><button type="button" onclick={handleRadioStart}>Radio</button></li>
 		<li><a href="mailto:curt@fauxfetus.net">Email</a></li>
-		<li><InstallAppButton /></li>
 	</ul>
 </nav>
+
+<Search />

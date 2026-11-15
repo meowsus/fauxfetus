@@ -1,3 +1,8 @@
+import type { PlayerActions, PlayerState } from '$lib/context/player';
+import type { Track } from '@fauxfetus/data-generator';
+import type { Writable } from 'svelte/store';
+import { get } from 'svelte/store';
+
 export const RADIO_PLAYLIST_SIZE = 49;
 
 export function shuffle<T>(arr: T[]): T[] {
@@ -73,4 +78,46 @@ export function sampleRadioPlaylist<T extends { artistSlug: string; audioUrl: st
 	}
 
 	return playlist;
+}
+
+/**
+ * Start Radio Mode from anywhere (the navbar Radio button is the only
+ * built-in trigger since the IA rework). No-ops when radio is already
+ * running or still loading; otherwise samples a fresh playlist from the
+ * client-side track cache — fetching /data/tracks.json once when the
+ * cache is cold — and hands it to the Gapless5-backed actions.
+ *
+ * The store and actions are passed explicitly rather than read from
+ * context inside this helper: Svelte context APIs may only be called
+ * during component initialisation, and this runs from event handlers.
+ *
+ * `allTracks` is only ever populated by this function (layout starts it
+ * empty and nothing else writes it), so length > 0 reliably means "the
+ * full catalog is cached".
+ */
+export async function startRadio(
+	playerStore: Writable<PlayerState>,
+	actions: PlayerActions
+): Promise<void> {
+	const { isRadio, isLoading, allTracks } = get(playerStore);
+	if (isRadio || isLoading) return;
+
+	if (allTracks.length === 0) {
+		playerStore.update((state) => ({ ...state, isLoading: true }));
+		try {
+			const response = await fetch('/data/tracks.json');
+			if (!response.ok) throw new Error(`HTTP ${response.status}`);
+			const tracks: Track[] = await response.json();
+			playerStore.update((state) => ({ ...state, allTracks: tracks }));
+		} catch (err) {
+			console.error('Radio failed to start:', err);
+			return;
+		} finally {
+			playerStore.update((state) => ({ ...state, isLoading: false }));
+		}
+	}
+
+	actions.loadPlaylist(sampleRadioPlaylist(get(playerStore).allTracks, RADIO_PLAYLIST_SIZE), 0, {
+		isRadio: true
+	});
 }
