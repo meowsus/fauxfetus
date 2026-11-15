@@ -71,17 +71,9 @@
 	<JsonLd html={jsonLdScript(relatedArtistsLd)} />
 {/if}
 
-<div class="flex flex-col gap-2 md:grid md:grid-cols-3 md:gap-4">
-	<div class="md:col-span-3">
-		<Breadcrumb items={breadcrumbItems} />
-	</div>
-	<h1 class="sr-only">{data.artist.name}</h1>
-	<div class={data.recommendedArtists.length > 0 ? 'md:col-span-2' : 'md:col-span-3'}>
-		<AlbumList albums={data.artist.albums} />
-	</div>
-	{#if data.recommendedArtists.length > 0}
-		<div class="md:col-span-1">
-			<RelatedArtistList artists={data.recommendedArtists} />
-		</div>
-	{/if}
-</div>
+<Breadcrumb items={breadcrumbItems} />
+<h1>{data.artist.name}</h1>
+<AlbumList albums={data.artist.albums} />
+{#if data.recommendedArtists.length > 0}
+	<RelatedArtistList artists={data.recommendedArtists} />
+{/if}

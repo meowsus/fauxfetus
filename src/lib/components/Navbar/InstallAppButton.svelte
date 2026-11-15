@@ -38,12 +38,5 @@
 </script>
 
 {#if showInstall}
-	<button
-		type="button"
-		class="btn btn-circle btn-ghost"
-		onclick={handleInstallClick}
-		title="Install app"
-	>
-		<span class="icon-[line-md--download-twotone-loop]">Install App</span>
-	</button>
+	<button type="button" onclick={handleInstallClick}>Install App</button>
 {/if}

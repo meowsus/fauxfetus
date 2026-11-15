@@ -38,15 +38,13 @@
 <JsonLd html={jsonLdScript(webSiteLd)} />
 <JsonLd html={jsonLdScript(breadcrumbLd)} />
 
-<h1 class="sr-only">Faux Fetus</h1>
+<h1>Faux Fetus</h1>
 
-<a href={resolve('/artists/')} class="btn mb-2 mb-8 btn-secondary">Browse artists &rarr;</a>
+<p><a href={resolve('/artists/')}>Browse artists &rarr;</a></p>
 
 <section>
-	<h2 class="sr-only">Latest news</h2>
-	<article
-		class="prose prose-base max-w-none md:prose-lg dark:prose-invert prose-headings:text-base-content/80 prose-a:text-primary prose-a:underline prose-a:decoration-primary prose-a:underline-offset-2 prose-a:hover:opacity-80"
-	>
+	<h2>Latest news</h2>
+	<article>
 		<!-- Server-rendered HTML from trusted markdown -->
 		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 		{@html data.html}

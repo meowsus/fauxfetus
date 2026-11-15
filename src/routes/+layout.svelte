@@ -42,33 +42,17 @@
 	<meta property="og:site_name" content="Faux Fetus" />
 </svelte:head>
 
-<div class="drawer drawer-end">
-	<input id="player-drawer-toggle" type="checkbox" class="drawer-toggle" />
+<header>
+	<Navbar />
+</header>
 
-	<div class="drawer-content">
-		<Navbar />
+<main>
+	{@render children()}
+</main>
 
-		<div class="container mx-auto flex flex-col gap-4 px-4 py-4 pb-20">
-			{@render children()}
-		</div>
-	</div>
-
+<aside aria-label="Player">
+	<Player />
 	<RadioFab />
-	<UpdateNotification />
+</aside>
 
-	<div class="drawer-side">
-		<label for="player-drawer-toggle" aria-label="close sidebar" class="drawer-overlay"></label>
-		<div class="min-h-full w-[90vw] bg-base-200 p-4 lg:w-[30vw]">
-			<label
-				for="player-drawer-toggle"
-				class="btn absolute top-4 right-4 z-10 btn-circle btn-ghost"
-				aria-label="Close player"
-				title="Close player"
-			>
-				<span class="icon-[line-md--close-circle-twotone]">Close</span>
-			</label>
-
-			<Player />
-		</div>
-	</div>
-</div>
+<UpdateNotification />

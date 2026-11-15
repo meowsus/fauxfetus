@@ -20,11 +20,8 @@
 </script>
 
 {#if $updated}
-	<div class="toast toast-center toast-bottom z-50">
-		<div role="alert" class="alert alert-vertical shadow-lg sm:alert-horizontal">
-			<span class="icon-[line-md--backup-restore] shrink-0"></span>
-			<span>A new version is available</span>
-			<button class="btn btn-sm btn-primary" onclick={refresh}>Update</button>
-		</div>
+	<div role="alert">
+		<span>A new version is available</span>
+		<button type="button" onclick={refresh}>Update</button>
 	</div>
 {/if}

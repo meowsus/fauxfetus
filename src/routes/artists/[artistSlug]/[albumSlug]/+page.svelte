@@ -68,16 +68,9 @@
 <JsonLd html={jsonLdScript(albumLd)} />
 <JsonLd html={jsonLdScript(breadcrumbLd)} />
 
-<div class="flex flex-col gap-2">
-	<Breadcrumb items={breadcrumbItems} />
-	<h1 class="sr-only">{data.album.name}</h1>
+<Breadcrumb items={breadcrumbItems} />
+<h1>{data.album.name}</h1>
 
-	<div class="flex justify-end">
-		<a href={asset(zipPath)} download rel="nofollow" class="btn btn-sm btn-neutral">
-			<span class="icon-[line-md--download-twotone]"></span>
-			Download ZIP
-		</a>
-	</div>
+<p><a href={asset(zipPath)} download rel="nofollow">Download ZIP</a></p>
 
-	<TrackList tracks={data.album.tracks} shouldDisableRadioMode={true} />
-</div>
+<TrackList tracks={data.album.tracks} shouldDisableRadioMode={true} />

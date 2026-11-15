@@ -27,8 +27,6 @@
 	{/each}
 </svelte:head>
 
-<div class="flex flex-col items-center justify-center gap-6 py-16">
-	<h1 class="text-6xl font-bold text-base-content/30">{status}</h1>
-	<p class="text-xl text-base-content/60">{message}</p>
-	<a href={resolve('/')} class="btn btn-primary">Go Home</a>
-</div>
+<h1>{status}</h1>
+<p>{message}</p>
+<p><a href={resolve('/')}>Go Home</a></p>

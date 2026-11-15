@@ -4,4 +4,4 @@
 	let progress = $derived(duration > 0 ? (position / duration) * 100 : 0);
 </script>
 
-<progress class="progress w-56 progress-accent" value={progress} max="100"></progress>
+<progress value={progress} max="100" aria-label="Playback position"></progress>

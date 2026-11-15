@@ -70,30 +70,22 @@
 <JsonLd html={jsonLdScript(trackLd)} />
 <JsonLd html={jsonLdScript(breadcrumbLd)} />
 
-<div class="flex flex-col gap-4">
-	<Breadcrumb items={breadcrumbItems} />
-	<h1 class="sr-only">{data.track.name}</h1>
+<Breadcrumb items={breadcrumbItems} />
+<h1>{data.track.name}</h1>
 
-	<ul class="list rounded-box bg-base-100 shadow-md">
-		<TrackRow
-			track={data.track}
-			index={data.startIndex}
-			playlist={data.playlist}
-			shouldDisableRadioMode={true}
-		/>
-	</ul>
+<ol>
+	<TrackRow
+		track={data.track}
+		index={data.startIndex}
+		playlist={data.playlist}
+		shouldDisableRadioMode={true}
+	/>
+</ol>
 
-	<div class="flex justify-end">
-		<a
-			href={asset(`/audio/${data.track.audioUrl}`)}
-			download={audioFilename}
-			rel="nofollow"
-			class="btn btn-sm btn-neutral"
-		>
-			<span class="icon-[line-md--download-twotone]"></span>
-			Download MP3
-		</a>
-	</div>
+<p>
+	<a href={asset(`/audio/${data.track.audioUrl}`)} download={audioFilename} rel="nofollow">
+		Download MP3
+	</a>
+</p>
 
-	<MetadataTable metadata={data.metadata} />
-</div>
+<MetadataTable metadata={data.metadata} />

@@ -39,8 +39,6 @@
 <JsonLd html={jsonLdScript(collectionLd)} />
 <JsonLd html={jsonLdScript(breadcrumbLd)} />
 
-<div class="flex flex-col gap-2">
-	<Breadcrumb items={breadcrumbItems} />
-	<h1 class="sr-only">Artists</h1>
-	<ArtistList artists={data.artists} />
-</div>
+<Breadcrumb items={breadcrumbItems} />
+<h1>Artists</h1>
+<ArtistList artists={data.artists} />

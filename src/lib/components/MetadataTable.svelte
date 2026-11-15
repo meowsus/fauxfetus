@@ -82,24 +82,22 @@
 </script>
 
 {#if !metadata}
-	<p class="text-base-content/70">No metadata available.</p>
+	<p>No metadata available.</p>
 {:else if tableRows.length > 0}
-	<div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
-		<table class="table">
-			<thead>
+	<table>
+		<thead>
+			<tr>
+				<th>Metadata</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+		<tbody>
+			{#each tableRows as { label, value } (label)}
 				<tr>
-					<th>Metadata</th>
-					<th>Value</th>
+					<th>{label}</th>
+					<td>{value}</td>
 				</tr>
-			</thead>
-			<tbody>
-				{#each tableRows as { label, value } (label)}
-					<tr>
-						<th>{label}</th>
-						<td>{value}</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-	</div>
+			{/each}
+		</tbody>
+	</table>
 {/if}

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { cn } from '$lib/helpers/tailwind';
 	import TrackRow from './TrackRow.svelte';
 
 	interface Track {
@@ -16,35 +15,32 @@
 
 	interface Props {
 		tracks: Track[];
-		className?: string;
 		shouldUseIndexAsTrackNumber?: boolean;
-		shouldTogglePlayerDrawer?: boolean;
 		shouldDisableRadioMode?: boolean;
 		shouldHideArtist?: boolean;
 	}
 
 	let {
 		tracks,
-		className,
 		shouldUseIndexAsTrackNumber = false,
-		shouldTogglePlayerDrawer = true,
 		shouldDisableRadioMode = false,
 		shouldHideArtist = false
 	}: Props = $props();
 </script>
 
-<ul class={cn('list rounded-box bg-base-100 shadow-md', className)}>
-	<li class="p-4 pb-2 text-xs tracking-wide opacity-60">Tracks</li>
+<section>
+	<h2>Tracks</h2>
 
-	{#each tracks as track, index (track.audioUrl)}
-		<TrackRow
-			{track}
-			{index}
-			playlist={tracks}
-			{shouldUseIndexAsTrackNumber}
-			{shouldTogglePlayerDrawer}
-			{shouldDisableRadioMode}
-			{shouldHideArtist}
-		/>
-	{/each}
-</ul>
+	<ol>
+		{#each tracks as track, index (track.audioUrl)}
+			<TrackRow
+				{track}
+				{index}
+				playlist={tracks}
+				{shouldUseIndexAsTrackNumber}
+				{shouldDisableRadioMode}
+				{shouldHideArtist}
+			/>
+		{/each}
+	</ol>
+</section>

@@ -271,30 +271,16 @@
 	};
 </script>
 
-<div class="absolute inset-4 flex flex-col gap-4 overflow-hidden">
-	{#if isLoading}
-		<div class="flex grow items-center justify-center">
-			<span class="loading loading-xl loading-infinity"></span>
-		</div>
-	{:else}
-		<CurrentTrackCard {position} {duration} />
-	{/if}
+{#if isLoading}
+	<p role="status">Loading…</p>
+{:else}
+	<CurrentTrackCard {position} {duration} />
+{/if}
 
-	{#if playlist}
-		<div class="grow overflow-y-auto">
-			<TrackList
-				tracks={playlist}
-				shouldTogglePlayerDrawer={false}
-				shouldUseIndexAsTrackNumber={isRadio}
-				shouldHideArtist={isRadio}
-			/>
-		</div>
-	{/if}
+{#if playlist}
+	<TrackList tracks={playlist} shouldUseIndexAsTrackNumber={isRadio} shouldHideArtist={isRadio} />
+{/if}
 
-	{#if !isRadio}
-		<button class="btn self-stretch btn-neutral" onclick={handleRadioButtonClick}>
-			<span class="icon-[line-md--arrow-small-left]"></span>
-			Radio Mode
-		</button>
-	{/if}
-</div>
+{#if !isRadio}
+	<button type="button" onclick={handleRadioButtonClick}>Radio Mode</button>
+{/if}
