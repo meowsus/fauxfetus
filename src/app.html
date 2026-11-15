@@ -6,10 +6,15 @@
 		<link rel="manifest" href="/manifest.webmanifest" />
 		<link rel="apple-touch-icon" href="/icons/icon-180x180.png" />
 
+		<!-- Analytics. Versioned v5 script = immutable upstream, so the SRI hash
+		     can never break. If a future version is wanted, get the new pair from
+		     https://www.goatcounter.com/help/countjs-versions -->
 		<script
 			data-goatcounter="https://fauxfetus.goatcounter.com/count"
 			async
-			src="//gc.zgo.at/count.js"
+			src="https://gc.zgo.at/count.v5.js"
+			crossorigin="anonymous"
+			integrity="sha384-atnOLvQb9t+jTSipvd75X2yginT4PjVbqDdlJAmxMm+wYElFmeR6EmLP5bYeoRVQ"
 		></script>
 
 		%sveltekit.head%
