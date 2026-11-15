@@ -8,19 +8,19 @@ pnpm lint
 pnpm format
 ```
 
-- **`pnpm check`** — catches TypeScript and Svelte type errors.
-- **`pnpm lint`** — catches formatting issues and ESLint violations.
-- **`pnpm format`** — auto-fixes formatting with Prettier.
+- **`pnpm check`**: catches TypeScript and Svelte type errors.
+- **`pnpm lint`**: catches formatting issues and ESLint violations.
+- **`pnpm format`**: auto-fixes formatting with Prettier.
 
-**Do not run `pnpm build` after every change** — it's slow (30+ seconds) and only needed for SSR/prerender verification or pre-deploy. See the **Build Verification** section below for when it's appropriate.
+**Do not run `pnpm build` after every change**: it's slow (30+ seconds) and only needed for SSR/prerender verification or pre-deploy. See the **Build Verification** section below for when it's appropriate.
 
 If any of the three mandatory commands fails, fix the issues and re-run all three until every one passes cleanly. **Do not skip this step. Do not consider a task complete until all three pass.**
 
 # Overview
 
-You are working on **fauxfetus**, a static music catalog site for an independent label/collective. It's built with SvelteKit (Svelte 5) using `@sveltejs/adapter-static`. The production deploy process builds the site to `./build/` and `rsync`'s it to the server — there is **no server-side runtime for the site itself**. The only server-side code is the album-zip sidecar in `server/dl/` (PHP, excluded from the SvelteKit build and rsync'ed separately — see "Album-zip sidecar" below).
+You are working on **fauxfetus**, a static music catalog site for an independent label/collective. It's built with SvelteKit (Svelte 5) using `@sveltejs/adapter-static`. The production deploy process builds the site to `./build/` and `rsync`'s it to the server: there is **no server-side runtime for the site itself**. The only server-side code is the album-zip sidecar in `server/dl/` (PHP, excluded from the SvelteKit build and rsync'ed separately; see "Album-zip sidecar" below).
 
-All site content (artists, albums, tracks) is generated at build time from JSON data files. The homepage also loads `content.md` (a changelog/blog) via `marked`.
+All site content (artists, albums, tracks) is generated at build time from JSON data files. The homepage also surfaces "what's new" from dated news posts in `content/news/` (see [News pipeline](#news-pipeline-contentnews)).
 
 ## Project Structure
 
@@ -35,9 +35,9 @@ fauxfetus/
 │       ├── context/
 │       │   └── player.ts          # Svelte context for player state
 │       ├── helpers/
-│       │   ├── catalog.ts         # readCatalog() — loads static/data/catalog.json
+│       │   ├── catalog.ts         # readCatalog(): loads static/data/catalog.json
 │       │   ├── player.ts          # Player logic helpers
-│       │   └── tailwind.ts        # cn() — clsx + tailwind-merge
+│       │   └── tailwind.ts        # cn(): clsx + tailwind-merge
 │       └── components/
 │           ├── AlbumList.svelte
 │           ├── ArtistList.svelte
@@ -48,7 +48,7 @@ fauxfetus/
 │           └── Player/            # Audio player (card, controls, progress)
 ├── src/routes/
 │   ├── +layout.server.ts          # prerender = true, trailingSlash = 'always'
-│   ├── +page.server.ts            # Home — loads content.md via marked
+│   ├── +page.server.ts            # Home: "Recently added" + news teaser via $lib/helpers/news
 │   ├── +page.svelte               # Home page
 │   ├── artists/
 │   │   ├── +page.server.ts        # Lists all artists
@@ -63,6 +63,13 @@ fauxfetus/
 │   │               ├── +page.server.ts  # Single track + metadata
 │   │               └── +page.svelte
 │   └── sitemap.xml/+server.ts     # Sitemap generation
+│   ├── news/
+│   │   ├── +page.server.ts        # News index (all posts, summaries only)
+│   │   ├── +page.svelte           # News archive, grouped by year
+│   │   ├── feed.xml/+server.ts    # RSS 2.0 feed (prerender = true)
+│   │   └── [slug]/
+│   │       ├── +page.server.ts    # Single post; entries() from news dir
+│   │       └── +page.svelte       # Post page: title/date/music/prose
 ├── packages/data-generator/      # @fauxfetus/data-generator workspace package
 │   ├── index.ts
 │   └── src/
@@ -73,10 +80,10 @@ fauxfetus/
 │       ├── ApeTag.ts              # APEv2 tag ID enum
 │       ├── Validator.ts           # Validator class (mirrors DataGenerator shape) + static validate(tuples)
 │       ├── types.ts               # Shared PathMetadataTuple
-│       └── walk.ts                # readAudioMetadata() — klaw walker
+│       └── walk.ts                # readAudioMetadata(): klaw walker
 ├── scripts/
-│   ├── data/generate.ts           # pnpm generate:data — runs DataGenerator
-│   ├── data/validate.ts           # pnpm validate:data — runs validateAudio
+│   ├── data/generate.ts           # pnpm generate:data: runs DataGenerator
+│   ├── data/validate.ts           # pnpm validate:data: runs validateAudio
 │   ├── deploy.sh                  # Build + rsync deploy (site + dl/ sidecar)
 │   └── release.sh                 # Version bump + release
 ├── server/
@@ -87,21 +94,36 @@ fauxfetus/
 ├── static/
 │   ├── audio/                     # Source MP3 files (input to generator)
 │   └── data/                      # Generated: catalog.json, tracks.json
-├── content.md                     # Homepage changelog (Markdown)
+├── content/
+│   └── news/                      # Dated news posts: YYYY-MM-DD-<slug>.md (title + music frontmatter)
 └── package.json                   # v2.7.0, pnpm monorepo
 ```
 
 ## Data Flow
 
 1. `pnpm validate:data` → runs `scripts/data/validate.ts` → `Validator` (in `@fauxfetus/data-validator`) walks `static/audio/`, parses metadata, and returns a `ValidationSummary` (collecting all errors, no throw-on-first)
-2. `pnpm generate:data` → runs `scripts/data/generate.ts` → `DataGenerator.create()` (in `@fauxfetus/data-generator`) calls `Validator.readAndValidate()` from `@fauxfetus/data-validator` as a constructor-time prerequisite. If any audio file is invalid, the full failure report is printed and an error is thrown — the generator object is never returned, so `run()` cannot be called. If validation passes, `run()` builds the catalog and writes JSON with no further validation.
+2. `pnpm generate:data` → runs `scripts/data/generate.ts` → `DataGenerator.create()` (in `@fauxfetus/data-generator`) calls `Validator.readAndValidate()` from `@fauxfetus/data-validator` as a constructor-time prerequisite. If any audio file is invalid, the full failure report is printed and an error is thrown; the generator object is never returned, so `run()` cannot be called. If validation passes, `run()` builds the catalog and writes JSON with no further validation.
 3. Outputs `static/data/catalog.json` and `static/data/tracks.json`
 4. At build time, `+page.server.ts` load functions call `readCatalog()` which reads `static/data/catalog.json`
-5. `adapter-static` prerenders all pages — no runtime server
+5. At build time, news load functions call `readNews()` which parses `content/news/*.md` and resolves every frontmatter `music` slug (`+` prose catalog links) against `catalog.json`; the build fails loudly on drift
+6. `adapter-static` prerenders all pages: no runtime server
 
 **Package dependency direction:** `data-generator` depends on `validator`. `validator` knows nothing about `data-generator`. This matches the natural relationship: "the audio directory has this contract" is a validator concern; "given valid audio, build a navigable catalog" is a generator concern.
 
-**CLI script shape:** both `scripts/data/generate.ts` and `scripts/data/validate.ts` are thin shims — they define `READ_PATH` (and `WRITE_PATH` for generate), instantiate the package's main class, and call `run()`. The only CLI concerns that live in the scripts (rather than the packages) are `process.exit()` based on the result and any output formatting that requires the exit code.
+**CLI script shape:** both `scripts/data/generate.ts` and `scripts/data/validate.ts` are thin shims: they define `READ_PATH` (and `WRITE_PATH` for generate), instantiate the package's main class, and call `run()`. The only CLI concerns that live in the scripts (rather than the packages) are `process.exit()` based on the result and any output formatting that requires the exit code.
+
+## News pipeline (content/news/)
+
+Dated Markdown posts drive the homepage "Recently added" list and the `/news/` archive (see `plans/site-news.md`):
+
+- **File contract**: `content/news/YYYY-MM-DD-<slug>.md`: the filename publishes the date AND the permalink (`/news/YYYY-MM-DD-<slug>/`). Frontmatter: `title` (required) and optional `music`, a list of `{ artist: <artistSlug>, albums?: [<albumSlug>] }`.
+- **Non-rigid rule**: anything listed in `music` renders on the homepage "Recently added" list as a per-announcement group whose date links to the post. Bare `artist` = "new artist" item; listing `albums` = one item per album. Re-rips count too (dedupe keeps the newest mention, so superseded announcements drop out of their groups).
+- **Loud-fail drift protection**: `readNews()` in `$lib/helpers/news.ts` (SERVER-ONLY, like `catalog.ts`) resolves every `music` slug and every hand-typed `/artists/...` prose link against `catalog.json` at build time; unknown slugs fail `pnpm build` with a file-level error message.
+- **Frontmatter is strict**: unknown keys are rejected (typo protection), and numeric-looking slugs must be quoted (`albums: ['060503']`) or YAML parses them as numbers and strips the leading zero.
+- Homepage: the release list is unbounded (the full additions history since
+  the site's reconception); teaser capped via `RECENT_POST_CAP` in `news.ts`.
+  `/news/feed.xml/` is an RSS 2.0 feed of every post; header links carry
+  artist/album counts from the layout load.
 
 ## Album-zip sidecar (dl/)
 
@@ -115,65 +137,66 @@ Invariants to keep when touching this area:
 
 - `deploy.sh` rsyncs `server/dl/ → fauxfetus.net/dl/` excluding `cache/`; the main site rsync uses `--exclude '/dl/'` so the sidecar + generated zips survive `--delete`.
 - Cache file names embed a version hash (audio size+mtime ⊕ catalog md5); new content ⇒ new URL ⇒ no stale browser/proxy caches. Superseded versions are pruned at generation time.
-- No user input reaches the filesystem — GET params only select an album; every archived path comes from `catalog.json` and is re-validated server-side.
-- Frontend links: `albumZipPath()` in `$lib/helpers/downloads.ts` (browser-safe module — `catalog.ts` has Node imports and must stay server-only) wrapped in `asset()` from `$app/paths` (typed routes reject `resolve()` with non-route paths; `asset()` is the sanctioned static-file API and passes `svelte/no-navigation-without-resolve`).
-- The sidecar only exists on the deployed server — download buttons 404 on local dev/preview by design.
+- No user input reaches the filesystem: GET params only select an album; every archived path comes from `catalog.json` and is re-validated server-side.
+- Frontend links: `albumZipPath()` in `$lib/helpers/downloads.ts` (browser-safe module; `catalog.ts` has Node imports and must stay server-only) wrapped in `asset()` from `$app/paths` (typed routes reject `resolve()` with non-route paths; `asset()` is the sanctioned static-file API and passes `svelte/no-navigation-without-resolve`).
+- The sidecar only exists on the deployed server: download buttons 404 on local dev/preview by design.
 - The service worker must never intercept `/dl` (see its fetch-handler exclusion list).
 
 ## Constraints
 
 - **Static-only site**: No runtime server. All pages are prerendered. Do not add API routes that need a server.
-- **Svelte 5 runes**: Use `$state`, `$derived`, `$effect` — not legacy `$:` reactive syntax. Use `$bindable` for props that need two-way binding.
+- **Svelte 5 runes**: Use `$state`, `$derived`, `$effect` (not legacy `$:` reactive syntax). Use `$bindable` for props that need two-way binding.
 - **Player state**: Managed via Svelte context (`createContext` / `setPlayerContext` / `getPlayerContext`), not a global store. The state type is `PlayerState` in `src/lib/context/player.ts`.
-- **Trailing slashes**: `trailingSlash = 'always'` — routes must end with `/`.
+- **Trailing slashes**: `trailingSlash = 'always'`: routes must end with `/`.
 - **Slug params**: Route params use camelCase (`artistSlug`, `albumSlug`, `trackSlug`).
 - **PWA**: The site is installable as a PWA. The service worker is at `src/service-worker/index.ts`. PWA icons live in `static/icons/` (optional).
+- **News posts**: follow the `content/news/YYYY-MM-DD-<slug>.md` contract (see News pipeline) and quote numeric-looking slugs in YAML.
 - **No test framework**: There is no test runner configured. Do not add one without explicit direction.
 
 ## Code Style
 
 ### Formatting
 
-- See **Mandatory Post-Task Verification** at the top of this file — always run `pnpm format` (alongside `pnpm check` and `pnpm lint`) after changes.
+- See **Mandatory Post-Task Verification** at the top of this file: always run `pnpm format` (alongside `pnpm check` and `pnpm lint`) after changes.
 - Config: tabs, single quotes, trailing commas off, 100 char width.
 - Plugins run automatically: `prettier-plugin-svelte`, `prettier-plugin-tailwindcss`, `prettier-plugin-organize-imports`.
-- `tailwindStylesheet: "./src/app.css"` — class sorting uses your actual Tailwind config.
+- `tailwindStylesheet` points at `./src/app.css`, so class sorting uses your actual Tailwind config.
 
 ### Conventions
 
 - Component style: `<script lang="ts">` with TypeScript.
 - Utility classes: use `cn()` from `$lib/helpers/tailwind` (wraps `clsx` + `tailwind-merge`) when merging or conditionally applying classes. For static class strings with no merging needed, plain string classnames are fine.
 - Import aliases: `$lib` for `src/lib/`.
-- Data access: always go through `readCatalog()` in `$lib/helpers/catalog.ts` — it memoizes and reads from `static/data/catalog.json`.
+- Data access: always go through `readCatalog()` in `$lib/helpers/catalog.ts`, which memoizes and reads from `static/data/catalog.json`.
 - Type imports: `Artist`, `Album`, `Track`, etc. come from `@fauxfetus/data-generator`.
 
 ## Build Verification
 
-- **`pnpm check`** is the primary verification after code changes — it catches TypeScript and Svelte type errors.
-- **`pnpm build`** is slow (30+ seconds) and only needed to verify SSR/prerendering issues (e.g., `window` references during SSR) or before deployment. Do not run it after every code change — `pnpm check` is sufficient for routine changes.
+- **`pnpm check`** is the primary verification after code changes: it catches TypeScript and Svelte type errors.
+- **`pnpm build`** is slow (30+ seconds) and only needed to verify SSR/prerendering issues (e.g., `window` references during SSR) or before deployment. Do not run it after every code change; `pnpm check` is sufficient for routine changes.
 - **`pnpm lint`** and **`pnpm format`** should still be run after changes.
 
-| Scenario                                                         | Run `pnpm build`?              |
-| ---------------------------------------------------------------- | ------------------------------ |
-| Routine code change (components, helpers, etc.)                  | No — `pnpm check` is enough    |
-| Adding/modifying a library that references `window`/browser APIs | Yes — verify SSR doesn't break |
-| Changing SvelteKit config, adapters, or prerendering             | Yes                            |
-| Before deployment                                                | Yes                            |
+| Scenario                                                         | Run `pnpm build`?             |
+| ---------------------------------------------------------------- | ----------------------------- |
+| Routine code change (components, helpers, etc.)                  | No, `pnpm check` is enough    |
+| Adding/modifying a library that references `window`/browser APIs | Yes, verify SSR doesn't break |
+| Changing SvelteKit config, adapters, or prerendering             | Yes                           |
+| Before deployment                                                | Yes                           |
 
 ## Commands
 
 | Command              | Purpose                                         | When to run                       | Allowed?  |
 | -------------------- | ----------------------------------------------- | --------------------------------- | --------- |
-| `pnpm dev`           | Start dev server                                | —                                 | No        |
+| `pnpm dev`           | Start dev server                                | n/a                               | No        |
 | `pnpm build`         | Production build to `./build/`                  | SSR/prerender changes, pre-deploy | Yes       |
-| `pnpm preview`       | Preview production build locally                | —                                 | Yes       |
+| `pnpm preview`       | Preview production build locally                | n/a                               | Yes       |
 | `pnpm check`         | Type-check with `svelte-check` + `tsc`          | After every code change           | Yes       |
 | `pnpm lint`          | Prettier check + ESLint                         | After every code change           | Yes       |
 | `pnpm format`        | Format all files with Prettier                  | After every code change           | Yes       |
-| `pnpm generate:data` | Regenerate catalog/tracks JSON from audio files | —                                 | Yes       |
-| `pnpm validate:data` | Validate audio files against schema/format/tags | —                                 | Yes       |
-| `pnpm deploy:build`  | Build + rsync to server                         | —                                 | No, never |
-| `pnpm release`       | Version bump + release                          | —                                 | No, never |
+| `pnpm generate:data` | Regenerate catalog/tracks JSON from audio files | n/a                               | Yes       |
+| `pnpm validate:data` | Validate audio files against schema/format/tags | n/a                               | Yes       |
+| `pnpm deploy:build`  | Build + rsync to server                         | n/a                               | No, never |
+| `pnpm release`       | Version bump + release                          | n/a                               | No, never |
 
 # Common Tasks
 
@@ -192,7 +215,7 @@ Invariants to keep when touching this area:
 
 ## Context7 (Documentation Lookup)
 
-Use the `ctx7` CLI to fetch current documentation **before writing or modifying any code that uses Svelte, SvelteKit, daisyUI, Tailwind, or any other library** — even if you think you know the API. Your training data may not reflect recent changes (especially Svelte 5 runes, daisyUI 5 classes, Tailwind 4 directives).
+Use the `ctx7` CLI to fetch current documentation **before writing or modifying any code that uses Svelte, SvelteKit, daisyUI, Tailwind, or any other library**, even if you think you know the API. Your training data may not reflect recent changes (especially Svelte 5 runes, daisyUI 5 classes, Tailwind 4 directives).
 
 ### When to use
 
@@ -212,12 +235,12 @@ Use the `ctx7` CLI to fetch current documentation **before writing or modifying 
 
 ### Workflow
 
-1. **Resolve the library** — `npx ctx7@latest library <name> "<query>"`
+1. **Resolve the library**: `npx ctx7@latest library <name> "<query>"`
    - Use the official library name with proper punctuation (e.g. `"Next.js"` not `"nextjs"`, `"Three.js"` not `"threejs"`)
-   - The query is required and directly affects result ranking — use the user's full question as the query
+   - The query is required and directly affects result ranking; use the user's full question as the query
 2. **Pick the best match** from the results by: exact name match, description relevance, code snippet count, source reputation (High/Medium preferred), and benchmark score (higher is better). If results look wrong, try alternate names or rephrased queries.
-3. **Fetch docs** — `npx ctx7@latest docs <libraryId> "<query>"`
-   - Library IDs use `/org/project` format (e.g. `/sveltejs/kit`, `/saadeghi/daisyui`) — the `/` prefix is required
+3. **Fetch docs**: `npx ctx7@latest docs <libraryId> "<query>"`
+   - Library IDs use `/org/project` format (e.g. `/sveltejs/kit`, `/saadeghi/daisyui`); the `/` prefix is required
    - For version-specific docs, use `/org/project/version` from the `library` output (e.g. `/vercel/next.js/v14.3.0`)
 4. **Answer using the fetched docs**
 

@@ -4,10 +4,11 @@
 	type ArtistPath = `/artists/${string}`;
 	type AlbumPath = `/artists/${string}/${string}`;
 	type TrackPath = `/artists/${string}/${string}/${string}`;
+	type NewsPath = '/news' | `/news/${string}`;
 
 	interface BreadcrumbItem {
 		name: string;
-		href?: '/' | '/artists' | ArtistPath | AlbumPath | TrackPath;
+		href?: '/' | '/artists' | '/albums' | ArtistPath | AlbumPath | TrackPath | NewsPath;
 	}
 
 	let { items }: { items: BreadcrumbItem[] } = $props();

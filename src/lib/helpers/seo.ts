@@ -1,4 +1,6 @@
-const BASE_URL = 'https://fauxfetus.net';
+/** Canonical site origin: no trailing slash. File artifacts (feeds) use this
+ * directly; HTML routes go through canonicalUrl(). */
+export const BASE_URL = 'https://fauxfetus.net';
 const SITE_NAME = 'Faux Fetus';
 const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.png`;
 
@@ -187,6 +189,35 @@ export function jsonLdMusicRecording(track: {
 			'@type': 'MusicAlbum',
 			name: track.albumName,
 			url: canonicalUrl(`/artists/${track.artistSlug}/${track.albumSlug}/`)
+		}
+	};
+}
+
+/** BlogPosting schema for a news post. */
+export function jsonLdBlogPosting(post: {
+	title: string;
+	slug: string;
+	date: string;
+	excerpt: string;
+}) {
+	const url = canonicalUrl(`/news/${post.slug}/`);
+	return {
+		'@context': 'https://schema.org',
+		'@type': 'BlogPosting',
+		headline: post.title,
+		description: post.excerpt,
+		datePublished: post.date,
+		url,
+		mainEntityOfPage: url,
+		author: {
+			'@type': 'Organization',
+			name: SITE_NAME,
+			url: BASE_URL
+		},
+		publisher: {
+			'@type': 'Organization',
+			name: SITE_NAME,
+			url: BASE_URL
 		}
 	};
 }

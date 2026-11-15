@@ -1,16 +1,18 @@
+import { readNewsSummary } from '$lib/helpers/news';
+import { BASE_URL } from '$lib/helpers/seo';
 import type { Artist } from '@fauxfetus/data-generator';
 import fs from 'fs-extra';
 import { join } from 'path';
 
 // Without this export the route is dynamic and adapter-static ships no
-// sitemap artifact at all — a pre-existing gap: this file prerendered on
+// sitemap artifact at all. Pre-existing gap: this file prerendered on
 // neither main nor any earlier build (only robots.txt, a static file,
 // made it into build/). With it, `build/sitemap.xml` is emitted as a
 // plain file the host serves directly.
 export const prerender = true;
 
 export async function GET() {
-	const baseUrl = 'https://fauxfetus.net';
+	const baseUrl = BASE_URL;
 
 	const dataPath = join(process.cwd(), 'static', 'data', 'catalog.json');
 	const artists: Artist[] = await fs.readJson(dataPath);
@@ -27,6 +29,12 @@ export async function GET() {
 
 	// Albums listing (all-albums index)
 	urls.push(urlEntry(`${baseUrl}/albums/`, today, 'daily', '0.9'));
+
+	// News index + posts (post lastmod = publish date)
+	urls.push(urlEntry(`${baseUrl}/news/`, today, 'weekly', '0.7'));
+	for (const post of await readNewsSummary()) {
+		urls.push(urlEntry(`${baseUrl}/news/${post.slug}/`, post.date, 'monthly', '0.6'));
+	}
 
 	// Artist, album, and track pages
 	for (const artist of artists) {
