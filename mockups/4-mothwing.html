@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="dark" />
+		<meta name="theme-color" content="#0e0f13" />
+		<title>Mockup 04 · Mothwing (v3, de-templated) — fauxfetus</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@300;400;500&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			/*
+				V3 — de-templated, per plans/redesign-principles.md
+				· three distinct section openers (no uniform label+hairline kit)
+				· real track counts as data texture; tabular figures everywhere
+				· varied rhythm: one deep "side-two" pause before the news
+				· acid = interaction color + data-true tags only
+				· instant hovers (no transitions); invert-on-hover is the signature
+			*/
+			:root {
+				color-scheme: dark;
+				--bg: #0e0f13;
+				--ink: #ece9f4;
+				--dim: #85819a;
+				--violet: #a79aff;
+				--acid: #c8f449;
+				--hair: rgba(236, 233, 244, 0.14);
+			}
+			* {
+				margin: 0;
+				box-sizing: border-box;
+			}
+			html {
+				-webkit-text-size-adjust: 100%;
+			}
+			body {
+				background: var(--bg);
+				color: var(--ink);
+				font-family: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+				font-size: 0.95rem;
+				line-height: 1.65;
+				max-width: 36rem;
+				margin-inline: auto;
+				padding: 1.4rem 1.25rem 8.5rem;
+			}
+			a {
+				color: inherit;
+				text-decoration: none;
+			}
+			a:hover {
+				color: var(--violet);
+			}
+			a:focus-visible,
+			button:focus-visible,
+			input:focus-visible {
+				outline: 2px solid var(--violet);
+				outline-offset: 3px;
+				border-radius: 2px;
+			}
+			/* acid splat #1: selection is an interaction color, on purpose */
+			::selection {
+				background: var(--acid);
+				color: #0e0f13;
+			}
+			button {
+				font: inherit;
+				color: inherit;
+				background: none;
+				border: 0;
+				cursor: pointer;
+			}
+			.vh {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				overflow: hidden;
+				clip-path: inset(50%);
+				white-space: nowrap;
+			}
+			.skip {
+				position: absolute;
+				left: -9999px;
+				top: 0;
+				background: var(--violet);
+				color: #0e0f13;
+				padding: 0.5em 1em;
+				z-index: 99;
+				font-size: 0.8rem;
+			}
+			.skip:focus-visible {
+				left: 0.5rem;
+			}
+			.cap {
+				font-size: 0.7rem;
+				font-weight: 500;
+				letter-spacing: 0.26em;
+				text-transform: uppercase;
+			}
+			.cap.dim {
+				color: var(--dim);
+			}
+			.tnum {
+				font-variant-numeric: tabular-nums lining-nums;
+			}
+
+			/* ── header — the mark lives here (direct child), caps stay the nav's voice ── */
+			header {
+				padding-top: 1.1rem;
+				display: grid;
+				grid-template-columns: 2.25rem minmax(0, 1fr);
+				grid-template-rows: minmax(2.25rem, auto) auto;
+				column-gap: 1.1rem;
+			}
+			.mark {
+				display: block;
+				position: relative;
+				grid-column: 1;
+				grid-row: 1;
+				align-self: stretch;
+			}
+			.mark img {
+				position: absolute;
+				inset: 0;
+				height: 100%;
+				width: 100%;
+				object-fit: contain;
+				object-position: left center;
+				filter: invert(1);
+				mix-blend-mode: screen;
+			}
+			nav[aria-label='Main'] {
+				grid-column: 2;
+				grid-row: 1;
+				display: flex;
+				align-items: center;
+				justify-content: flex-end;
+			}
+			nav ul {
+				list-style: none;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.35rem 1rem;
+				padding: 0;
+				margin: 0;
+				justify-content: flex-end;
+			}
+			nav[aria-label='Main'] a,
+			nav[aria-label='Main'] button {
+				color: var(--dim);
+			}
+			nav[aria-label='Main'] a .cap,
+			nav[aria-label='Main'] button .cap {
+				display: inline-block;
+				padding: 0.4em 0;
+			}
+			nav[aria-label='Main'] a:hover,
+			nav[aria-label='Main'] button:hover {
+				color: var(--violet);
+			}
+			form[role='search'] {
+				grid-column: 1 / -1;
+				grid-row: 2;
+				display: flex;
+				align-items: center;
+				gap: 0.55rem;
+				margin-top: 1.2rem;
+				background: rgb(236 233 244 / 0.055);
+				border: 1px solid rgb(236 233 244 / 0.18);
+				border-radius: 10px;
+				padding: 0 0.9rem;
+			}
+			form[role='search'] svg {
+				flex: none;
+				color: var(--dim);
+			}
+			form[role='search'] input {
+				width: 100%;
+				background: none;
+				border: 0;
+				color: var(--ink);
+				font-family: inherit;
+				font-size: 0.95rem;
+				padding: 0.72em 0;
+			}
+			form[role='search'] input::placeholder {
+				color: var(--dim);
+			}
+			form[role='search']:focus-within {
+				border-color: var(--violet);
+				background: rgb(236 233 244 / 0.08);
+			}
+
+			/* ── hero — opener #1: serif annotation, no caps ── */
+			.hero {
+				padding-block: 4.5rem 1rem;
+			}
+			.eyebrow {
+				font-family: 'Instrument Serif', Georgia, serif;
+				font-style: italic;
+				font-size: 1.2rem;
+				color: var(--dim);
+				/* subtitle: hangs beneath the wordmark, not above it */
+				margin-top: 1.05rem;
+			}
+			h1 {
+				font-family: 'Instrument Serif', Georgia, serif;
+				font-weight: 400;
+				font-size: clamp(4rem, 17vw, 8.5rem);
+				line-height: 0.92;
+				letter-spacing: -0.01em;
+				margin-top: 0;
+			}
+			h1 em {
+				font-style: italic;
+			}
+			.tagline {
+				color: var(--dim);
+				font-weight: 300;
+				margin-top: 1.6rem;
+				text-wrap: balance;
+			}
+			.counts {
+				color: var(--dim);
+				margin-top: 1.1rem;
+				font-weight: 300;
+				font-variant-numeric: tabular-nums lining-nums;
+			}
+			.counts b {
+				color: var(--ink);
+				font-weight: 400;
+				font-size: 1.08rem;
+			}
+
+			/* ── recently added — opener #2: untracked caps label, ledger ── */
+			section {
+				margin-top: 5rem;
+			}
+			.lbl {
+				font-size: 0.72rem;
+				font-weight: 500;
+				letter-spacing: 0.09em;
+				text-transform: uppercase;
+				color: var(--violet);
+			}
+			.note {
+				font-family: 'Instrument Serif', Georgia, serif;
+				font-style: italic;
+				font-size: 1.05rem;
+				color: var(--dim);
+				margin-top: 0.8rem;
+			}
+			ol.groups {
+				list-style: none;
+				padding: 0;
+				margin-top: 2.2rem;
+			}
+			ol.groups > li + li {
+				margin-top: 3rem;
+			}
+			.group-date .cap {
+				letter-spacing: 0.14em;
+				font-variant-numeric: tabular-nums lining-nums;
+			}
+			.group-date a {
+				color: var(--violet);
+			}
+			.group-date a:hover {
+				color: var(--ink);
+			}
+			ul.items {
+				list-style: none;
+				padding: 0;
+				margin-top: 1.1rem;
+				font-family: 'Instrument Serif', Georgia, serif;
+				font-size: 1.45rem;
+				line-height: 1.35;
+			}
+			ul.items li {
+				padding-left: 1.7rem;
+				text-indent: -1.7rem;
+				margin-top: 0.55rem;
+			}
+			ul.items li::before {
+				content: '—';
+				color: var(--dim);
+				margin-right: 0.45em;
+			}
+			/* the signature: a name you touch stamps itself like a label */
+			ul.items a:hover {
+				background: var(--violet);
+				color: #0e0f13;
+				padding-inline: 0.14em;
+				margin-inline: -0.14em;
+				-webkit-box-decoration-break: clone;
+				box-decoration-break: clone;
+			}
+			ul.items .albs {
+				font-size: 1rem;
+				color: var(--dim);
+				font-style: italic;
+			}
+			.track-count {
+				font-size: 0.8em;
+				opacity: 0.72;
+				letter-spacing: 0.02em;
+				white-space: nowrap;
+				font-variant-numeric: tabular-nums lining-nums;
+			}
+			/* acid splat #2 stays because it is data, not decoration */
+			ul.items small {
+				font-family: 'Space Grotesk', system-ui, sans-serif;
+				font-size: 0.66rem;
+				font-weight: 500;
+				letter-spacing: 0.2em;
+				text-transform: uppercase;
+				color: var(--acid);
+				margin-left: 0.5em;
+			}
+			.sec-foot {
+				margin-top: 2.2rem;
+			}
+			.sec-foot a {
+				color: var(--dim);
+			}
+			.sec-foot a:hover {
+				color: var(--violet);
+			}
+
+			/* ── news — opener #3: italic ink label, then the front page ── */
+			section.news {
+				margin-top: 7rem;
+			}
+			.news-label {
+				font-family: 'Instrument Serif', Georgia, serif;
+				font-style: italic;
+				font-weight: 400;
+				font-size: 1.1rem;
+				color: var(--ink);
+				opacity: 0.85;
+			}
+			ol.newslist {
+				list-style: none;
+				padding: 0;
+				margin-top: 2rem;
+			}
+			ol.newslist li {
+				padding-block: 2rem;
+			}
+			ol.newslist li + li {
+				border-top: 1px solid var(--hair);
+			}
+			ol.newslist li:first-child {
+				padding-top: 0.5rem;
+			}
+			.newslist .date {
+				letter-spacing: 0.14em;
+				font-variant-numeric: tabular-nums lining-nums;
+			}
+			.newslist h3 {
+				font-family: 'Instrument Serif', Georgia, serif;
+				font-weight: 400;
+				font-size: 1.75rem;
+				line-height: 1.15;
+				margin-top: 0.5rem;
+				text-wrap: balance;
+			}
+			.newslist h3 a:hover {
+				color: var(--violet);
+			}
+			.newslist .excerpt {
+				font-family: 'Instrument Serif', Georgia, serif;
+				font-style: italic;
+				color: var(--dim);
+				margin-top: 0.6rem;
+			}
+
+			/* ── footer ─────────────────────────────── */
+			footer {
+				margin-top: 6rem;
+				border-top: 1px solid var(--hair);
+				padding-top: 1.6rem;
+			}
+			footer nav ul {
+				list-style: none;
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 0.3rem 1.4rem;
+				padding: 0;
+			}
+			footer .cap {
+				color: var(--dim);
+				display: inline-block;
+				padding: 0.35em 0;
+			}
+			footer a:hover,
+			footer button:hover {
+				color: var(--violet);
+			}
+
+			/* ── floating pill player ───────────────── */
+			aside.player {
+				position: fixed;
+				z-index: 10;
+				bottom: 1rem;
+				inset-inline: 0;
+				margin-inline: auto;
+				width: min(calc(100% - 2.5rem), 33rem);
+				display: flex;
+				align-items: center;
+				gap: 0.7rem;
+				background: rgb(19 20 27 / 0.93);
+				-webkit-backdrop-filter: blur(18px);
+				backdrop-filter: blur(18px);
+				border: 1px solid rgb(236 233 244 / 0.24);
+				border-radius: 999px;
+				padding: 0.6rem 0.7rem 0.6rem 1.1rem;
+				box-shadow: 0 12px 32px rgb(0 0 0 / 0.5);
+			}
+			aside.player::before {
+				content: '';
+				position: absolute;
+				top: -1px;
+				left: 12%;
+				right: 12%;
+				height: 1px;
+				background: linear-gradient(
+					to right,
+					var(--violet) 29%,
+					rgba(236, 233, 244, 0.22) 29%
+				);
+			}
+			.player .track {
+				flex: 1;
+				min-width: 0;
+				font-family: 'Instrument Serif', Georgia, serif;
+				font-style: italic;
+				font-size: 1.15rem;
+				line-height: 1.2;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			.player .track span {
+				font-family: 'Space Grotesk', system-ui, sans-serif;
+				font-style: normal;
+				font-weight: 300;
+				color: var(--dim);
+				white-space: nowrap;
+			}
+			.player .time {
+				color: var(--dim);
+				font-weight: 300;
+				flex: none;
+				font-variant-numeric: tabular-nums lining-nums;
+			}
+			.player .glyphs {
+				display: flex;
+				align-items: center;
+				gap: 0.15rem;
+				flex: none;
+			}
+			.glyph {
+				width: 42px;
+				height: 42px;
+				display: grid;
+				place-items: center;
+				color: var(--dim);
+				border-radius: 50%;
+			}
+			.glyph:hover {
+				color: var(--ink);
+			}
+			.glyph.play {
+				width: 48px;
+				height: 48px;
+				background: var(--violet);
+				color: #0e0f13;
+			}
+			.glyph.play:hover {
+				background: #c0b4ff;
+				color: #0e0f13;
+			}
+
+			/* ── M ≥48em — the column learns to breathe ─── */
+			@media (min-width: 48em) {
+				body {
+					max-width: 44rem;
+					font-size: 1rem;
+					padding-top: 2rem;
+				}
+				header nav[aria-label='Main'] {
+					gap: 2rem;
+				}
+				nav ul {
+					gap: 0.4rem 1.3rem;
+				}
+				/* freeform text gets a reading measure only when there's room */
+				.tagline {
+					max-width: 54ch;
+				}
+				.newslist .excerpt {
+					max-width: 54ch;
+				}
+				.hero {
+					padding-block: 6rem 1.5rem;
+				}
+				section {
+					margin-top: 6.5rem;
+				}
+				section.news {
+					margin-top: 8rem;
+				}
+				ul.items {
+					font-size: 1.55rem;
+				}
+				aside.player {
+					width: min(calc(100% - 4rem), 36rem);
+				}
+			}
+
+			/* ── L ≥64em — restructure, not a wider column ── */
+			@media (min-width: 64em) {
+				body {
+					max-width: 72rem;
+					padding-inline: 3rem;
+					padding-block: 2.5rem 9rem;
+				}
+				/* masthead: mark column = nav row + search row exactly;
+				   fixed track heights keep the header at its original size */
+				header {
+					grid-template-columns: 5.25rem minmax(0, 1fr);
+					grid-template-rows: 2.25rem 3rem;
+					column-gap: 2rem;
+				}
+				.mark {
+					grid-row: 1 / span 2;
+				}
+				nav[aria-label='Main'] {
+					grid-row: 1;
+				}
+				form[role='search'] {
+					grid-column: 2;
+					grid-row: 2;
+					align-self: end;
+					max-width: 19rem;
+					margin-top: 0;
+					margin-left: auto;
+					flex-direction: row-reverse;
+					/* desktop: quiet underline field — menu leads, search whispers */
+					background: none;
+					border-width: 0 0 1px;
+					border-radius: 0;
+					padding: 0 0.2rem;
+				}
+				form[role='search']:focus-within {
+					background: none;
+					border-bottom-color: var(--violet);
+				}
+				form[role='search'] input {
+					text-align: right;
+					padding: 0.45em 0;
+				}
+				.tagline {
+					max-width: 38ch;
+				}
+				.newslist .excerpt {
+					max-width: 46ch;
+				}
+
+				/* masthead: title left, annotation right, baseline-locked */
+				.hero {
+					display: grid;
+					grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
+					column-gap: 3rem;
+					padding-block: 6.5rem 2rem;
+				}
+				.hero h1 {
+					grid-column: 1;
+					grid-row: 1;
+					font-size: clamp(8rem, 12vw, 11rem);
+					line-height: 0.85;
+					margin-top: 0;
+				}
+				.eyebrow {
+					grid-column: 1;
+					grid-row: 2;
+				}
+				.tagcol {
+					grid-column: 2;
+					grid-row: 1 / span 2;
+					align-self: end;
+					/* right block bottoms out on the same line as the
+					   subtitle: one shared visual baseline across the banner */
+					text-align: right;
+				}
+
+				/* ledger: dates hang in the left margin, items flow right */
+				section {
+					margin-top: 7.5rem;
+				}
+				ol.groups {
+					margin-top: 1.5rem;
+				}
+				ol.groups > li {
+					display: grid;
+					grid-template-columns: 11rem minmax(0, 1fr);
+					column-gap: 2.5rem;
+					align-items: baseline;
+					border-top: 1px solid var(--hair);
+					padding-block: 1.9rem;
+				}
+				ol.groups > li + li {
+					margin-top: 0;
+				}
+				ol.groups ul.items {
+					margin-top: 0;
+					font-size: 1.6rem;
+					display: grid;
+					grid-template-columns: repeat(2, minmax(0, 1fr));
+					gap: 1rem 2.5rem;
+				}
+				ol.groups ul.items li {
+					margin-top: 0;
+				}
+
+				/* the side-two moment: one deep pause, on purpose */
+				section.news {
+					margin-top: 12rem;
+				}
+
+				/* news: front page, three across */
+				ol.newslist {
+					display: grid;
+					grid-template-columns: repeat(3, 1fr);
+					gap: 3rem;
+					margin-top: 1.5rem;
+				}
+				ol.newslist li {
+					padding-block: 0;
+				}
+				ol.newslist li + li {
+					border-top: 0;
+					border-left: 1px solid var(--hair);
+					padding-left: 3rem;
+				}
+				ol.newslist li:first-child {
+					padding-left: 0;
+					padding-top: 0;
+				}
+				.newslist h3 {
+					font-size: 1.95rem;
+				}
+
+				/* the pill widens, stays a pill */
+				aside.player {
+					width: min(calc(100% - 6rem), 46rem);
+					bottom: 1.4rem;
+				}
+				.player .track {
+					font-size: 1.3rem;
+				}
+				footer {
+					margin-top: 8rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<a class="skip" href="#main">skip to content</a>
+
+			<header>
+				<a class="mark" href="/">
+					<img src="logo.png" alt="fauxfetus" width="36" height="36" />
+				</a>
+				<nav aria-label="Main">
+				<ul>
+					<li><a href="5-artists-index.html"><span class="cap dim">Artists (99)</span></a></li>
+					<li><a href="8-albums-index.html"><span class="cap dim">Albums (239)</span></a></li>
+					<li><a href="7-news-index.html"><span class="cap dim">News</span></a></li>
+				</ul>
+			</nav>
+			<form role="search">
+				<label class="vh" for="q">Search the catalog</label>
+				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+				<input id="q" type="search" placeholder="search ninety-nine artists…" />
+			</form>
+		</header>
+
+		<main id="main">
+			<div class="hero">
+				<h1><em>faux</em>fetus</h1>
+				<p class="eyebrow">an experimental music collective</p>
+				<div class="tagcol">
+					<p class="tagline">
+						A collection of experimental music you never heard of or even
+						want to listen to made by people you don't care about.
+					</p>
+					<p class="counts">
+						<b>99</b> artists · <b>239</b> albums · <b>2,521</b> tracks
+					</p>
+				</div>
+			</div>
+
+			<section aria-labelledby="h-recent">
+				<h2 class="lbl" id="h-recent">Recently added</h2>
+				<p class="note">
+					Everything to land in the catalog since the site's reconception,
+					newest first.
+				</p>
+				<ol class="groups">
+					<li>
+						<p class="group-date">
+							<a class="cap" href="7-news-index.html"
+								><time datetime="2026-08-09">Aug 9, 2026</time></a
+							>
+						</p>
+						<ul class="items">
+							<li>
+								<a href="6-album-detail.html">Used Friends</a>
+								<small>new artist</small>
+							</li>
+							<li>
+								<a href="6-album-detail.html">Assistant Manager</a>
+								<small>new artist</small>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p class="group-date">
+							<a class="cap" href="7-news-index.html"
+								><time datetime="2026-07-16">Jul 16, 2026</time></a
+							>
+						</p>
+						<ul class="items">
+							<li>
+								<a href="6-album-detail.html">Kreemy F.F.U.P.</a>
+								<span class="albs">
+									— Live 2004 <span class="track-count">· 15 tracks</span></span
+								>
+							</li>
+							<li>
+								<a href="6-album-detail.html">Mucid Cuspidor</a>
+								<span class="albs">
+									— Live Radio <span class="track-count">· 6 tracks</span></span
+								>
+							</li>
+							<li>
+								<a href="6-album-detail.html">Mystery Brinkman</a>
+								<span class="albs">
+									— Brinkmangler <span class="track-count">· 19 tracks</span></span
+								>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p class="group-date">
+							<a class="cap" href="7-news-index.html"
+								><time datetime="2026-07-05">Jul 5, 2026</time></a
+							>
+						</p>
+						<ul class="items">
+							<li>
+								<a href="6-album-detail.html"
+									>Nuclear Family Holocaust</a
+								>
+								<span class="albs">
+									— NFH #1
+									<span class="track-count">· 4 tracks</span> · NFH #2
+									<span class="track-count">· 5 tracks</span></span
+								>
+							</li>
+							<li>
+								<a href="6-album-detail.html">Chamomile</a>
+								<span class="albs">
+									— A Womb with A View
+									<span class="track-count">· 15 tracks</span></span
+								>
+							</li>
+							<li>
+								<a href="6-album-detail.html"
+									>The Most Amazing Century Of Science</a
+								>
+								<span class="albs">
+									— Live At The Springwater
+									<span class="track-count">· 16 tracks</span> · Live At The Boro
+									<span class="track-count">· 15 tracks</span></span
+								>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p class="group-date">
+							<a class="cap" href="7-news-index.html"
+								><time datetime="2026-05-17">May 17, 2026</time></a
+							>
+						</p>
+						<ul class="items">
+							<li>
+								<a href="6-album-detail.html">The Night Owl</a>
+								<span class="albs">
+									— Voices in the Mist
+									<span class="track-count">· 6 tracks</span></span
+								>
+							</li>
+						</ul>
+					</li>
+				</ol>
+				<p class="sec-foot">
+					<a class="cap dim" href="7-news-index.html">more context in the news →</a>
+				</p>
+			</section>
+
+			<section aria-labelledby="h-news" class="news">
+				<h2 class="news-label" id="h-news">From the news</h2>
+				<ol class="newslist">
+					<li>
+						<p class="cap dim date"><time datetime="2026-11-14">Nov 14, 2026</time></p>
+						<h3>
+							<a href="7-news-index.html"
+								>Album downloads for everyone</a
+							>
+						</h3>
+						<p class="excerpt">“I bet y'all thought that I forgot about y'all.”</p>
+					</li>
+					<li>
+						<p class="cap dim date"><time datetime="2026-08-09">Aug 9, 2026</time></p>
+						<h3>
+							<a href="7-news-index.html"
+								>Used Friends, Assistant Manager</a
+							>
+						</h3>
+						<p class="excerpt">Two new artists enter the catalog.</p>
+					</li>
+					<li>
+						<p class="cap dim date"><time datetime="2026-05-17">May 17, 2026</time></p>
+						<h3>
+							<a href="7-news-index.html"
+								>The long-lost Voices in the Mist</a
+							>
+						</h3>
+						<p class="excerpt">A lost album resurfaces.</p>
+					</li>
+				</ol>
+				<p class="sec-foot">
+					<a class="cap dim" href="7-news-index.html">all news →</a>
+				</p>
+			</section>
+		</main>
+
+		<footer>
+			<nav aria-label="Footer">
+				<ul>
+					<li><a class="cap" href="https://github.com/meowsus/fauxfetus">GitHub</a></li>
+					<li><button type="button"><span class="cap">Install the app</span></button></li>
+					<li><a class="cap" href="/sitemap.xml">Sitemap</a></li>
+					<li><a class="cap" href="mailto:curt@fauxfetus.net">Email</a></li>
+				</ul>
+			</nav>
+		</footer>
+
+		<aside class="player" aria-label="Now playing">
+			<p class="track">
+				<a href="6-album-detail.html"
+					>Eschaton In Rosendale</a
+				>
+				<span> — 123dood · Death Row Unicorn Parade</span>
+			</p>
+			<span class="time">1:24 / 4:47</span>
+			<div class="glyphs">
+				<button type="button" class="glyph" aria-label="Previous track">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 6-5 6 5 6M19 6l-5 6 5 6" /></svg>
+				</button>
+				<button type="button" class="glyph play" aria-label="Pause">
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z" /></svg>
+				</button>
+				<button type="button" class="glyph" aria-label="Next track">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 6 5 6-5 6M5 6l5 6-5 6" /></svg>
+				</button>
+			</div>
+		</aside>
+	</body>
+</html>

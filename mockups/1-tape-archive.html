@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="dark" />
+		<meta name="theme-color" content="#0a0c09" />
+		<title>Mockup 01 · Tape Archive — fauxfetus</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			:root {
+				color-scheme: dark;
+				--bg: #0a0c09;
+				--card: #10130c;
+				--ink: #d9dece;
+				--dim: #79826d;
+				--acid: #c8f449;
+				--line: #262b1f;
+			}
+			* {
+				margin: 0;
+				box-sizing: border-box;
+			}
+			html {
+				-webkit-text-size-adjust: 100%;
+			}
+			body {
+				background: var(--bg);
+				color: var(--ink);
+				font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas,
+					monospace;
+				font-size: 1rem;
+				line-height: 1.55;
+				max-width: 68rem;
+				margin-inline: auto;
+				padding: 1rem 1rem 11rem;
+			}
+			a {
+				color: inherit;
+				text-decoration: none;
+			}
+			a:hover {
+				color: var(--acid);
+				text-decoration: underline;
+				text-underline-offset: 3px;
+			}
+			a:focus-visible,
+			button:focus-visible,
+			input:focus-visible {
+				outline: 2px solid var(--acid);
+				outline-offset: 2px;
+			}
+			button {
+				font: inherit;
+				color: inherit;
+				background: none;
+				border: 1px solid var(--line);
+				padding: 0.45em 0.85em;
+				cursor: pointer;
+			}
+			button:hover {
+				border-color: var(--acid);
+				color: var(--acid);
+			}
+			.btn-brackets::before {
+				content: '[ ';
+				color: var(--dim);
+			}
+			.btn-brackets::after {
+				content: ' ]';
+				color: var(--dim);
+			}
+			.vh {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				overflow: hidden;
+				clip-path: inset(50%);
+				white-space: nowrap;
+			}
+			.skip {
+				position: absolute;
+				left: -9999px;
+				top: 0;
+				background: var(--acid);
+				color: var(--bg);
+				padding: 0.5em 1em;
+				z-index: 99;
+			}
+			.skip:focus-visible {
+				left: 0.5rem;
+			}
+
+			/* ── header ─────────────────────────────── */
+			header {
+				padding-top: 0.5rem;
+			}
+			.prompt {
+				color: var(--dim);
+				font-size: 0.8rem;
+				letter-spacing: 0.06em;
+			}
+			.prompt .pcaret {
+				display: inline-block;
+				width: 0.55em;
+				height: 1em;
+				background: var(--acid);
+				vertical-align: text-top;
+				animation: blink 1.1s steps(1) infinite;
+			}
+			@keyframes blink {
+				50% {
+					opacity: 0;
+				}
+			}
+			nav[aria-label='Main'] {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				gap: 0.5rem 1rem;
+				margin-top: 0.9rem;
+				border-block: 1px solid var(--line);
+				padding-block: 0.65rem;
+			}
+			.wordmark {
+				color: var(--bg);
+				background: var(--acid);
+				font-weight: 700;
+				padding: 0.1em 0.45em;
+				letter-spacing: 0.02em;
+			}
+			.wordmark:hover {
+				color: var(--bg);
+				text-decoration: none;
+			}
+			.wordmark::before {
+				content: none;
+			}
+			nav ul {
+				list-style: none;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.35rem 1.1rem;
+				padding: 0;
+				font-size: 0.9rem;
+			}
+			form[role='search'] {
+				margin-top: 0.8rem;
+			}
+			input[type='search'] {
+				width: 100%;
+				font: inherit;
+				font-size: 0.9rem;
+				color: var(--ink);
+				background: var(--card);
+				border: 1px solid var(--line);
+				padding: 0.6em 0.8em;
+			}
+			input[type='search']::placeholder {
+				color: var(--dim);
+			}
+			input[type='search']:focus {
+				outline: 1px solid var(--acid);
+				outline-offset: 0;
+			}
+
+			/* ── hero ───────────────────────────────── */
+			.hero {
+				padding-block: 3rem;
+			}
+			h1 {
+				font-size: clamp(2.5rem, 10.5vw, 5.25rem);
+				font-weight: 700;
+				text-transform: uppercase;
+				line-height: 0.95;
+				letter-spacing: -0.015em;
+				word-spacing: -0.1em;
+			}
+			h1 .caret {
+				display: inline-block;
+				width: 0.45em;
+				height: 0.82em;
+				background: var(--acid);
+				margin-left: 0.06em;
+				animation: blink 1.1s steps(1) infinite;
+			}
+			.tagline {
+				color: var(--dim);
+				font-style: italic;
+				max-width: 52ch;
+				margin-top: 1.25rem;
+				font-size: 0.95rem;
+			}
+			.sysline {
+				color: var(--dim);
+				font-size: 0.78rem;
+				letter-spacing: 0.04em;
+				margin-top: 1.1rem;
+			}
+			.sysline b {
+				color: var(--ink);
+				font-weight: 500;
+			}
+
+			/* ── sections ───────────────────────────── */
+			section {
+				margin-top: 3.25rem;
+			}
+			.sec {
+				display: flex;
+				align-items: center;
+				gap: 0.9rem;
+				font-size: 0.95rem;
+				font-weight: 600;
+				text-transform: uppercase;
+				letter-spacing: 0.1em;
+				color: var(--acid);
+			}
+			.sec::before {
+				content: var(--secno);
+				color: var(--dim);
+				letter-spacing: 0;
+			}
+			.sec::after {
+				content: '';
+				flex: 1;
+				border-top: 1px solid var(--line);
+			}
+			.sec-note {
+				color: var(--dim);
+				font-size: 0.82rem;
+				margin-top: 0.7rem;
+			}
+			.sec-foot {
+				margin-top: 1.1rem;
+				font-size: 0.9rem;
+			}
+			.sec-foot a {
+				color: var(--acid);
+			}
+
+			/* ── recently added ─────────────────────── */
+			ol.groups {
+				list-style: none;
+				padding: 0;
+			}
+			ol.groups > li {
+				border-bottom: 1px dashed var(--line);
+				padding-block: 1.1rem;
+			}
+			.group-date {
+				font-size: 0.9rem;
+			}
+			.group-date a {
+				color: var(--acid);
+			}
+			.group-date a:hover {
+				color: var(--acid);
+			}
+			.group-date .dbr {
+				color: var(--dim);
+			}
+			ul.items {
+				list-style: none;
+				padding: 0;
+				margin-top: 0.5rem;
+				display: grid;
+				gap: 0.3rem;
+				font-size: 0.92rem;
+			}
+			ul.items li::before {
+				content: '→ ';
+				color: var(--dim);
+			}
+			ul.items small {
+				color: var(--dim);
+				font-size: 0.78rem;
+			}
+			ul.items small::before {
+				content: ' [';
+			}
+			ul.items small::after {
+				content: ']';
+			}
+
+			/* ── catalog slice ──────────────────────── */
+			ul.catlist {
+				list-style: none;
+				padding: 0;
+			}
+			ul.catlist li {
+				padding-block: 0.8rem;
+				border-bottom: 1px dashed var(--line);
+			}
+			ul.catlist a {
+				font-weight: 600;
+			}
+			.cat-albs {
+				display: block;
+				color: var(--dim);
+				font-size: 0.85rem;
+				margin-top: 0.15rem;
+			}
+			.cat-albs i {
+				font-style: normal;
+				color: var(--ink);
+			}
+			@media (min-width: 40em) {
+				ul.catlist li {
+					display: flex;
+					align-items: baseline;
+					gap: 0.75rem;
+				}
+				ul.catlist a {
+					flex: none;
+				}
+				.cat-albs {
+					display: block;
+					flex: 1;
+					margin-top: 0;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+				}
+				ul.catlist li::after {
+					content: '';
+					flex: 1;
+					border-bottom: 1px dotted var(--line);
+					align-self: center;
+					transform: translateY(-1px);
+				}
+			}
+
+			/* ── news ───────────────────────────────── */
+			ol.newslist {
+				list-style: none;
+				padding: 0;
+				display: grid;
+				gap: 1.5rem;
+			}
+			ol.newslist li {
+				border-bottom: 1px dashed var(--line);
+				padding-bottom: 1.5rem;
+			}
+			.newslist .ndate {
+				color: var(--dim);
+				font-size: 0.8rem;
+				margin-bottom: 0.4rem;
+			}
+			.ndate .dbr {
+				color: var(--acid);
+			}
+			.newslist h3 {
+				font-size: 1.02rem;
+				font-weight: 600;
+			}
+			.newslist .excerpt {
+				color: var(--dim);
+				font-size: 0.88rem;
+				font-style: italic;
+				margin-top: 0.4rem;
+			}
+
+			/* ── player (fixed dock) ────────────────── */
+			aside.player {
+				position: fixed;
+				inset-inline: 0;
+				bottom: 0;
+				z-index: 10;
+				background: var(--bg);
+				border-top: 1px solid var(--acid);
+				padding: 0.75rem 1rem;
+				padding-bottom: calc(0.9rem + env(safe-area-inset-bottom));
+				box-shadow: 0 -0.5rem 1.5rem rgba(0, 0, 0, 0.45);
+			}
+			.p-main {
+				display: flex;
+				align-items: baseline;
+				gap: 0.7rem;
+				font-size: 0.92rem;
+			}
+			.p-state {
+				color: var(--acid);
+				letter-spacing: -0.1em;
+			}
+			.p-pos {
+				color: var(--dim);
+				font-size: 0.8rem;
+			}
+			.p-track {
+				flex: 1;
+				min-width: 0;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			.p-track .p-art {
+				color: var(--dim);
+			}
+			.p-time {
+				color: var(--dim);
+				font-size: 0.8rem;
+				flex: none;
+			}
+			.p-bar {
+				height: 4px;
+				background: var(--line);
+				margin-block: 0.55rem;
+			}
+			.p-bar span {
+				display: block;
+				height: 100%;
+				width: 29%;
+				background: var(--acid);
+			}
+			.p-ctl {
+				display: flex;
+				gap: 0.4rem;
+				flex-wrap: nowrap;
+			}
+			.p-ctl button {
+				font-size: 0.85rem;
+				padding: 0.5em 0.95em;
+			}
+			.p-ctl .p-radio {
+				margin-left: auto;
+				border-color: var(--acid);
+				color: var(--acid);
+			}
+
+			/* ── footer ─────────────────────────────── */
+			footer {
+				margin-top: 4rem;
+				border-top: 1px solid var(--line);
+				padding-top: 1rem;
+			}
+			footer nav ul {
+				list-style: none;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.35rem 1.1rem;
+				padding: 0;
+				font-size: 0.85rem;
+			}
+			footer button {
+				padding: 0.1em 0.4em;
+				border: none;
+			}
+			footer button:hover {
+				text-decoration: underline;
+			}
+			.eof {
+				color: var(--dim);
+				font-size: 0.75rem;
+				letter-spacing: 0.2em;
+				margin-top: 1.5rem;
+			}
+
+			/* ── desktop ────────────────────────────── */
+			@media (min-width: 56em) {
+				body {
+					padding: 1.5rem 2rem 12rem;
+				}
+				main {
+					display: grid;
+					grid-template-columns: 1fr 1fr;
+					column-gap: 4rem;
+					row-gap: 0;
+				}
+				.hero {
+					grid-column: 1 / -1;
+					grid-row: 1;
+				}
+				.sec-recent {
+					grid-column: 1;
+					grid-row: 2;
+				}
+				.sec-news {
+					grid-column: 2;
+					grid-row: 2;
+					margin-top: 3.25rem;
+				}
+				.sec-catalog {
+					grid-column: 1 / -1;
+					grid-row: 3;
+				}
+				.hero h1 {
+					font-size: 5.25rem;
+				}
+				.cat-grid {
+					display: grid;
+					grid-template-columns: 1fr 1fr;
+					column-gap: 2.5rem;
+				}
+				.cat-grid ul:first-of-type {
+					border-right: 0;
+				}
+			}
+			@media (prefers-reduced-motion: reduce) {
+				.caret,
+				.pcaret {
+					animation: none;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<a class="skip" href="#main">skip to content</a>
+
+		<header>
+			<p class="prompt">~/fauxfetus $<span class="pcaret" aria-hidden="true"></span></p>
+			<nav aria-label="Main">
+				<a class="wordmark" href="/">fauxfetus</a>
+				<ul>
+					<li><a href="/">Home</a></li>
+					<li><a href="/artists/">Artists (99)</a></li>
+					<li><a href="/albums/">Albums (239)</a></li>
+					<li><a href="/news/">News</a></li>
+					<li><button type="button" class="btn-brackets">Radio</button></li>
+					<li><a href="mailto:curt@fauxfetus.net">Email</a></li>
+				</ul>
+			</nav>
+			<form role="search">
+				<label class="vh" for="q">Search the catalog</label>
+				<input id="q" type="search" placeholder="grep the catalog…" />
+			</form>
+		</header>
+
+		<main id="main">
+			<section class="hero" aria-label="faux fetus">
+				<h1>Faux Fetus<span class="caret" aria-hidden="true"></span></h1>
+				<p class="tagline">
+					A collection of experimental music you never heard of or even want
+					to listen to made by people you don't care about.
+				</p>
+				<p class="sysline">
+					<b>status</b>: online · <b>artists</b>: 99 · <b>albums</b>: 239 ·
+					<b>tracks</b>: 2,521 · <b>pwa</b>: installable
+				</p>
+			</section>
+
+			<section class="sec-recent" aria-labelledby="h-recent">
+				<h2 id="h-recent" class="sec" style="--secno: '[01]'">recently added</h2>
+				<p class="sec-note">
+					Everything to land in the catalog since the site's reconception,
+					newest first.
+				</p>
+				<ol class="groups">
+					<li>
+						<p class="group-date">
+							<a href="/news/2026-08-09-used-friends/"
+								><span class="dbr">[</span><time datetime="2026-08-09">2026-08-09</time
+								><span class="dbr">]</span></a
+							>
+						</p>
+						<ul class="items">
+							<li>
+								<a href="/artists/used-friends/">Used Friends</a>
+								<small>new artist</small>
+							</li>
+							<li>
+								<a href="/artists/assistant-manager/">Assistant Manager</a>
+								<small>new artist</small>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p class="group-date">
+							<a href="/news/2026-07-16-mcbs-cds/"
+								><span class="dbr">[</span><time datetime="2026-07-16">2026-07-16</time
+								><span class="dbr">]</span></a
+							>
+						</p>
+						<ul class="items">
+							<li>
+								<a href="/artists/kreemy-ffup/">Kreemy Ffup</a>,
+								<a href="/artists/kreemy-ffup/live-2004/">Live 2004</a>
+							</li>
+							<li>
+								<a href="/artists/mucid-cuspidor/">Mucid Cuspidor</a>,
+								<a href="/artists/mucid-cuspidor/live-radio/">Live Radio</a>
+							</li>
+							<li>
+								<a href="/artists/mystery-brinkman/">Mystery Brinkman</a>,
+								<a href="/artists/mystery-brinkman/brinkmangler/">Brinkmangler</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p class="group-date">
+							<a href="/news/2026-07-05-found-a-box-of-cds/"
+								><span class="dbr">[</span><time datetime="2026-07-05">2026-07-05</time
+								><span class="dbr">]</span></a
+							>
+						</p>
+						<ul class="items">
+							<li>
+								<a href="/artists/nuclear-family-holocaust/">Nuclear Family Holocaust</a>,
+								<a href="/artists/nuclear-family-holocaust/nfh-1/">NFH 1</a>,
+								<a href="/artists/nuclear-family-holocaust/nfh-2/">NFH 2</a>
+							</li>
+							<li>
+								<a href="/artists/chamomile/">Chamomile</a>,
+								<a href="/artists/chamomile/a-womb-with-a-view/">A Womb with a View</a>
+							</li>
+							<li>
+								<a href="/artists/the-most-amazing-century-of-science/"
+									>The Most Amazing Century of Science</a
+								>,
+								<a href="/artists/the-most-amazing-century-of-science/live-at-the-springwater/"
+									>Live at the Springwater</a
+								>,
+								<a href="/artists/the-most-amazing-century-of-science/live-at-the-boro/"
+									>Live at the Boro</a
+								>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p class="group-date">
+							<a href="/news/2026-05-17-voices-in-the-mist/"
+								><span class="dbr">[</span><time datetime="2026-05-17">2026-05-17</time
+								><span class="dbr">]</span></a
+							>
+						</p>
+						<ul class="items">
+							<li>
+								<a href="/artists/the-night-owl/">The Night Owl</a>,
+								<a href="/artists/the-night-owl/voices-in-the-mist/">Voices in the Mist</a>
+							</li>
+						</ul>
+					</li>
+				</ol>
+				<p class="sec-foot">
+					<a href="/news/">more context in the news →</a>
+				</p>
+			</section>
+
+			<section class="sec-catalog" aria-labelledby="h-catalog">
+				<h2 id="h-catalog" class="sec" style="--secno: '[02]'">from the catalog</h2>
+				<p class="sec-note">Six of ninety-nine artists.</p>
+				<div class="cat-grid">
+					<ul class="catlist">
+						<li>
+							<a href="/artists/night-veins/">† (Night Veins)</a>
+							<span class="cat-albs"><i>Teufelsberg Sessions Vol. 1</i></span>
+						</li>
+						<li>
+							<a href="/artists/123dood/">123dood</a>
+							<span class="cat-albs"><i>Death Row Unicorn Parade</i></span>
+						</li>
+						<li>
+							<a href="/artists/5limbs/">5limbs</a>
+							<span class="cat-albs"
+								><i>Faux Comp 1</i> · <i>Modulation For Serious</i></span
+							>
+						</li>
+					</ul>
+					<ul class="catlist">
+						<li>
+							<a href="/artists/attack-rabbit/">Attack Rabbit</a>
+							<span class="cat-albs"
+								><i>Millions Of Sparrows</i> · <i>Newchester</i> ·
+								<i>Somebody</i></span
+							>
+						</li>
+						<li>
+							<a href="/artists/the-barco-project/">The Barco Project</a>
+							<span class="cat-albs"
+								><i>Cow</i> · <i>Five</i> · <i>The Worst Of</i> · +7 more</span
+							>
+						</li>
+						<li>
+							<a href="/artists/assisted-living/">Assisted Living</a>
+							<span class="cat-albs"><i>Faux Faux Fest '24</i></span>
+						</li>
+					</ul>
+				</div>
+				<p class="sec-foot">
+					<a href="/artists/">all ninety-nine artists →</a>
+				</p>
+			</section>
+
+			<section class="sec-news" aria-labelledby="h-news">
+				<h2 id="h-news" class="sec" style="--secno: '[03]'">news</h2>
+				<ol class="newslist">
+					<li>
+						<p class="ndate">
+							<span class="dbr">[</span><time datetime="2026-11-14">2026-11-14</time
+							><span class="dbr">]</span>
+						</p>
+						<h3>
+							<a href="/news/2026-11-14-album-downloads/">Album downloads for everyone</a>
+						</h3>
+						<p class="excerpt">"I bet y'all thought that I forgot about y'all."</p>
+					</li>
+					<li>
+						<p class="ndate">
+							<span class="dbr">[</span><time datetime="2026-08-09">2026-08-09</time
+							><span class="dbr">]</span>
+						</p>
+						<h3>
+							<a href="/news/2026-08-09-used-friends/">Used Friends, Assistant Manager</a>
+						</h3>
+						<p class="excerpt">Two new artists enter the catalog.</p>
+					</li>
+					<li>
+						<p class="ndate">
+							<span class="dbr">[</span><time datetime="2026-05-17">2026-05-17</time
+							><span class="dbr">]</span>
+						</p>
+						<h3>
+							<a href="/news/2026-05-17-voices-in-the-mist/"
+								>The long-lost Voices in the Mist</a
+							>
+						</h3>
+						<p class="excerpt">A lost album resurfaces.</p>
+					</li>
+				</ol>
+				<p class="sec-foot"><a href="/news/">all news →</a></p>
+			</section>
+		</main>
+
+		<footer>
+			<nav aria-label="Footer">
+				<ul>
+					<li><a href="https://github.com/meowsus/fauxfetus">GitHub</a></li>
+					<li><button type="button" class="btn-brackets">Install the app</button></li>
+					<li><a href="/sitemap.xml">Sitemap</a></li>
+					<li><a href="mailto:curt@fauxfetus.net">Email</a></li>
+				</ul>
+			</nav>
+			<p class="eof">-- EOF --</p>
+		</footer>
+
+		<aside class="player" aria-label="Now playing">
+			<div class="p-main">
+				<span class="p-state" aria-hidden="true">❚❚</span>
+				<span class="p-pos"><span class="dbr">[</span>02/04<span class="dbr">]</span></span>
+				<p class="p-track">
+					<a href="/artists/123dood/death-row-unicorn-parade/eschaton-in-rosendale/"
+						>Eschaton In Rosendale</a
+					>
+					<span class="p-art">— 123dood · Death Row Unicorn Parade</span>
+				</p>
+				<span class="p-time">1:24/4:47</span>
+			</div>
+			<div
+				class="p-bar"
+				role="progressbar"
+				aria-label="Track position"
+				aria-valuemin="0"
+				aria-valuemax="287"
+				aria-valuenow="84"
+				aria-valuetext="1:24 of 4:47"
+			>
+				<span></span>
+			</div>
+			<div class="p-ctl">
+				<button type="button" aria-label="Previous track">◀◀</button>
+				<button type="button" aria-label="Pause">❚❚</button>
+				<button type="button" aria-label="Next track">▶▶</button>
+				<button type="button" class="p-radio btn-brackets">Radio</button>
+			</div>
+		</aside>
+	</body>
+</html>

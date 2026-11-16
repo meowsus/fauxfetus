@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>bottom crop</title>
+		<style>
+			* { margin: 0; }
+			iframe { display: block; width: 100vw; height: 100vh; border: 0; }
+		</style>
+	</head>
+	<body>
+		<iframe src="4-mothwing.html" title="bottom crop"></iframe>
+		<script>
+			document.querySelector('iframe').addEventListener('load', function () {
+				try {
+					var win = this.contentWindow,
+						doc = win.document.documentElement;
+					win.scrollTo(0, doc.scrollHeight - win.innerHeight + 150);
+				} catch (e) {}
+			});
+		</script>
+	</body>
+</html>

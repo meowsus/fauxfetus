@@ -1,0 +1,891 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="dark" />
+		<meta name="theme-color" content="#0e0f13" />
+		<title>Mockup 08 · Albums index — Mothwing chrome — fauxfetus</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@300;400;500&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			/*
+				V3 — de-templated, per plans/redesign-principles.md
+				· three distinct section openers (no uniform label+hairline kit)
+				· real track counts as data texture; tabular figures everywhere
+				· varied rhythm: one deep "side-two" pause before the news
+				· acid = interaction color + data-true tags only
+				· instant hovers (no transitions); invert-on-hover is the signature
+			*/
+			:root {
+				color-scheme: dark;
+				--bg: #0e0f13;
+				--ink: #ece9f4;
+				--dim: #85819a;
+				--violet: #a79aff;
+				--acid: #c8f449;
+				--hair: rgba(236, 233, 244, 0.14);
+			}
+			* {
+				margin: 0;
+				box-sizing: border-box;
+			}
+			html {
+				-webkit-text-size-adjust: 100%;
+			}
+			body {
+				background: var(--bg);
+				color: var(--ink);
+				font-family: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+				font-size: 0.95rem;
+				line-height: 1.65;
+				max-width: 36rem;
+				margin-inline: auto;
+				padding: 1.4rem 1.25rem 8.5rem;
+			}
+			a {
+				color: inherit;
+				text-decoration: none;
+			}
+			a:hover {
+				color: var(--violet);
+			}
+			a:focus-visible,
+			button:focus-visible,
+			input:focus-visible {
+				outline: 2px solid var(--violet);
+				outline-offset: 3px;
+				border-radius: 2px;
+			}
+			/* acid splat #1: selection is an interaction color, on purpose */
+			::selection {
+				background: var(--acid);
+				color: #0e0f13;
+			}
+			button {
+				font: inherit;
+				color: inherit;
+				background: none;
+				border: 0;
+				cursor: pointer;
+			}
+			.vh {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				overflow: hidden;
+				clip-path: inset(50%);
+				white-space: nowrap;
+			}
+			.skip {
+				position: absolute;
+				left: -9999px;
+				top: 0;
+				background: var(--violet);
+				color: #0e0f13;
+				padding: 0.5em 1em;
+				z-index: 99;
+				font-size: 0.8rem;
+			}
+			.skip:focus-visible {
+				left: 0.5rem;
+			}
+			.cap {
+				font-size: 0.7rem;
+				font-weight: 500;
+				letter-spacing: 0.26em;
+				text-transform: uppercase;
+			}
+			.cap.dim {
+				color: var(--dim);
+			}
+			.tnum {
+				font-variant-numeric: tabular-nums lining-nums;
+			}
+
+			/* ── header — the mark lives here (direct child), caps stay the nav's voice ── */
+			header {
+				padding-top: 1.1rem;
+				display: grid;
+				grid-template-columns: 2.25rem minmax(0, 1fr);
+				grid-template-rows: minmax(2.25rem, auto) auto;
+				column-gap: 1.1rem;
+			}
+			.mark {
+				display: block;
+				position: relative;
+				grid-column: 1;
+				grid-row: 1;
+				align-self: stretch;
+			}
+			.mark img {
+				position: absolute;
+				inset: 0;
+				height: 100%;
+				width: 100%;
+				object-fit: contain;
+				object-position: left center;
+				filter: invert(1);
+				mix-blend-mode: screen;
+			}
+			nav[aria-label='Main'] {
+				grid-column: 2;
+				grid-row: 1;
+				display: flex;
+				align-items: center;
+				justify-content: flex-end;
+			}
+			nav ul {
+				list-style: none;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.35rem 1rem;
+				padding: 0;
+				margin: 0;
+				justify-content: flex-end;
+			}
+			nav[aria-label='Main'] a,
+			nav[aria-label='Main'] button {
+				color: var(--dim);
+			}
+			nav[aria-label='Main'] a .cap,
+			nav[aria-label='Main'] button .cap {
+				display: inline-block;
+				padding: 0.4em 0;
+			}
+			nav[aria-label='Main'] a:hover,
+			nav[aria-label='Main'] button:hover {
+				color: var(--violet);
+			}
+			form[role='search'] {
+				grid-column: 1 / -1;
+				grid-row: 2;
+				display: flex;
+				align-items: center;
+				gap: 0.55rem;
+				margin-top: 1.2rem;
+				background: rgb(236 233 244 / 0.055);
+				border: 1px solid rgb(236 233 244 / 0.18);
+				border-radius: 10px;
+				padding: 0 0.9rem;
+			}
+			form[role='search'] svg {
+				flex: none;
+				color: var(--dim);
+			}
+			form[role='search'] input {
+				width: 100%;
+				background: none;
+				border: 0;
+				color: var(--ink);
+				font-family: inherit;
+				font-size: 0.95rem;
+				padding: 0.72em 0;
+			}
+			form[role='search'] input::placeholder {
+				color: var(--dim);
+			}
+			form[role='search']:focus-within {
+				border-color: var(--violet);
+				background: rgb(236 233 244 / 0.08);
+			}
+
+
+				/* page opener: serif masthead — the homepage wordmark system at page scale */
+				.mast {
+					padding-block: 3.5rem 0;
+				}
+				.mast h1 {
+					font-family: 'Instrument Serif', Georgia, serif;
+					font-weight: 400;
+					font-size: clamp(3.4rem, 9vw, 5.5rem);
+					line-height: 0.92;
+					letter-spacing: -0.01em;
+				}
+				.mast .sub {
+					color: var(--dim);
+					font-weight: 300;
+					margin-top: 0.9rem;
+				}
+				.mast .sub b {
+					color: var(--ink);
+					font-weight: 400;
+					font-size: 1.08rem;
+				}
+
+				/* the stamp: shared signature from the homepage ledger */
+				.stamp,
+				.names a:hover,
+				.music a:hover,
+				.tracks a:hover span.trname,
+				.entries a:hover h3 {
+					background: var(--violet);
+					color: #0e0f13;
+					padding-inline: 0.14em;
+					margin-inline: -0.14em;
+					-webkit-box-decoration-break: clone;
+					box-decoration-break: clone;
+				}
+
+
+				/* bins: letter-led archive, same bones as the artists index */
+				ol.letters {
+					list-style: none;
+					padding: 0;
+					margin-top: 2.6rem;
+				}
+				ol.letters > li {
+					border-top: 1px solid var(--hair);
+					padding-block: 1.6rem;
+				}
+				ul.names {
+					list-style: none;
+					padding: 0;
+					margin-top: 1.1rem;
+					font-size: 1.3rem;
+					line-height: 1.3;
+				}
+				ul.names li {
+					/* print-index flow: the artist continues the title's last line */
+					display: block;
+				}
+				ul.names li + li {
+					margin-top: 0.8rem;
+				}
+				ul.names a {
+					font-family: 'Instrument Serif', Georgia, serif;
+					font-size: 1em;
+				}
+				ul.names .by {
+					font-size: 0.72rem;
+					color: var(--dim);
+					white-space: nowrap;
+					margin-left: 0.6em;
+				}
+
+			/* ── footer ─────────────────────────────── */
+			footer {
+				margin-top: 6rem;
+				border-top: 1px solid var(--hair);
+				padding-top: 1.6rem;
+			}
+			footer nav ul {
+				list-style: none;
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 0.3rem 1.4rem;
+				padding: 0;
+			}
+			footer .cap {
+				color: var(--dim);
+				display: inline-block;
+				padding: 0.35em 0;
+			}
+			footer a:hover,
+			footer button:hover {
+				color: var(--violet);
+			}
+
+			/* ── floating pill player ───────────────── */
+			aside.player {
+				position: fixed;
+				z-index: 10;
+				bottom: 1rem;
+				inset-inline: 0;
+				margin-inline: auto;
+				width: min(calc(100% - 2.5rem), 33rem);
+				display: flex;
+				align-items: center;
+				gap: 0.7rem;
+				background: rgb(19 20 27 / 0.93);
+				-webkit-backdrop-filter: blur(18px);
+				backdrop-filter: blur(18px);
+				border: 1px solid rgb(236 233 244 / 0.24);
+				border-radius: 999px;
+				padding: 0.6rem 0.7rem 0.6rem 1.1rem;
+				box-shadow: 0 12px 32px rgb(0 0 0 / 0.5);
+			}
+			aside.player::before {
+				content: '';
+				position: absolute;
+				top: -1px;
+				left: 12%;
+				right: 12%;
+				height: 1px;
+				background: linear-gradient(
+					to right,
+					var(--violet) 29%,
+					rgba(236, 233, 244, 0.22) 29%
+				);
+			}
+			.player .track {
+				flex: 1;
+				min-width: 0;
+				font-family: 'Instrument Serif', Georgia, serif;
+				font-style: italic;
+				font-size: 1.15rem;
+				line-height: 1.2;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			.player .track span {
+				font-family: 'Space Grotesk', system-ui, sans-serif;
+				font-style: normal;
+				font-weight: 300;
+				color: var(--dim);
+				white-space: nowrap;
+			}
+			.player .time {
+				color: var(--dim);
+				font-weight: 300;
+				flex: none;
+				font-variant-numeric: tabular-nums lining-nums;
+			}
+			.player .glyphs {
+				display: flex;
+				align-items: center;
+				gap: 0.15rem;
+				flex: none;
+			}
+			.glyph {
+				width: 42px;
+				height: 42px;
+				display: grid;
+				place-items: center;
+				color: var(--dim);
+				border-radius: 50%;
+			}
+			.glyph:hover {
+				color: var(--ink);
+			}
+			.glyph.play {
+				width: 48px;
+				height: 48px;
+				background: var(--violet);
+				color: #0e0f13;
+			}
+			.glyph.play:hover {
+				background: #c0b4ff;
+				color: #0e0f13;
+			}
+
+
+			/* ── M ≥48em — the column learns to breathe ─── */
+			@media (min-width: 48em) {
+				body {
+					max-width: 44rem;
+					font-size: 1rem;
+					padding-top: 2rem;
+				}
+				header nav[aria-label='Main'] {
+					gap: 2rem;
+				}
+				nav ul {
+					gap: 0.4rem 1.3rem;
+				}
+				.mast {
+					padding-block: 4.5rem 0;
+				}
+				ul.names {
+					font-size: 1.4rem;
+				}
+				aside.player {
+					width: min(calc(100% - 4rem), 36rem);
+				}
+			}
+
+			/* ── L ≥64em — restructure, not a wider column ── */
+			@media (min-width: 64em) {
+				body {
+					max-width: 72rem;
+					padding-inline: 3rem;
+					padding-block: 2.5rem 9rem;
+				}
+				header {
+					grid-template-columns: 5.25rem minmax(0, 1fr);
+					grid-template-rows: 2.25rem 3rem;
+					column-gap: 2rem;
+				}
+				.mark {
+					grid-row: 1 / span 2;
+				}
+				nav[aria-label='Main'] {
+					grid-row: 1;
+				}
+				form[role='search'] {
+					grid-column: 2;
+					grid-row: 2;
+					align-self: end;
+					max-width: 19rem;
+					margin-top: 0;
+					margin-left: auto;
+					flex-direction: row-reverse;
+					/* desktop: quiet underline field — menu leads */
+					background: none;
+					border-width: 0 0 1px;
+					border-radius: 0;
+					padding: 0 0.2rem;
+				}
+				form[role='search']:focus-within {
+					background: none;
+					border-bottom-color: var(--violet);
+				}
+				form[role='search'] input {
+					padding: 0.45em 0;
+				}
+				.mast {
+					padding-block: 5.5rem 0;
+				}
+				ol.letters > li {
+					display: grid;
+					grid-template-columns: 4.5rem minmax(0, 1fr);
+					column-gap: 2.5rem;
+					align-items: baseline;
+					padding-block: 2rem;
+				}
+				ul.names {
+					margin-top: 0;
+					font-size: 1.5rem;
+					display: grid;
+					grid-template-columns: repeat(2, minmax(0, 1fr));
+					gap: 1rem 2.5rem;
+				}
+				ul.names li + li {
+					margin-top: 0;
+				}
+				footer {
+					margin-top: 8rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<a class="skip" href="#main">skip to content</a>
+
+			<header>
+				<a class="mark" href="/">
+					<img src="logo.png" alt="fauxfetus" width="36" height="36" />
+				</a>
+				<nav aria-label="Main">
+				<ul>
+					<li><a href="5-artists-index.html"><span class="cap dim">Artists (99)</span></a></li>
+					<li><a href="8-albums-index.html"><span class="cap dim">Albums (239)</span></a></li>
+					<li><a href="7-news-index.html"><span class="cap dim">News</span></a></li>
+				</ul>
+			</nav>
+			<form role="search">
+				<label class="vh" for="q">Search the catalog</label>
+				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+				<input id="q" type="search" placeholder="search ninety-nine artists…" />
+			</form>
+		</header>
+		<main id="main">
+
+
+		<div class="mast">
+			<h1>albums</h1>
+			<p class="sub"><b>239</b> albums · alphabetical, the artist rides along</p>
+		</div>
+			<!-- album pages are unstubbed; every title routes to the representative album-detail mock -->
+			<ol class="letters">
+				<li class="letter">
+					<h2 class="cap dim tnum">#</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">"Music"</a><span class="by">Assistant Manager</span></li>
+						<li><a href="6-album-detail.html">060503</a><span class="by">Mix Ape</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">A</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">A Cold Lampin' Christmas</a><span class="by">The Cold Lamper</span></li>
+						<li><a href="6-album-detail.html">A History Of Might And Mystery (Live Anthology)</a><span class="by">Chamomile</span></li>
+						<li><a href="6-album-detail.html">A Non-Denominational Holiday Celebration</a><span class="by">The Cold Lamper</span></li>
+						<li><a href="6-album-detail.html">A Pony On Top Of A Mountain</a><span class="by">Ugh God</span></li>
+						<li><a href="6-album-detail.html">A Pound of Ham</a><span class="by">EAT!</span></li>
+						<li><a href="6-album-detail.html">A Three Ring Circus</a></li>
+						<li><a href="6-album-detail.html">A Womb with A View</a><span class="by">Chamomile</span></li>
+						<li><a href="6-album-detail.html">Absence Makes The Heart Garbanzo</a><span class="by">The Touchables</span></li>
+						<li><a href="6-album-detail.html">Adipem Frumenti</a></li>
+						<li><a href="6-album-detail.html">An Adonis</a><span class="by">F!</span></li>
+						<li><a href="6-album-detail.html">Annotations</a><span class="by">The Cold Lamper</span></li>
+						<li><a href="6-album-detail.html">Apples and Banananananas</a><span class="by">Apples and Cinnamon</span></li>
+						<li><a href="6-album-detail.html">Assertion And Repetition</a><span class="by">Middle Room</span></li>
+						<li><a href="6-album-detail.html">Audio Zine 5</a><span class="by">Free Matter For The Blind</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">B</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Best Summer Ever</a><span class="by">Drums Like Machine Guns</span></li>
+						<li><a href="6-album-detail.html">Black Pus 1</a><span class="by">Black Pus</span></li>
+						<li><a href="6-album-detail.html">Black Pus 2</a><span class="by">Black Pus</span></li>
+						<li><a href="6-album-detail.html">Black Pus 3</a><span class="by">Black Pus</span></li>
+						<li><a href="6-album-detail.html">Blanks</a><span class="by">SYNB</span></li>
+						<li><a href="6-album-detail.html">Blinds</a><span class="by">Drunk Hands</span></li>
+						<li><a href="6-album-detail.html">Bornpilot / Welcome Wizard Split</a><span class="by">Bornpilot</span></li>
+						<li><a href="6-album-detail.html">Bornpilot / Welcome Wizard Split</a><span class="by">Welcome Wizard</span></li>
+						<li><a href="6-album-detail.html">Boxtest</a><span class="by">Captain Werewolf</span></li>
+						<li><a href="6-album-detail.html">Brinkmangler</a><span class="by">Mystery Brinkman</span></li>
+						<li><a href="6-album-detail.html">Buddy Cianci is Fucking Dead</a><span class="by">Blatant Cronyism</span></li>
+						<li><a href="6-album-detail.html">Build Things</a><span class="by">Rasputin's Secret Police</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">C</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Captain Werewolf / Miles Rozatti Split</a><span class="by">Captain Werewolf</span></li>
+						<li><a href="6-album-detail.html">Captain Werewolf / Miles Rozatti Split</a><span class="by">Miles Rozatti</span></li>
+						<li><a href="6-album-detail.html">Cassette</a><span class="by">The Dead Kids</span></li>
+						<li><a href="6-album-detail.html">Channel 10</a><span class="by">SYNB</span></li>
+						<li><a href="6-album-detail.html">City Number 3</a><span class="by">Bornpilot</span></li>
+						<li><a href="6-album-detail.html">Clippity Klopp Don't Rob Me</a><span class="by">Hemorrhoy Rogers</span></li>
+						<li><a href="6-album-detail.html">Cocktails With Culturebot</a><span class="by">The Cold Lamper</span></li>
+						<li><a href="6-album-detail.html">Cod Is My Go Pilot</a><span class="by">Bornpilot</span></li>
+						<li><a href="6-album-detail.html">Cold Lampin'</a><span class="by">The Cold Lamper</span></li>
+						<li><a href="6-album-detail.html">Confuse Red with Survival</a><span class="by">Kitty Kadoogal</span></li>
+						<li><a href="6-album-detail.html">Contractions 1</a><span class="by">The Pregnancy</span></li>
+						<li><a href="6-album-detail.html">Contractions 2</a><span class="by">The Pregnancy</span></li>
+						<li><a href="6-album-detail.html">Contractions 3</a><span class="by">The Pregnancy</span></li>
+						<li><a href="6-album-detail.html">Cow</a><span class="by">The Barco Project</span></li>
+						<li><a href="6-album-detail.html">Cream of What</a><span class="by">Hemorrhoy Rogers</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">D</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Daisy Chain</a><span class="by">Snitcherz</span></li>
+						<li><a href="6-album-detail.html">Dangerbird Split</a><span class="by">Ugh God</span></li>
+						<li><a href="6-album-detail.html">Dead</a><span class="by">Captain Werewolf</span></li>
+						<li><a href="6-album-detail.html">Dearth</a><span class="by">Pink Panzer</span></li>
+						<li><a href="6-album-detail.html">Death Row Unicorn Parade</a><span class="by">123dood</span></li>
+						<li><a href="6-album-detail.html">Deep, Dark, Mysterious and Serious</a><span class="by">Ugh God</span></li>
+						<li><a href="6-album-detail.html">Demo</a><span class="by">F!</span></li>
+						<li><a href="6-album-detail.html">Demo</a><span class="by">Mega Mega</span></li>
+						<li><a href="6-album-detail.html">Demos</a><span class="by">Chamomile</span></li>
+						<li><a href="6-album-detail.html">Dev Comp</a><span class="by">Welcome Wizard</span></li>
+						<li><a href="6-album-detail.html">Digloxy Twilvbed; Neclongdox Regard</a><span class="by">Y2keith</span></li>
+						<li><a href="6-album-detail.html">Double Dungeon: Level I</a><span class="by">SYNB</span></li>
+						<li><a href="6-album-detail.html">Double Dungeon: Level II</a><span class="by">SYNB</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">E</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Echo Sound Loaf</a><span class="by">SYNB</span></li>
+						<li><a href="6-album-detail.html">EP</a><span class="by">Used Friends</span></li>
+						<li><a href="6-album-detail.html">Ericka Badon't</a></li>
+						<li><a href="6-album-detail.html">Eschaton</a><span class="by">The Wacky Ball Kickers</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">F</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Farther Down The Road To Ecological Collapse & The Fucking Apocalpyse - Volume 9</a><span class="by">ZZ Pot</span></li>
+						<li><a href="6-album-detail.html">Fat China Vagina</a><span class="by">Number One Sun</span></li>
+						<li><a href="6-album-detail.html">Father Sleep</a></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">5limbs</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">The Barco Project</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Bornpilot</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Captain Werewolf</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Casy + Brian</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">CAW!</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Chamomile</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Dead Rabbits</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Death Chants</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">EAT!</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Ericka Badon't</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Father Sleep</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Furrrrrrr</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">The Grays</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Happybear Kaboom</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Mary Magdalene</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Matsushita Electric Cassette</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">MONKEYKNUCkLER</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">The Nacht</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">The Night Owl</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Nuclear Family Holocaust</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Number One Sun</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Rasputin's Secret Police</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Savage Nomads</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">The Touchables</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Vaginasaur</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Welcome Wizard</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">Wolfenschnitzeltron</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">The Wooden Horse</span></li>
+						<li><a href="6-album-detail.html">Faux Comp 1</a><span class="by">ZZ Pot</span></li>
+						<li><a href="6-album-detail.html">Faux Faux Fest '24</a><span class="by">Assisted Living</span></li>
+						<li><a href="6-album-detail.html">Faux Faux Fest '24</a><span class="by">Bad History Month</span></li>
+						<li><a href="6-album-detail.html">Faux Faux Fest '24</a><span class="by">Drums Like Machine Guns</span></li>
+						<li><a href="6-album-detail.html">Faux Faux Fest '24</a><span class="by">Dust From 1000 Years</span></li>
+						<li><a href="6-album-detail.html">Faux Faux Fest '24</a><span class="by">Idiot Mambo</span></li>
+						<li><a href="6-album-detail.html">Faux Faux Fest '24</a><span class="by">Luna Honey</span></li>
+						<li><a href="6-album-detail.html">Faux Faux Fest '24</a><span class="by">Nyxy Nix</span></li>
+						<li><a href="6-album-detail.html">Feast</a><span class="by">Stuttering Danly And The Vaginal Secretions</span></li>
+						<li><a href="6-album-detail.html">Fish Not Your Will Story</a><span class="by">The Gland Puppies</span></li>
+						<li><a href="6-album-detail.html">Five</a><span class="by">The Barco Project</span></li>
+						<li><a href="6-album-detail.html">Folktales</a><span class="by">Red Rocket</span></li>
+						<li><a href="6-album-detail.html">Found In The Streets Vol. 1</a><span class="by">Mix Ape</span></li>
+						<li><a href="6-album-detail.html">Found In The Streets Vol. 4</a><span class="by">Mix Ape</span></li>
+						<li><a href="6-album-detail.html">Found In The Streets Vol. 5</a><span class="by">Mix Ape</span></li>
+						<li><a href="6-album-detail.html">Four</a><span class="by">The Barco Project</span></li>
+						<li><a href="6-album-detail.html">Free Matter For The Blind</a><span class="by">Psicklops</span></li>
+						<li><a href="6-album-detail.html">Fuck You To Dust</a><span class="by">Zeigenbock Kopf</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">G</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Get Out Of My Toilet</a><span class="by">The Gland Puppies</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">H</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Happy</a><span class="by">Captain Werewolf</span></li>
+						<li><a href="6-album-detail.html">Happybear Kaboom / Father Sleep Split</a><span class="by">Father Sleep</span></li>
+						<li><a href="6-album-detail.html">Happybear Kaboom / Father Sleep Split</a><span class="by">Happybear Kaboom</span></li>
+						<li><a href="6-album-detail.html">Heavy Flow</a><span class="by">Ugh God</span></li>
+						<li><a href="6-album-detail.html">Here Come The Mixes</a><span class="by">Mix Ape</span></li>
+						<li><a href="6-album-detail.html">Hygienic Productions (the Hot Reel!)</a><span class="by">Father Bingo</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">I</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">I Am Currently Attacking Your Dog With Rubber Gloves</a><span class="by">The Gland Puppies</span></li>
+						<li><a href="6-album-detail.html">I Contain Multitudes</a><span class="by">Bornpilot</span></li>
+						<li><a href="6-album-detail.html">I Shall Over-Cum!</a><span class="by">The Riffingtons</span></li>
+						<li><a href="6-album-detail.html">I Washed My Dog Now It's Dead</a><span class="by">The Crapenters</span></li>
+						<li><a href="6-album-detail.html">Idiot Mambo</a><span class="by">Pink Panzer</span></li>
+						<li><a href="6-album-detail.html">It, the Tard</a><span class="by">Abe Lincoln and the Stincolns</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">J</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Jaw & Iron</a><span class="by">Welcome Wizard</span></li>
+						<li><a href="6-album-detail.html">Jeep</a><span class="by">Savage Nomads</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">L</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Lest The Pipes Burst Forth</a><span class="by">Count Robocula</span></li>
+						<li><a href="6-album-detail.html">Life</a><span class="by">Stuttering Danly And The Vaginal Secretions</span></li>
+						<li><a href="6-album-detail.html">Live</a><span class="by">Mega Mega</span></li>
+						<li><a href="6-album-detail.html">Live - April 24, 2004</a><span class="by">Father Sleep</span></li>
+						<li><a href="6-album-detail.html">Live @ Inciting HQ (April 9th, 2007)</a><span class="by">Br'er & Charles Cohen</span></li>
+						<li><a href="6-album-detail.html">Live @ WPRB</a><span class="by">The Beautiful Traps</span></li>
+						<li><a href="6-album-detail.html">Live @ WPRB</a><span class="by">Ugh God</span></li>
+						<li><a href="6-album-detail.html">Live @ Yerba Buena</a><span class="by">Thee Oh Sees</span></li>
+						<li><a href="6-album-detail.html">Live 2004</a><span class="by">Kreemy F.F.U.P.</span></li>
+						<li><a href="6-album-detail.html">Live At Elcy's Coffee Shop - April 12th, 2002</a><span class="by">The Pregnancy</span></li>
+						<li><a href="6-album-detail.html">Live At Elcys Coffee Shop - January 31st, 2003</a><span class="by">Stuttering Danly And The Vaginal Secretions</span></li>
+						<li><a href="6-album-detail.html">Live At Lunt</a><span class="by">Wolfenschnitzeltron</span></li>
+						<li><a href="6-album-detail.html">Live At The Boro</a><span class="by">The Most Amazing Century Of Science</span></li>
+						<li><a href="6-album-detail.html">Live At The Springwater</a><span class="by">The Most Amazing Century Of Science</span></li>
+						<li><a href="6-album-detail.html">Live Auf Der Steakhouse - April 20th, 2006</a><span class="by">Wolfenschnitzeltron</span></li>
+						<li><a href="6-album-detail.html">Live In Kingston</a><span class="by">Chamomile</span></li>
+						<li><a href="6-album-detail.html">Live In Matt's Garage</a><span class="by">Chamomile</span></li>
+						<li><a href="6-album-detail.html">Live Radio</a><span class="by">Mucid Cuspidor</span></li>
+						<li><a href="6-album-detail.html">Lost Sisters</a><span class="by">The Beautiful Traps</span></li>
+						<li><a href="6-album-detail.html">Love Loops</a><span class="by">The Cold Lamper</span></li>
+						<li><a href="6-album-detail.html">Lunachild</a><span class="by">Welcome Wizard</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">M</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Milkone</a><span class="by">Welcome Wizard</span></li>
+						<li><a href="6-album-detail.html">Millions Of Sparrows</a><span class="by">Attack Rabbit</span></li>
+						<li><a href="6-album-detail.html">Modulation For Serious</a><span class="by">5limbs</span></li>
+						<li><a href="6-album-detail.html">MONKEYKNUCkLER</a></li>
+						<li><a href="6-album-detail.html">Montery Jack Me Off In The Closet After You Kiss Me, Mother...</a><span class="by">A Three Ring Circus</span></li>
+						<li><a href="6-album-detail.html">Mortimer</a><span class="by">The Pregnancy</span></li>
+						<li><a href="6-album-detail.html">Mwab Got Attacked</a><span class="by">BlastexOP134.XXnds</span></li>
+						<li><a href="6-album-detail.html">My Tail Is The Fuse To The Burning Anus</a><span class="by">Drums Like Machine Guns</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">N</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Naked Japanese Boys</a><span class="by">EAT!</span></li>
+						<li><a href="6-album-detail.html">Newchester</a><span class="by">Attack Rabbit</span></li>
+						<li><a href="6-album-detail.html">NFH #1</a><span class="by">Nuclear Family Holocaust</span></li>
+						<li><a href="6-album-detail.html">NFH #2</a><span class="by">Nuclear Family Holocaust</span></li>
+						<li><a href="6-album-detail.html">Nos Navizgark</a><span class="by">Plain Jain</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">O</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Oatmeal Womb</a><span class="by">BlastexOP134.XXnds</span></li>
+						<li><a href="6-album-detail.html">Ob/Gyn</a><span class="by">Welcome Wizard</span></li>
+						<li><a href="6-album-detail.html">October</a><span class="by">Captain Werewolf</span></li>
+						<li><a href="6-album-detail.html">Odei</a><span class="by">Bornpilot</span></li>
+						<li><a href="6-album-detail.html">Old Days</a><span class="by">Middle Room</span></li>
+						<li><a href="6-album-detail.html">Old Sun</a></li>
+						<li><a href="6-album-detail.html">One</a><span class="by">The Barco Project</span></li>
+						<li><a href="6-album-detail.html">One</a><span class="by">Death Chants</span></li>
+						<li><a href="6-album-detail.html">One</a><span class="by">Lezet</span></li>
+						<li><a href="6-album-detail.html">One</a><span class="by">Savage Nomads</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">P</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Pink Panzer</a></li>
+						<li><a href="6-album-detail.html">Please Kill Us</a><span class="by">Big Poo Generator</span></li>
+						<li><a href="6-album-detail.html">Poke It</a><span class="by">Hot Buns And Tea</span></li>
+						<li><a href="6-album-detail.html">Process</a><span class="by">Unami</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">R</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Rare And Tender</a><span class="by">The Pregnancy</span></li>
+						<li><a href="6-album-detail.html">Rasputin's Secret Police</a></li>
+						<li><a href="6-album-detail.html">Remixmomile</a><span class="by">Welcome Wizard</span></li>
+						<li><a href="6-album-detail.html">Rock And Real Bad: The Worst of Ugh God</a><span class="by">Ugh God</span></li>
+						<li><a href="6-album-detail.html">Rust</a><span class="by">Welcome Wizard</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">S</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Satanic Harvest</a></li>
+						<li><a href="6-album-detail.html">Secret Demo</a><span class="by">Ugh God</span></li>
+						<li><a href="6-album-detail.html">Secret Love</a><span class="by">The Gland Puppies</span></li>
+						<li><a href="6-album-detail.html">Seven</a><span class="by">The Barco Project</span></li>
+						<li><a href="6-album-detail.html">Shishkababy</a><span class="by">The Gland Puppies</span></li>
+						<li><a href="6-album-detail.html">Silver / MXD</a><span class="by">Mix Ape</span></li>
+						<li><a href="6-album-detail.html">Six</a><span class="by">The Barco Project</span></li>
+						<li><a href="6-album-detail.html">Six Songs From The New Deck</a><span class="by">Father Sleep</span></li>
+						<li><a href="6-album-detail.html">Small Faces</a><span class="by">Big Poo Generator</span></li>
+						<li><a href="6-album-detail.html">Smother Lumpkins</a><span class="by">Vidooch</span></li>
+						<li><a href="6-album-detail.html">Soccer Ear Fob</a><span class="by">The Gland Puppies</span></li>
+						<li><a href="6-album-detail.html">Somebody</a><span class="by">Attack Rabbit</span></li>
+						<li><a href="6-album-detail.html">Sorry, Bud</a><span class="by">Aunt Vivian's Revengence</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">T</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Taco Enema</a><span class="by">EAT!</span></li>
+						<li><a href="6-album-detail.html">Taco Enema</a><span class="by">The Riffingtons</span></li>
+						<li><a href="6-album-detail.html">Teufelsberg Sessions Vol. 1</a><span class="by">† (Night Veins)</span></li>
+						<li><a href="6-album-detail.html">The Ancillary</a><span class="by">Vidooch</span></li>
+						<li><a href="6-album-detail.html">The Barco Project</a></li>
+						<li><a href="6-album-detail.html">The Best of the First Four Acts of Faux Fest</a><span class="by">A Three Ring Circus</span></li>
+						<li><a href="6-album-detail.html">The Best of the First Four Acts of Faux Fest</a><span class="by">Captain Werewolf</span></li>
+						<li><a href="6-album-detail.html">The Best of the First Four Acts of Faux Fest</a><span class="by">Happybear Kaboom</span></li>
+						<li><a href="6-album-detail.html">The Best of the First Four Acts of Faux Fest</a><span class="by">Lee, Jae Won</span></li>
+						<li><a href="6-album-detail.html">The Blue Spiral</a><span class="by">Will Spritzler</span></li>
+						<li><a href="6-album-detail.html">The Cold Lamper / J. Mono Split</a><span class="by">The Cold Lamper</span></li>
+						<li><a href="6-album-detail.html">The Cold Lamper / J. Mono Split</a><span class="by">J. Mono</span></li>
+						<li><a href="6-album-detail.html">The Dog That Ate Cincinnati</a><span class="by">Mary Magdalene</span></li>
+						<li><a href="6-album-detail.html">The Flowering Judas In The Satanic Handjob</a><span class="by">Captain Werewolf</span></li>
+						<li><a href="6-album-detail.html">The Happily Married Tammywhale Tape</a><span class="by">Ugh God</span></li>
+						<li><a href="6-album-detail.html">The Lost Album</a><span class="by">Chamomile</span></li>
+						<li><a href="6-album-detail.html">The Night Owl / Welcome Wizard Split</a><span class="by">The Night Owl</span></li>
+						<li><a href="6-album-detail.html">The Night Owl / Welcome Wizard Split</a><span class="by">Welcome Wizard</span></li>
+						<li><a href="6-album-detail.html">The Octogon</a><span class="by">Welcome Wizard</span></li>
+						<li><a href="6-album-detail.html">The Parisan Touch</a><span class="by">Captain Werewolf</span></li>
+						<li><a href="6-album-detail.html">The Pentagram</a><span class="by">Drug From Shit</span></li>
+						<li><a href="6-album-detail.html">The Presidents Album</a><span class="by">Furrrrrrr</span></li>
+						<li><a href="6-album-detail.html">The Wooden Horse</a></li>
+						<li><a href="6-album-detail.html">The Worst Of</a><span class="by">The Barco Project</span></li>
+						<li><a href="6-album-detail.html">This Is What Happens When You Fight A Stranger In The Alps</a><span class="by">Matsushita Electric Cassette</span></li>
+						<li><a href="6-album-detail.html">This Tape Will Make You Fart</a><span class="by">The Gland Puppies</span></li>
+						<li><a href="6-album-detail.html">Three</a><span class="by">The Barco Project</span></li>
+						<li><a href="6-album-detail.html">Three Inches of PAIN!</a><span class="by">The Riffingtons</span></li>
+						<li><a href="6-album-detail.html">Tinkletitties</a><span class="by">Vaginasaur</span></li>
+						<li><a href="6-album-detail.html">To Binge and Purge in LA</a><span class="by">Worshiper</span></li>
+						<li><a href="6-album-detail.html">Treble In The Bedroom</a><span class="by">The Night Owl</span></li>
+						<li><a href="6-album-detail.html">TV Tards</a><span class="by">Abe Lincoln and the Stincolns</span></li>
+						<li><a href="6-album-detail.html">Two</a><span class="by">The Barco Project</span></li>
+						<li><a href="6-album-detail.html">Two</a><span class="by">Lezet</span></li>
+						<li><a href="6-album-detail.html">Two</a><span class="by">Savage Nomads</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">U</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Ugh God Fucks Drexel</a><span class="by">Ugh God</span></li>
+						<li><a href="6-album-detail.html">Ugh God... Not The M Room!</a><span class="by">Ugh God</span></li>
+						<li><a href="6-album-detail.html">Underground Epiphanies At High Speeds Prove Fatal</a><span class="by">Bear Is Driving</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">V</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Vidooch</a></li>
+						<li><a href="6-album-detail.html">Voices in the Mist</a><span class="by">The Night Owl</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">W</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">We Play For No One (It's Our Choice)</a><span class="by">CAW!</span></li>
+						<li><a href="6-album-detail.html">Wolfenschnitzeltron</a></li>
+						<li><a href="6-album-detail.html">Wood</a><span class="by">Ugh God</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">Y</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">Your Word Is Your Wand</a><span class="by">Drums Like Machine Guns</span></li>
+					</ul>
+				</li>
+				<li class="letter">
+					<h2 class="cap dim tnum">Z</h2>
+					<ul class="names">
+						<li><a href="6-album-detail.html">ZZ Pot & Doctor Ninja</a></li>
+						<li><a href="6-album-detail.html">ZZ Pot I</a><span class="by">ZZ Pot</span></li>
+						<li><a href="6-album-detail.html">ZZ Pot II</a><span class="by">ZZ Pot</span></li>
+						<li><a href="6-album-detail.html">ZZ Pot III</a><span class="by">ZZ Pot</span></li>
+					</ul>
+				</li>
+			</ol>
+		</main>
+
+		<footer>
+			<nav aria-label="Footer">
+				<ul>
+					<li><a class="cap" href="https://github.com/meowsus/fauxfetus">GitHub</a></li>
+					<li><button type="button"><span class="cap">Install the app</span></button></li>
+					<li><a class="cap" href="/sitemap.xml">Sitemap</a></li>
+					<li><a class="cap" href="mailto:curt@fauxfetus.net">Email</a></li>
+				</ul>
+			</nav>
+		</footer>
+
+		<aside class="player" aria-label="Now playing">
+			<p class="track">
+				<a href="6-album-detail.html"
+					>Eschaton In Rosendale</a
+				>
+				<span> — 123dood · Death Row Unicorn Parade</span>
+			</p>
+			<span class="time">1:24 / 4:47</span>
+			<div class="glyphs">
+				<button type="button" class="glyph" aria-label="Previous track">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 6-5 6 5 6M19 6l-5 6 5 6" /></svg>
+				</button>
+				<button type="button" class="glyph play" aria-label="Pause">
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z" /></svg>
+				</button>
+				<button type="button" class="glyph" aria-label="Next track">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 6 5 6-5 6M5 6l5 6-5 6" /></svg>
+				</button>
+			</div>
+		</aside>
+	</body>
+</html>

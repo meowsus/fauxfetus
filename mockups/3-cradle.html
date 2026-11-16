@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+		<meta name="color-scheme" content="dark" />
+		<meta name="theme-color" content="#121317" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<title>Mockup 03 · Cradle — fauxfetus</title>
+		<style>
+			:root {
+				color-scheme: dark;
+				--bg: #121317;
+				--surface: #1d1f26;
+				--surface2: #262933;
+				--ink: #f2f1ec;
+				--dim: #8d92a2;
+				--coral: #ff5c47;
+				--hair: rgba(255, 255, 255, 0.08);
+				--tabbar-h: 62px;
+			}
+			* {
+				margin: 0;
+				box-sizing: border-box;
+			}
+			html {
+				-webkit-text-size-adjust: 100%;
+			}
+			body {
+				background: var(--bg);
+				color: var(--ink);
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+					'Helvetica Neue', sans-serif;
+				font-size: 16px;
+				line-height: 1.5;
+			}
+			a {
+				color: inherit;
+				text-decoration: none;
+				-webkit-tap-highlight-color: transparent;
+			}
+			a:focus-visible,
+			button:focus-visible {
+				outline: 2px solid var(--coral);
+				outline-offset: 2px;
+			}
+			button {
+				font: inherit;
+				color: inherit;
+				background: none;
+				border: 0;
+				cursor: pointer;
+			}
+			.vh {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				overflow: hidden;
+				clip-path: inset(50%);
+				white-space: nowrap;
+			}
+			.skip {
+				position: absolute;
+				left: -9999px;
+				top: 0;
+				background: var(--coral);
+				color: #0d0908;
+				padding: 0.5em 1em;
+				z-index: 99;
+				font-weight: 600;
+			}
+			.skip:focus-visible {
+				left: 0.5rem;
+			}
+
+			/* ── phone column ───────────────────────── */
+			.phone {
+				max-width: 30rem;
+				margin-inline: auto;
+				min-height: 100dvh;
+			}
+
+			/* ── top app bar ────────────────────────── */
+			.topbar {
+				position: sticky;
+				top: 0;
+				z-index: 20;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 0.75rem;
+				padding: 0.9rem 1rem 0.75rem;
+				background: rgba(18, 19, 23, 0.86);
+				-webkit-backdrop-filter: blur(14px);
+				backdrop-filter: blur(14px);
+				border-bottom: 1px solid var(--hair);
+			}
+			.wordmark {
+				font-weight: 700;
+				font-size: 1rem;
+				letter-spacing: -0.01em;
+			}
+			.iconbtn {
+				width: 44px;
+				height: 44px;
+				margin-right: -8px;
+				display: grid;
+				place-items: center;
+				color: var(--dim);
+				border-radius: 50%;
+			}
+			.iconbtn:hover,
+			.iconbtn[aria-current]:hover {
+				color: var(--ink);
+			}
+
+			/* ── hero ───────────────────────────────── */
+			.hero {
+				padding: 1.25rem 1rem 0;
+			}
+			h1 {
+				font-size: 2rem;
+				font-weight: 800;
+				letter-spacing: -0.02em;
+				line-height: 1.1;
+			}
+			.tagline {
+				color: var(--dim);
+				font-size: 0.95rem;
+				margin-top: 0.4rem;
+				max-width: 30ch;
+			}
+			.chips {
+				padding: 0;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.4rem;
+				margin-top: 0.9rem;
+			}
+			.chips li {
+				list-style: none;
+				background: var(--surface);
+				border: 1px solid var(--hair);
+				color: var(--dim);
+				font-size: 0.75rem;
+				font-weight: 600;
+				padding: 0.35em 0.75em;
+				border-radius: 999px;
+			}
+			.chips b {
+				color: var(--ink);
+				font-weight: 700;
+			}
+			.radio-card {
+				display: flex;
+				align-items: center;
+				gap: 0.9rem;
+				width: 100%;
+				margin-top: 1.4rem;
+				padding: 1rem 1.1rem;
+				text-align: left;
+				border: 0;
+				border-radius: 16px;
+				cursor: pointer;
+				color: #fff;
+				background: linear-gradient(120deg, #ff5c47 0%, #d13c39 55%, #6e2233 100%);
+				box-shadow: 0 10px 28px -14px rgba(255, 92, 71, 0.55);
+			}
+			.radio-card .r-glyph {
+				width: 44px;
+				height: 44px;
+				flex: none;
+				display: grid;
+				place-items: center;
+				background: rgba(255, 255, 255, 0.16);
+				border-radius: 999px;
+			}
+			.radio-card .r-copy {
+				flex: 1;
+			}
+			.radio-card .r-title {
+				font-weight: 700;
+				font-size: 1.05rem;
+			}
+			.radio-card .r-sub {
+				font-size: 0.83rem;
+				color: rgba(255, 255, 255, 0.8);
+				margin-top: 1px;
+			}
+			.radio-card .chev {
+				color: rgba(255, 255, 255, 0.7);
+			}
+
+			/* ── sections ───────────────────────────── */
+			section {
+				margin-top: 1.9rem;
+			}
+			.sec-head {
+				display: flex;
+				align-items: baseline;
+				justify-content: space-between;
+				padding-inline: 1rem;
+				margin-bottom: 0.7rem;
+			}
+			h2 {
+				font-size: 1.02rem;
+				font-weight: 700;
+				letter-spacing: 0.01em;
+			}
+			.sec-head a {
+				font-size: 0.82rem;
+				font-weight: 600;
+				color: var(--coral);
+			}
+
+			/* recently added — horizontal snap cards */
+			.snap {
+				display: flex;
+				gap: 0.65rem;
+				overflow-x: auto;
+				padding: 0.15rem 1rem 1rem;
+				margin-inline: -0.25rem;
+				scroll-snap-type: x mandatory;
+				scrollbar-width: none;
+			}
+			.snap::-webkit-scrollbar {
+				display: none;
+			}
+			.add-card {
+				flex: none;
+				scroll-snap-align: start;
+				width: 17rem;
+				background: var(--surface);
+				border-radius: 16px;
+				padding: 0.9rem 1rem 1rem;
+				border: 1px solid var(--hair);
+			}
+			.add-card:hover {
+				border-color: rgba(255, 255, 255, 0.16);
+			}
+			.add-card time {
+				font-size: 0.72rem;
+				font-weight: 700;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--coral);
+			}
+			.add-card ul {
+				list-style: none;
+				margin-top: 0.6rem;
+				display: grid;
+				gap: 0.45rem;
+			}
+			.add-card .art {
+				font-weight: 600;
+				font-size: 0.95rem;
+				line-height: 1.25;
+			}
+			.add-card .alb {
+				font-size: 0.84rem;
+				color: var(--dim);
+				line-height: 1.3;
+			}
+			.add-card .new {
+				color: var(--dim);
+				font-size: 0.72rem;
+				font-weight: 700;
+				letter-spacing: 0.06em;
+				text-transform: uppercase;
+			}
+
+			/* catalog rows */
+			.rows {
+				list-style: none;
+				padding: 0 1rem;
+				display: grid;
+				gap: 0.5rem;
+			}
+			.rows a {
+				display: grid;
+				grid-template-columns: 52px 1fr auto;
+				gap: 0.8rem;
+				align-items: center;
+				background: var(--surface);
+				border-radius: 12px;
+				padding: 0.6rem 0.7rem;
+				min-height: 68px;
+			}
+			.rows a:hover {
+				background: var(--surface2);
+			}
+			.thumb {
+				width: 52px;
+				height: 52px;
+				border-radius: 9px;
+			}
+			.row-txt {
+				min-width: 0;
+			}
+			.row-name {
+				font-weight: 600;
+				font-size: 1rem;
+				line-height: 1.2;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			.row-sub {
+				font-size: 0.82rem;
+				color: var(--dim);
+				margin-top: 1px;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			.chev {
+				color: var(--dim);
+				flex: none;
+			}
+
+			/* news rows */
+			.rows.news a {
+				grid-template-columns: 1fr auto;
+				background: none;
+				border: 1px solid var(--hair);
+				padding: 0.85rem 0.9rem;
+			}
+			.rows.news a:hover {
+				background: var(--surface);
+			}
+			.ndate {
+				font-size: 0.76rem;
+				color: var(--dim);
+				letter-spacing: 0.04em;
+			}
+
+			.foot {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+				padding: 1.8rem 1rem 2.2rem;
+			}
+			.foot a,
+			.foot button {
+				background: var(--surface);
+				border: 1px solid var(--hair);
+				color: var(--dim);
+				font-size: 0.78rem;
+				font-weight: 600;
+				padding: 0.45em 0.9em;
+				border-radius: 999px;
+			}
+			.foot a:hover,
+			.foot button:hover {
+				color: var(--ink);
+			}
+
+			/* ── docked player ──────────────────────── */
+			.dock {
+				position: fixed;
+				z-index: 30;
+				bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 0.5rem);
+				inset-inline: 0;
+				width: min(100%, 30rem);
+				margin-inline: auto;
+				padding-inline: 0.6rem;
+			}
+			.dock-inner {
+				position: relative;
+				display: grid;
+				grid-template-columns: 46px 1fr auto;
+				gap: 0.75rem;
+				align-items: center;
+				background: rgba(32, 34, 42, 0.92);
+				-webkit-backdrop-filter: blur(18px);
+				backdrop-filter: blur(18px);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				border-radius: 14px;
+				padding: 0.55rem 0.65rem;
+				box-shadow: 0 14px 34px -12px rgba(0, 0, 0, 0.65);
+				overflow: hidden;
+			}
+			.dock-bar {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				height: 3px;
+				background: rgba(255, 255, 255, 0.08);
+			}
+			.dock-bar span {
+				display: block;
+				height: 100%;
+				width: 29%;
+				background: var(--coral);
+			}
+			.dock-thumb {
+				width: 46px;
+				height: 46px;
+				border-radius: 9px;
+				background: linear-gradient(135deg, #4a3f8f, #2a2740 70%);
+				display: grid;
+				place-items: center;
+				color: rgba(255, 255, 255, 0.65);
+			}
+			.dock-txt {
+				min-width: 0;
+			}
+			.dock-track {
+				font-weight: 600;
+				font-size: 0.95rem;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			.dock-track:hover {
+				text-decoration: underline;
+				text-underline-offset: 3px;
+			}
+			.dock-meta {
+				font-size: 0.8rem;
+				color: var(--dim);
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			.dock-ctl {
+				display: flex;
+				align-items: center;
+				gap: 0.15rem;
+			}
+			.mini {
+				width: 42px;
+				height: 42px;
+				display: grid;
+				place-items: center;
+				color: var(--dim);
+				border-radius: 50%;
+			}
+			.mini:hover {
+				color: var(--ink);
+			}
+			.mini.play {
+				background: var(--coral);
+				color: #fff;
+			}
+			.mini.play:hover {
+				background: #ff7462;
+			}
+
+			/* ── tab bar ────────────────────────────── */
+			nav[aria-label='Main'] {
+				position: fixed;
+				z-index: 30;
+				bottom: 0;
+				inset-inline: 0;
+				width: min(100%, 30rem);
+				margin-inline: auto;
+				background: rgba(18, 19, 23, 0.92);
+				-webkit-backdrop-filter: blur(18px);
+				backdrop-filter: blur(18px);
+				border-top: 1px solid var(--hair);
+				padding-bottom: env(safe-area-inset-bottom);
+			}
+			nav[aria-label='Main'] ul {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+				display: grid;
+				grid-template-columns: repeat(4, 1fr);
+				height: var(--tabbar-h);
+			}
+			nav[aria-label='Main'] a {
+				display: grid;
+				place-items: center;
+				gap: 3px;
+				align-content: center;
+				color: var(--dim);
+				font-size: 0.72rem;
+				font-weight: 600;
+				letter-spacing: 0.02em;
+			}
+			nav[aria-label='Main'] a[aria-current='page'] {
+				color: var(--coral);
+			}
+			nav[aria-label='Main'] a:hover {
+				color: var(--ink);
+			}
+			nav[aria-label='Main'] a[aria-current='page']:hover {
+				color: var(--coral);
+			}
+
+			main {
+				padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 6.5rem);
+			}
+
+			/* desktop: acknowledge the phone frame */
+			@media (min-width: 48em) {
+				body {
+					background: radial-gradient(
+							1200px 500px at 50% -100px,
+							#191b22,
+							var(--bg)
+						)
+						var(--bg);
+				}
+				.phone {
+					box-shadow: 0 0 0 1px var(--hair), 0 30px 80px -30px rgba(0, 0, 0, 0.8);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<a class="skip" href="#main">skip to content</a>
+
+		<div class="phone">
+			<header class="topbar">
+				<a class="wordmark" href="/">fauxfetus</a>
+				<button type="button" class="iconbtn" aria-label="Search the catalog">
+					<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+						<circle cx="11" cy="11" r="7" />
+						<path d="m20 20-4-4" />
+					</svg>
+				</button>
+			</header>
+
+			<main id="main">
+				<div class="hero">
+					<h1>Faux Fetus</h1>
+					<p class="tagline">
+						A collection of experimental music you never heard of or even want
+						to listen to made by people you don't care about.
+					</p>
+					<ul class="chips">
+						<li><b>99</b> artists</li>
+						<li><b>239</b> albums</li>
+						<li><b>2,521</b> tracks</li>
+						<li>installable</li>
+					</ul>
+					<button type="button" class="radio-card">
+						<span class="r-glyph" aria-hidden="true">
+							<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+								<path d="M8 5.14v13.72L19 12z" />
+							</svg>
+						</span>
+						<span class="r-copy">
+							<span class="r-title">Start the radio</span>
+							<span class="r-sub">shuffle all 2,521 tracks</span>
+						</span>
+						<span class="chev" aria-hidden="true">
+							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="m9 5 7 7-7 7" />
+							</svg>
+						</span>
+					</button>
+				</div>
+
+				<section aria-labelledby="h-recent">
+					<div class="sec-head">
+						<h2 id="h-recent">Recently added</h2>
+						<a href="/news/">See all</a>
+					</div>
+					<div class="snap">
+						<a class="add-card" href="/news/2026-08-09-used-friends/">
+							<time datetime="2026-08-09">Aug 9</time>
+							<ul>
+								<li>
+									<p class="art">Used Friends</p>
+									<p class="new">new artist</p>
+								</li>
+								<li>
+									<p class="art">Assistant Manager</p>
+									<p class="new">new artist</p>
+								</li>
+							</ul>
+						</a>
+						<a class="add-card" href="/news/2026-07-16-mcbs-cds/">
+							<time datetime="2026-07-16">Jul 16</time>
+							<ul>
+								<li>
+									<p class="art">Kreemy Ffup</p>
+									<p class="alb">Live 2004</p>
+								</li>
+								<li>
+									<p class="art">Mucid Cuspidor</p>
+									<p class="alb">Live Radio</p>
+								</li>
+								<li>
+									<p class="art">Mystery Brinkman</p>
+									<p class="alb">Brinkmangler</p>
+								</li>
+							</ul>
+						</a>
+						<a class="add-card" href="/news/2026-07-05-found-a-box-of-cds/">
+							<time datetime="2026-07-05">Jul 5</time>
+							<ul>
+								<li>
+									<p class="art">Nuclear Family Holocaust</p>
+									<p class="alb">NFH 1 · NFH 2</p>
+								</li>
+								<li>
+									<p class="art">Chamomile</p>
+									<p class="alb">A Womb with a View</p>
+								</li>
+								<li>
+									<p class="art">The Most Amazing Century of Science</p>
+									<p class="alb">Live at the Springwater · Live at the Boro</p>
+								</li>
+							</ul>
+						</a>
+						<a class="add-card" href="/news/2026-05-17-voices-in-the-mist/">
+							<time datetime="2026-05-17">May 17</time>
+							<ul>
+								<li>
+									<p class="art">The Night Owl</p>
+									<p class="alb">Voices in the Mist</p>
+								</li>
+							</ul>
+						</a>
+					</div>
+				</section>
+
+				<section aria-labelledby="h-catalog">
+					<div class="sec-head">
+						<h2 id="h-catalog">From the catalog</h2>
+						<a href="/artists/">All 99</a>
+					</div>
+					<ul class="rows">
+						<li>
+							<a href="/artists/night-veins/">
+								<span class="thumb" style="background: linear-gradient(135deg, #274156, #101820)" aria-hidden="true"></span>
+								<span class="row-txt">
+									<span class="row-name">† (Night Veins)</span>
+									<span class="row-sub">Teufelsberg Sessions Vol. 1</span>
+								</span>
+								<span class="chev" aria-hidden="true">
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="/artists/123dood/">
+								<span class="thumb" style="background: linear-gradient(135deg, #6e3b9e, #2a1b40)" aria-hidden="true"></span>
+								<span class="row-txt">
+									<span class="row-name">123dood</span>
+									<span class="row-sub">Death Row Unicorn Parade</span>
+								</span>
+								<span class="chev" aria-hidden="true">
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="/artists/5limbs/">
+								<span class="thumb" style="background: linear-gradient(135deg, #1f6e50, #10231a)" aria-hidden="true"></span>
+								<span class="row-txt">
+									<span class="row-name">5limbs</span>
+									<span class="row-sub">Faux Comp 1 · Modulation For Serious</span>
+								</span>
+								<span class="chev" aria-hidden="true">
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="/artists/attack-rabbit/">
+								<span class="thumb" style="background: linear-gradient(135deg, #b03434, #2c1212)" aria-hidden="true"></span>
+								<span class="row-txt">
+									<span class="row-name">Attack Rabbit</span>
+									<span class="row-sub">Millions Of Sparrows · Newchester · Somebody</span>
+								</span>
+								<span class="chev" aria-hidden="true">
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="/artists/the-barco-project/">
+								<span class="thumb" style="background: linear-gradient(135deg, #a5752a, #33270f)" aria-hidden="true"></span>
+								<span class="row-txt">
+									<span class="row-name">The Barco Project</span>
+									<span class="row-sub">Cow · Five · The Worst Of · +7 more</span>
+								</span>
+								<span class="chev" aria-hidden="true">
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="/artists/assisted-living/">
+								<span class="thumb" style="background: linear-gradient(135deg, #38558a, #141d2e)" aria-hidden="true"></span>
+								<span class="row-txt">
+									<span class="row-name">Assisted Living</span>
+									<span class="row-sub">Faux Faux Fest '24</span>
+								</span>
+								<span class="chev" aria-hidden="true">
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+								</span>
+							</a>
+						</li>
+					</ul>
+				</section>
+
+				<section aria-labelledby="h-news">
+					<div class="sec-head">
+						<h2 id="h-news">News</h2>
+						<a href="/news/">See all</a>
+					</div>
+					<ul class="rows news">
+						<li>
+							<a href="/news/2026-11-14-album-downloads/">
+								<span class="row-txt">
+									<span class="row-name">Album downloads for everyone</span>
+									<span class="ndate"><time datetime="2026-11-14">Nov 14, 2026</time></span>
+								</span>
+								<span class="chev" aria-hidden="true">
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="/news/2026-08-09-used-friends/">
+								<span class="row-txt">
+									<span class="row-name">Used Friends, Assistant Manager</span>
+									<span class="ndate"><time datetime="2026-08-09">Aug 9, 2026</time></span>
+								</span>
+								<span class="chev" aria-hidden="true">
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+								</span>
+							</a>
+						</li>
+						<li>
+							<a href="/news/2026-05-17-voices-in-the-mist/">
+								<span class="row-txt">
+									<span class="row-name">The long-lost Voices in the Mist</span>
+									<span class="ndate"><time datetime="2026-05-17">May 17, 2026</time></span>
+								</span>
+								<span class="chev" aria-hidden="true">
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+								</span>
+							</a>
+						</li>
+					</ul>
+				</section>
+
+				<div class="foot">
+					<a href="https://github.com/meowsus/fauxfetus">GitHub</a>
+					<button type="button">Install the app</button>
+					<a href="/sitemap.xml">Sitemap</a>
+					<a href="mailto:curt@fauxfetus.net">Email</a>
+				</div>
+			</main>
+
+			<aside class="dock" aria-label="Now playing">
+				<div class="dock-inner">
+					<div
+						class="dock-bar"
+						role="progressbar"
+						aria-label="Track position"
+						aria-valuemin="0"
+						aria-valuemax="287"
+						aria-valuenow="84"
+						aria-valuetext="1:24 of 4:47"
+					>
+						<span></span>
+					</div>
+					<span class="dock-thumb" aria-hidden="true">
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+							<path d="M9 18V6l9 2v10" />
+							<circle cx="7" cy="18" r="2" />
+							<circle cx="16" cy="18" r="2" />
+						</svg>
+					</span>
+					<span class="dock-txt">
+						<a class="dock-track" href="/artists/123dood/death-row-unicorn-parade/eschaton-in-rosendale/">Eschaton In Rosendale</a>
+						<p class="dock-meta">123dood · Death Row Unicorn Parade · 1:24</p>
+					</span>
+					<span class="dock-ctl">
+						<button type="button" class="mini" aria-label="Previous track">
+							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 6-5 6 5 6M19 6l-5 6 5 6" /></svg>
+						</button>
+						<button type="button" class="mini play" aria-label="Pause">
+							<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z" /></svg>
+						</button>
+						<button type="button" class="mini" aria-label="Next track">
+							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 6 5 6-5 6M5 6l5 6-5 6" /></svg>
+						</button>
+					</span>
+				</div>
+			</aside>
+
+			<nav aria-label="Main">
+				<ul>
+					<li>
+						<a href="/" aria-current="page">
+							<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="M4 14v-2a8 8 0 0 1 16 0v2" />
+								<rect x="3" y="14" width="4" height="7" rx="1.5" />
+								<rect x="17" y="14" width="4" height="7" rx="1.5" />
+							</svg>
+							Listen
+						</a>
+					</li>
+					<li>
+						<a href="/artists/">
+							<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<circle cx="12" cy="8" r="4" />
+								<path d="M4 21c0-4 3.6-6 8-6s8 2 8 6" />
+							</svg>
+							Artists
+						</a>
+					</li>
+					<li>
+						<a href="/albums/">
+							<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<circle cx="12" cy="12" r="9" />
+								<circle cx="12" cy="12" r="2.5" />
+							</svg>
+							Albums
+						</a>
+					</li>
+					<li>
+						<a href="/news/">
+							<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<rect x="3" y="5" width="18" height="16" rx="2" />
+								<path d="M7 9h10M7 13h10M7 17h6" />
+							</svg>
+							News
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</body>
+</html>

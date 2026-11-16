@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="dark" />
+		<meta name="theme-color" content="#0e0f13" />
+		<title>Mockup 08 · Albums index — Mothwing chrome — fauxfetus</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@300;400;500&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			/*
+				V3 — de-templated, per plans/redesign-principles.md
+				· three distinct section openers (no uniform label+hairline kit)
+				· real track counts as data texture; tabular figures everywhere
+				· varied rhythm: one deep "side-two" pause before the news
+				· acid = interaction color + data-true tags only
+				· instant hovers (no transitions); invert-on-hover is the signature
+			*/
+			:root {
+				color-scheme: dark;
+				--bg: #0e0f13;
+				--ink: #ece9f4;
+				--dim: #85819a;
+				--violet: #a79aff;
+				--acid: #c8f449;
+				--hair: rgba(236, 233, 244, 0.14);
+			}
+			* {
+				margin: 0;
+				box-sizing: border-box;
+			}
+			html {
+				-webkit-text-size-adjust: 100%;
+			}
+			body {
+				background: var(--bg);
+				color: var(--ink);
+				font-family: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+				font-size: 0.95rem;
+				line-height: 1.65;
+				max-width: 36rem;
+				margin-inline: auto;
+				padding: 1.4rem 1.25rem 8.5rem;
+			}
+			a {
+				color: inherit;
+				text-decoration: none;
+			}
+			a:hover {
+				color: var(--violet);
+			}
+			a:focus-visible,
+			button:focus-visible,
+			input:focus-visible {
+				outline: 2px solid var(--violet);
+				outline-offset: 3px;
+				border-radius: 2px;
+			}
+			/* acid splat #1: selection is an interaction color, on purpose */
+			::selection {
+				background: var(--acid);
+				color: #0e0f13;
+			}
+			button {
+				font: inherit;
+				color: inherit;
+				background: none;
+				border: 0;
+				cursor: pointer;
+			}
+			.vh {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				overflow: hidden;
+				clip-path: inset(50%);
+				white-space: nowrap;
+			}
+			.skip {
+				position: absolute;
+				left: -9999px;
+				top: 0;
+				background: var(--violet);
+				color: #0e0f13;
+				padding: 0.5em 1em;
+				z-index: 99;
+				font-size: 0.8rem;
+			}
+			.skip:focus-visible {
+				left: 0.5rem;
+			}
+			.cap {
+				font-size: 0.7rem;
+				font-weight: 500;
+				letter-spacing: 0.26em;
+				text-transform: uppercase;
+			}
+			.cap.dim {
+				color: var(--dim);
+			}
+			.tnum {
+				font-variant-numeric: tabular-nums lining-nums;
+			}
+
+			/* ── header — the mark lives here (direct child), caps stay the nav's voice ── */
+			header {
+				padding-top: 1.1rem;
+				display: grid;
+				grid-template-columns: 2.25rem minmax(0, 1fr);
+				grid-template-rows: minmax(2.25rem, auto) auto;
+				column-gap: 1.1rem;
+			}
+			.mark {
+				display: block;
+				position: relative;
+				grid-column: 1;
+				grid-row: 1;
+				align-self: stretch;
+			}
+			.mark img {
+				position: absolute;
+				inset: 0;
+				height: 100%;
+				width: 100%;
+				object-fit: contain;
+				object-position: left center;
+				filter: invert(1);
+				mix-blend-mode: screen;
+			}
+			nav[aria-label='Main'] {
+				grid-column: 2;
+				grid-row: 1;
+				display: flex;
+				align-items: center;
+				justify-content: flex-end;
+			}
+			nav ul {
+				list-style: none;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.35rem 1rem;
+				padding: 0;
+				margin: 0;
+				justify-content: flex-end;
+			}
+			nav[aria-label='Main'] a,
+			nav[aria-label='Main'] button {
+				color: var(--dim);
+			}
+			nav[aria-label='Main'] a .cap,
+			nav[aria-label='Main'] button .cap {
+				display: inline-block;
+				padding: 0.4em 0;
+			}
+			nav[aria-label='Main'] a:hover,
+			nav[aria-label='Main'] button:hover {
+				color: var(--violet);
+			}
+			form[role='search'] {
+				grid-column: 1 / -1;
+				grid-row: 2;
+				display: flex;
+				align-items: center;
+				gap: 0.55rem;
+				margin-top: 1.2rem;
+				background: rgb(236 233 244 / 0.055);
+				border: 1px solid rgb(236 233 244 / 0.18);
+				border-radius: 10px;
+				padding: 0 0.9rem;
+			}
+			form[role='search'] svg {
+				flex: none;
+				color: var(--dim);
+			}
+			form[role='search'] input {
+				width: 100%;
+				background: none;
+				border: 0;
+				color: var(--ink);
+				font-family: inherit;
+				font-size: 0.95rem;
+				padding: 0.72em 0;
+			}
+			form[role='search'] input::placeholder {
+				color: var(--dim);
+			}
+			form[role='search']:focus-within {
+				border-color: var(--violet);
+				background: rgb(236 233 244 / 0.08);
+			}
+
+
+				/* page opener: serif masthead — the homepage wordmark system at page scale */
+				.mast {
+					padding-block: 3.5rem 0;
+				}
+				.mast h1 {
+					font-family: 'Instrument Serif', Georgia, serif;
+					font-weight: 400;
+					font-size: clamp(3.4rem, 9vw, 5.5rem);
+					line-height: 0.92;
+					letter-spacing: -0.01em;
+				}
+				.mast .sub {
+					color: var(--dim);
+					font-weight: 300;
+					margin-top: 0.9rem;
+				}
+				.mast .sub b {
+					color: var(--ink);
+					font-weight: 400;
+					font-size: 1.08rem;
+				}
+
+				/* the stamp: shared signature from the homepage ledger */
+				.stamp,
+				.names a:hover,
+				.music a:hover,
+				.tracks a:hover span.trname,
+				.entries a:hover h3 {
+					background: var(--violet);
+					color: #0e0f13;
+					padding-inline: 0.14em;
+					margin-inline: -0.14em;
+					-webkit-box-decoration-break: clone;
+					box-decoration-break: clone;
+				}
+
+
+				/* post: kicker date, masthead prose, then what the post shipped */
+				/* the homepage's violet section marker */
+				.lbl {
+					font-size: 0.72rem;
+					font-weight: 500;
+					letter-spacing: 0.09em;
+					text-transform: uppercase;
+					color: var(--violet);
+				}
+				main > section {
+					margin-top: 4.5rem;
+				}
+				.prose {
+					margin-top: 2.2rem;
+					max-width: 62ch;
+				}
+				.prose p + p {
+					margin-top: 1.2em;
+				}
+				.music {
+					list-style: none;
+					padding: 0;
+					margin-top: 1.6rem;
+					font-family: 'Instrument Serif', Georgia, serif;
+					font-size: 1.45rem;
+					line-height: 1.35;
+				}
+				.music li {
+					border-top: 1px solid var(--hair);
+					padding-block: 1.05rem;
+					padding-left: 1.7rem;
+					text-indent: -1.7rem;
+				}
+				.music li::before {
+					content: '—';
+					color: var(--dim);
+					margin-right: 0.45em;
+				}
+				.music .albs {
+					font-size: 1rem;
+					color: var(--dim);
+					font-style: italic;
+				}
+				.music .track-count {
+					font-size: 0.8em;
+					opacity: 0.72;
+					letter-spacing: 0.02em;
+					white-space: nowrap;
+					font-variant-numeric: tabular-nums lining-nums;
+				}
+				.endcap {
+					margin-top: 4.5rem;
+				}
+				.endcap a {
+					color: var(--dim);
+				}
+				.endcap a:hover {
+					color: var(--violet);
+				}
+
+			/* ── footer ─────────────────────────────── */
+			footer {
+				margin-top: 6rem;
+				border-top: 1px solid var(--hair);
+				padding-top: 1.6rem;
+			}
+			footer nav ul {
+				list-style: none;
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 0.3rem 1.4rem;
+				padding: 0;
+			}
+			footer .cap {
+				color: var(--dim);
+				display: inline-block;
+				padding: 0.35em 0;
+			}
+			footer a:hover,
+			footer button:hover {
+				color: var(--violet);
+			}
+
+			/* ── floating pill player ───────────────── */
+			aside.player {
+				position: fixed;
+				z-index: 10;
+				bottom: 1rem;
+				inset-inline: 0;
+				margin-inline: auto;
+				width: min(calc(100% - 2.5rem), 33rem);
+				display: flex;
+				align-items: center;
+				gap: 0.7rem;
+				background: rgb(19 20 27 / 0.93);
+				-webkit-backdrop-filter: blur(18px);
+				backdrop-filter: blur(18px);
+				border: 1px solid rgb(236 233 244 / 0.24);
+				border-radius: 999px;
+				padding: 0.6rem 0.7rem 0.6rem 1.1rem;
+				box-shadow: 0 12px 32px rgb(0 0 0 / 0.5);
+			}
+			aside.player::before {
+				content: '';
+				position: absolute;
+				top: -1px;
+				left: 12%;
+				right: 12%;
+				height: 1px;
+				background: linear-gradient(
+					to right,
+					var(--violet) 29%,
+					rgba(236, 233, 244, 0.22) 29%
+				);
+			}
+			.player .track {
+				flex: 1;
+				min-width: 0;
+				font-family: 'Instrument Serif', Georgia, serif;
+				font-style: italic;
+				font-size: 1.15rem;
+				line-height: 1.2;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			.player .track span {
+				font-family: 'Space Grotesk', system-ui, sans-serif;
+				font-style: normal;
+				font-weight: 300;
+				color: var(--dim);
+				white-space: nowrap;
+			}
+			.player .time {
+				color: var(--dim);
+				font-weight: 300;
+				flex: none;
+				font-variant-numeric: tabular-nums lining-nums;
+			}
+			.player .glyphs {
+				display: flex;
+				align-items: center;
+				gap: 0.15rem;
+				flex: none;
+			}
+			.glyph {
+				width: 42px;
+				height: 42px;
+				display: grid;
+				place-items: center;
+				color: var(--dim);
+				border-radius: 50%;
+			}
+			.glyph:hover {
+				color: var(--ink);
+			}
+			.glyph.play {
+				width: 48px;
+				height: 48px;
+				background: var(--violet);
+				color: #0e0f13;
+			}
+			.glyph.play:hover {
+				background: #c0b4ff;
+				color: #0e0f13;
+			}
+
+
+			/* ── M ≥48em — the column learns to breathe ─── */
+			@media (min-width: 48em) {
+				body {
+					max-width: 44rem;
+					font-size: 1rem;
+					padding-top: 2rem;
+				}
+				header nav[aria-label='Main'] {
+					gap: 2rem;
+				}
+				nav ul {
+					gap: 0.4rem 1.3rem;
+				}
+				.mast {
+					padding-block: 4.5rem 0;
+				}
+				.music {
+					font-size: 1.6rem;
+				}
+				.music li {
+					padding-block: 1.2rem;
+				}
+				aside.player {
+					width: min(calc(100% - 4rem), 36rem);
+				}
+			}
+
+			/* ── L ≥64em — restructure, not a wider column ── */
+			@media (min-width: 64em) {
+				body {
+					max-width: 72rem;
+					padding-inline: 3rem;
+					padding-block: 2.5rem 9rem;
+				}
+				header {
+					grid-template-columns: 5.25rem minmax(0, 1fr);
+					grid-template-rows: 2.25rem 3rem;
+					column-gap: 2rem;
+				}
+				.mark {
+					grid-row: 1 / span 2;
+				}
+				nav[aria-label='Main'] {
+					grid-row: 1;
+				}
+				form[role='search'] {
+					grid-column: 2;
+					grid-row: 2;
+					align-self: end;
+					max-width: 19rem;
+					margin-top: 0;
+					margin-left: auto;
+					flex-direction: row-reverse;
+					/* desktop: quiet underline field — menu leads */
+					background: none;
+					border-width: 0 0 1px;
+					border-radius: 0;
+					padding: 0 0.2rem;
+				}
+				form[role='search']:focus-within {
+					background: none;
+					border-bottom-color: var(--violet);
+				}
+				form[role='search'] input {
+					padding: 0.45em 0;
+				}
+				.mast {
+					padding-block: 5.5rem 0;
+				}
+				footer {
+					margin-top: 8rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<a class="skip" href="#main">skip to content</a>
+
+			<header>
+				<a class="mark" href="/">
+					<img src="logo.png" alt="fauxfetus" width="36" height="36" />
+				</a>
+				<nav aria-label="Main">
+				<ul>
+					<li><a href="5-artists-index.html"><span class="cap dim">Artists (99)</span></a></li>
+					<li><a href="8-albums-index.html"><span class="cap dim">Albums (239)</span></a></li>
+					<li><a href="7-news-index.html"><span class="cap dim">News</span></a></li>
+				</ul>
+			</nav>
+			<form role="search">
+				<label class="vh" for="q">Search the catalog</label>
+				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+				<input id="q" type="search" placeholder="search ninety-nine artists…" />
+			</form>
+		</header>
+		<main id="main">
+
+		<div class="kicker tnum">
+			<a class="cap dim" href="7-news-index.html">News</a>
+
+			<div class="right">
+				<time class="cap dim" datetime="2026-07-05">Jul 5, 2026</time>
+			</div>
+		</div>
+		<div class="mast">
+			<h1>Found a box of Faux Fetus CDs</h1>
+		</div>
+		<div class="prose">
+			<p>You wouldn't believe it, but I found a box in my kids' mom's basement containing my old Faux Fetus CDs. As a result I've re-ripped a few things to be in higher quality, and I've also put up some new things that have probably always should have been here.</p>
+			<p>This was made possible by a little CLI that I wrote up that will let me toss a CD into my computer and run a single command to rip albums quickly. It's a great little utility, but I don't have any more CDs to rip. If you do, feel free to reach out and send me your copies so I can get better quality audio on here. I really should surface which albums are in crappier quality at some point...</p>
+		</div>
+
+		<section aria-labelledby="h-music">
+			<h2 class="lbl" id="h-music">New in the catalog</h2>
+			<ul class="music">
+				<li><a href="5-artists-index.html">Nuclear Family Holocaust</a><span class="albs"> — NFH #1 <span class="track-count">· 4 tracks</span> — NFH #2 <span class="track-count">· 5 tracks</span></span></li>
+				<li><a href="10-artist-detail.html">Chamomile</a><span class="albs"> — A Womb with A View <span class="track-count">· 15 tracks</span></span></li>
+				<li><a href="5-artists-index.html">The Most Amazing Century Of Science</a><span class="albs"> — Live At The Springwater <span class="track-count">· 16 tracks</span> — Live At The Boro <span class="track-count">· 15 tracks</span></span></li>
+				<li><a href="5-artists-index.html">Pink Panzer</a><span class="albs"> — Idiot Mambo <span class="track-count">· 5 tracks</span> — Dearth <span class="track-count">· 5 tracks</span></span></li>
+				<li><a href="5-artists-index.html">Aunt Vivian's Revengence</a><span class="albs"> — Sorry, Bud <span class="track-count">· 21 tracks</span></span></li>
+				<li><a href="5-artists-index.html">The Night Owl</a><span class="albs"> — Voices in the Mist <span class="track-count">· 6 tracks</span></span></li>
+				<li><a href="5-artists-index.html">F!</a><span class="albs"> — An Adonis <span class="track-count">· 12 tracks</span></span></li>
+				<li><a href="5-artists-index.html">Wolfenschnitzeltron</a><span class="albs"> — Wolfenschnitzeltron <span class="track-count">· 12 tracks</span></span></li>
+			</ul>
+		</section>
+
+		<p class="endcap"><a class="cap" href="7-news-index.html">← All news</a></p>
+		</main>
+
+		<footer>
+			<nav aria-label="Footer">
+				<ul>
+					<li><a class="cap" href="https://github.com/meowsus/fauxfetus">GitHub</a></li>
+					<li><button type="button"><span class="cap">Install the app</span></button></li>
+					<li><a class="cap" href="/sitemap.xml">Sitemap</a></li>
+					<li><a class="cap" href="mailto:curt@fauxfetus.net">Email</a></li>
+				</ul>
+			</nav>
+		</footer>
+
+		<aside class="player" aria-label="Now playing">
+			<p class="track">
+				<a href="6-album-detail.html"
+					>Eschaton In Rosendale</a
+				>
+				<span> — 123dood · Death Row Unicorn Parade</span>
+			</p>
+			<span class="time">1:24 / 4:47</span>
+			<div class="glyphs">
+				<button type="button" class="glyph" aria-label="Previous track">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 6-5 6 5 6M19 6l-5 6 5 6" /></svg>
+				</button>
+				<button type="button" class="glyph play" aria-label="Pause">
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z" /></svg>
+				</button>
+				<button type="button" class="glyph" aria-label="Next track">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 6 5 6-5 6M5 6l5 6-5 6" /></svg>
+				</button>
+			</div>
+		</aside>
+	</body>
+</html>

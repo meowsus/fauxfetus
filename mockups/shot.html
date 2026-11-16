@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>viewport crop</title>
+		<style>
+			* { margin: 0; }
+			iframe { display: block; width: 100vw; height: 100vh; border: 0; }
+		</style>
+	</head>
+	<body>
+		<iframe id="page" src="4-mothwing.html" data-default="4-mothwing.html" title="viewport crop"></iframe>
+		<script>
+				const q = new URLSearchParams(location.search).get("src");
+				if (q) document.querySelector("#page").src = q;
+	</script>
+</body>
+</html>

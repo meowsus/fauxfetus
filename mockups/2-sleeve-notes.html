@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="light" />
+		<meta name="theme-color" content="#f7f1e5" />
+		<title>Mockup 02 · Sleeve Notes — fauxfetus</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			:root {
+				color-scheme: light;
+				--paper: #f7f1e5;
+				--ink: #221d14;
+				--ox: #8a2b1f;
+				--rule: #d8cbb2;
+				--dim: #6e6250;
+			}
+			* {
+				margin: 0;
+				box-sizing: border-box;
+			}
+			body {
+				background: var(--paper);
+				color: var(--ink);
+				font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+				font-size: 1.075rem;
+				line-height: 1.6;
+				max-width: 44rem;
+				margin-inline: auto;
+				padding: 2rem 1.25rem 4rem;
+				-webkit-text-size-adjust: 100%;
+			}
+			a {
+				color: inherit;
+				text-decoration: none;
+			}
+			a:hover {
+				color: var(--ox);
+				text-decoration: underline;
+				text-decoration-thickness: 1px;
+				text-underline-offset: 3px;
+			}
+			a:focus-visible,
+			button:focus-visible,
+			input:focus-visible {
+				outline: 2px solid var(--ox);
+				outline-offset: 2px;
+			}
+			a::selection,
+			body p::selection {
+				background: var(--ox);
+				color: var(--paper);
+			}
+			::selection {
+				background: var(--ink);
+				color: var(--paper);
+			}
+			.vh {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				overflow: hidden;
+				clip-path: inset(50%);
+				white-space: nowrap;
+			}
+			.skip {
+				position: absolute;
+				left: -9999px;
+				top: 0;
+				background: var(--ink);
+				color: var(--paper);
+				padding: 0.5em 1em;
+				z-index: 99;
+				font-family: 'Inter', system-ui, sans-serif;
+				font-size: 0.8rem;
+			}
+			.skip:focus-visible {
+				left: 0.5rem;
+			}
+			.sc {
+				font-family: 'Inter', system-ui, sans-serif;
+				font-size: 0.72rem;
+				font-weight: 600;
+				letter-spacing: 0.17em;
+				text-transform: uppercase;
+			}
+
+			/* ── masthead ───────────────────────────── */
+			header {
+				text-align: center;
+				padding-top: 1.5rem;
+			}
+			.eyebrow {
+				color: var(--dim);
+			}
+			h1 {
+				font-size: clamp(2.9rem, 9vw, 4.5rem);
+				font-weight: 500;
+				line-height: 1.02;
+				margin-top: 0.6rem;
+				letter-spacing: -0.01em;
+			}
+			.tagline {
+				font-style: italic;
+				font-size: 1.1rem;
+				color: var(--dim);
+				max-width: 34rem;
+				margin: 0.9rem auto 0;
+				text-wrap: balance;
+			}
+			.rule-double {
+				border: 0;
+				border-top: 1px solid var(--rule);
+				border-bottom: 1px solid var(--rule);
+				height: 4px;
+				margin-top: 1.9rem;
+			}
+			nav[aria-label='Main'] {
+				margin-top: 0.9rem;
+				text-align: center;
+			}
+			nav[aria-label='Main'] ul {
+				list-style: none;
+				padding: 0;
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 0.2rem 1.6rem;
+			}
+			nav[aria-label='Main'] .sc {
+				display: inline-block;
+				padding: 0.55em 0;
+			}
+			nav[aria-label='Main'] .count {
+				color: var(--ox);
+			}
+			nav[aria-label='Main'] button {
+				font: inherit;
+				background: none;
+				border: 1px solid var(--ink);
+				border-radius: 999px;
+				padding: 0.4em 0.9em;
+				cursor: pointer;
+				color: inherit;
+			}
+			nav[aria-label='Main'] button:hover {
+				background: var(--ink);
+				color: var(--paper);
+			}
+			form[role='search'] {
+				margin-top: 1rem;
+				text-align: center;
+			}
+			form[role='search'] input {
+				font-family: 'Newsreader', Georgia, serif;
+				font-size: 1.05rem;
+				font-style: italic;
+				color: var(--ink);
+				background: none;
+				border: 0;
+				border-bottom: 1px solid var(--rule);
+				width: min(100%, 21rem);
+				padding: 0.35em 0.2em;
+				text-align: center;
+			}
+			form[role='search'] input::placeholder {
+				color: var(--dim);
+				font-style: italic;
+			}
+			form[role='search'] input:focus {
+				outline: none;
+				border-bottom-color: var(--ox);
+			}
+
+			/* ── sections ───────────────────────────── */
+			main {
+				margin-top: 3rem;
+			}
+			section {
+				margin-top: 3.4rem;
+				scroll-margin-top: 1rem;
+			}
+			h2 {
+				display: flex;
+				align-items: baseline;
+				gap: 0.65rem;
+				border-top: 1px solid var(--rule);
+				padding-top: 1.1rem;
+				font-size: 1.5rem;
+				font-weight: 600;
+			}
+			h2 .rom {
+				font-style: italic;
+				font-weight: 500;
+				color: var(--ox);
+				font-size: 1.15rem;
+			}
+			.sec-note {
+				color: var(--dim);
+				font-style: italic;
+				font-size: 0.98rem;
+				margin-top: 0.55rem;
+			}
+
+			/* ── now playing figure ─────────────────── */
+			figure.turntable {
+				border: 1px solid var(--ink);
+				padding: 1.5rem 1.4rem;
+				margin-top: 2.6rem;
+			}
+			figure.turntable .sc {
+				color: var(--dim);
+			}
+			.turntable .tr {
+				font-style: italic;
+				font-size: 1.75rem;
+				line-height: 1.15;
+				margin-top: 0.5rem;
+			}
+			.turntable .who {
+				margin-top: 0.3rem;
+				font-size: 1rem;
+			}
+			.turntable .who .sep,
+			.turntable .who .dim {
+				color: var(--dim);
+			}
+			.turntable .line {
+				display: flex;
+				align-items: baseline;
+				justify-content: space-between;
+				gap: 1rem;
+				margin-top: 1.1rem;
+			}
+			.turntable .times {
+				font-family: 'Inter', system-ui, sans-serif;
+				font-size: 0.78rem;
+				color: var(--dim);
+				letter-spacing: 0.06em;
+			}
+			.turntable .prog {
+				height: 2px;
+				background: var(--rule);
+				margin-top: 0.35rem;
+			}
+			.turntable .prog span {
+				display: block;
+				height: 100%;
+				width: 29%;
+				background: var(--ox);
+			}
+			.turntable .ctl {
+				display: flex;
+				gap: 1.5rem;
+				margin-top: 1.2rem;
+			}
+			.turntable .ctl button {
+				font-family: 'Inter', system-ui, sans-serif;
+				font-size: 0.74rem;
+				font-weight: 600;
+				letter-spacing: 0.17em;
+				text-transform: uppercase;
+				background: none;
+				border: 0;
+				border-bottom: 1px solid transparent;
+				padding: 0 0 0.2em;
+				cursor: pointer;
+				color: var(--ink);
+			}
+			.turntable .ctl button:hover {
+				color: var(--ox);
+				border-bottom-color: var(--ox);
+			}
+			.turntable .ctl .radio-btn {
+				margin-left: auto;
+				color: var(--ox);
+			}
+
+			/* ── recently added ─────────────────────── */
+			ol.groups {
+				list-style: none;
+				padding: 0;
+				margin-top: 1.6rem;
+			}
+			ol.groups > li + li {
+				margin-top: 1.7rem;
+			}
+			.group-date .sc {
+				color: var(--ox);
+			}
+			ol.groups p.group-date {
+				margin-bottom: 0.45rem;
+			}
+			ul.items {
+				list-style: none;
+				padding: 0;
+			}
+			ul.items li {
+				padding-left: 2.35rem;
+				text-indent: -2.35rem;
+			}
+			ul.items li::before {
+				content: '— ';
+				color: var(--dim);
+			}
+			ul.items small {
+				font-family: 'Inter', system-ui, sans-serif;
+				font-size: 0.68rem;
+				font-weight: 600;
+				letter-spacing: 0.14em;
+				text-transform: uppercase;
+				color: var(--dim);
+			}
+			.group-end {
+				border-bottom: 0;
+			}
+			.sec-foot {
+				margin-top: 2rem;
+			}
+			.sec-foot a {
+				font-style: italic;
+			}
+			.sec-foot .arrow,
+			.items .arrow {
+				color: var(--ox);
+				font-style: normal;
+			}
+
+			/* ── catalog slice ──────────────────────── */
+			ul.catlist {
+				list-style: none;
+				padding: 0;
+				margin-top: 1.4rem;
+			}
+			ul.catlist li {
+				border-bottom: 1px solid var(--rule);
+				padding-block: 0.95rem;
+			}
+			ul.catlist a {
+				font-size: 1.28rem;
+				font-weight: 500;
+			}
+			ul.catlist .albs {
+				display: block;
+				font-style: italic;
+				color: var(--dim);
+				font-size: 0.98rem;
+				margin-top: 0.05rem;
+			}
+			@media (min-width: 44em) {
+				ul.catlist {
+					column-count: 2;
+					column-gap: 3rem;
+				}
+				ul.catlist li {
+					break-inside: avoid;
+				}
+			}
+
+			/* ── news ───────────────────────────────── */
+			ol.newslist {
+				list-style: none;
+				padding: 0;
+				margin-top: 1.6rem;
+			}
+			ol.newslist li {
+				border-bottom: 1px solid var(--rule);
+				padding-block: 1.4rem;
+			}
+			ol.newslist li:first-child {
+				padding-top: 0.2rem;
+			}
+			.newslist .ndate {
+				color: var(--dim);
+				margin-bottom: 0.35rem;
+			}
+			.newslist h3 {
+				font-size: 1.42rem;
+				font-weight: 600;
+				line-height: 1.2;
+			}
+			.newslist .excerpt {
+				color: var(--dim);
+				font-size: 1rem;
+				margin-top: 0.3rem;
+			}
+
+			/* ── footer ─────────────────────────────── */
+			footer {
+				margin-top: 4.5rem;
+			}
+			footer .rule-double {
+				margin-top: 0;
+			}
+			footer nav ul {
+				list-style: none;
+				padding: 0;
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 0.2rem 1.6rem;
+				margin-top: 1.3rem;
+			}
+			footer .sc {
+				display: inline-block;
+				padding: 0.55em 0;
+			}
+			footer button {
+				font: inherit;
+				background: none;
+				border: 0;
+				cursor: pointer;
+				color: inherit;
+			}
+			footer button:hover {
+				color: var(--ox);
+				text-decoration: underline;
+			}
+			.colophon {
+				text-align: center;
+				color: var(--dim);
+				font-style: italic;
+				font-size: 0.95rem;
+				margin-top: 1.6rem;
+			}
+
+			@media (min-width: 48em) {
+				body {
+					font-size: 1.125rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<a class="skip" href="#main">skip to content</a>
+
+		<header>
+			<p class="eyebrow sc">an experimental music collective</p>
+			<h1>Faux Fetus</h1>
+			<p class="tagline">
+				“A collection of experimental music you never heard of or even want to
+				listen to made by people you don't care about.”
+			</p>
+			<hr class="rule-double" />
+			<nav aria-label="Main">
+				<ul>
+					<li><a class="sc" href="/">Home</a></li>
+					<li>
+						<a class="sc" href="/artists/"
+							>Artists <span class="count">(99)</span></a
+						>
+					</li>
+					<li>
+						<a class="sc" href="/albums/"
+							>Albums <span class="count">(239)</span></a
+						>
+					</li>
+					<li><a class="sc" href="/news/">News</a></li>
+					<li><button type="button" class="sc">Radio</button></li>
+					<li><a class="sc" href="mailto:curt@fauxfetus.net">Email</a></li>
+				</ul>
+			</nav>
+			<form role="search">
+				<label class="vh" for="q">Search the catalog</label>
+				<input id="q" type="search" placeholder="search ninety-nine artists…" />
+			</form>
+		</header>
+
+		<main id="main">
+			<figure class="turntable" aria-label="Now playing">
+				<p class="sc">on the turntable</p>
+				<p class="tr">
+					<a href="/artists/123dood/death-row-unicorn-parade/eschaton-in-rosendale/"
+						>Eschaton In Rosendale</a
+					>
+				</p>
+				<p class="who">
+					<a href="/artists/123dood/">123dood</a>
+					<span class="sep">·</span>
+					<span class="dim">Death Row Unicorn Parade</span>
+					<span class="sep">—</span>
+					<span class="dim">2<sup>nd</sup> of 4</span>
+				</p>
+				<p class="line">
+					<span class="times">1:24</span>
+					<span class="times">4:47</span>
+				</p>
+				<div
+					class="prog"
+					role="progressbar"
+					aria-label="Track position"
+					aria-valuemin="0"
+					aria-valuemax="287"
+					aria-valuenow="84"
+					aria-valuetext="1:24 of 4:47"
+				>
+					<span></span>
+				</div>
+				<div class="ctl">
+					<button type="button">Prev</button>
+					<button type="button">Pause</button>
+					<button type="button">Next</button>
+					<button type="button" class="radio-btn">Radio</button>
+				</div>
+			</figure>
+
+			<section aria-labelledby="h-recent">
+				<h2 id="h-recent"><span class="rom">I.</span> Recently added</h2>
+				<p class="sec-note">
+					Everything to land in the catalog since the site's reconception,
+					newest first.
+				</p>
+				<ol class="groups">
+					<li>
+						<p class="group-date">
+							<a href="/news/2026-08-09-used-friends/"
+								><time class="sc" datetime="2026-08-09">Aug 9, 2026</time></a
+							>
+						</p>
+						<ul class="items">
+							<li>
+								<a href="/artists/used-friends/">Used Friends</a>
+								<small>new artist</small>
+							</li>
+							<li>
+								<a href="/artists/assistant-manager/">Assistant Manager</a>
+								<small>new artist</small>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p class="group-date">
+							<a href="/news/2026-07-16-mcbs-cds/"
+								><time class="sc" datetime="2026-07-16">Jul 16, 2026</time></a
+							>
+						</p>
+						<ul class="items">
+							<li>
+								<a href="/artists/kreemy-ffup/">Kreemy Ffup</a>,
+								<a href="/artists/kreemy-ffup/live-2004/">Live 2004</a>
+							</li>
+							<li>
+								<a href="/artists/mucid-cuspidor/">Mucid Cuspidor</a>,
+								<a href="/artists/mucid-cuspidor/live-radio/">Live Radio</a>
+							</li>
+							<li>
+								<a href="/artists/mystery-brinkman/">Mystery Brinkman</a>,
+								<a href="/artists/mystery-brinkman/brinkmangler/">Brinkmangler</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<p class="group-date">
+							<a href="/news/2026-07-05-found-a-box-of-cds/"
+								><time class="sc" datetime="2026-07-05">Jul 5, 2026</time></a
+							>
+						</p>
+						<ul class="items">
+							<li>
+								<a href="/artists/nuclear-family-holocaust/"
+									>Nuclear Family Holocaust</a
+								>,
+								<a href="/artists/nuclear-family-holocaust/nfh-1/">NFH 1</a>,
+								<a href="/artists/nuclear-family-holocaust/nfh-2/">NFH 2</a>
+							</li>
+							<li>
+								<a href="/artists/chamomile/">Chamomile</a>,
+								<a href="/artists/chamomile/a-womb-with-a-view/"
+									>A Womb with a View</a
+								>
+							</li>
+							<li>
+								<a href="/artists/the-most-amazing-century-of-science/"
+									>The Most Amazing Century of Science</a
+								>,
+								<a href="/artists/the-most-amazing-century-of-science/live-at-the-springwater/"
+									>Live at the Springwater</a
+								>,
+								<a href="/artists/the-most-amazing-century-of-science/live-at-the-boro/"
+									>Live at the Boro</a
+								>
+							</li>
+						</ul>
+					</li>
+					<li class="group-end">
+						<p class="group-date">
+							<a href="/news/2026-05-17-voices-in-the-mist/"
+								><time class="sc" datetime="2026-05-17">May 17, 2026</time></a
+							>
+						</p>
+						<ul class="items">
+							<li>
+								<a href="/artists/the-night-owl/">The Night Owl</a>,
+								<a href="/artists/the-night-owl/voices-in-the-mist/"
+									>Voices in the Mist</a
+								>
+							</li>
+						</ul>
+					</li>
+				</ol>
+				<p class="sec-foot">
+					<a href="/news/">more context in the news <span class="arrow">→</span></a>
+				</p>
+			</section>
+
+			<section aria-labelledby="h-catalog">
+				<h2 id="h-catalog"><span class="rom">II.</span> From the catalog</h2>
+				<p class="sec-note">Six of ninety-nine artists.</p>
+				<ul class="catlist">
+					<li>
+						<a href="/artists/night-veins/">† (Night Veins)</a>
+						<span class="albs">Teufelsberg Sessions Vol. 1</span>
+					</li>
+					<li>
+						<a href="/artists/123dood/">123dood</a>
+						<span class="albs">Death Row Unicorn Parade</span>
+					</li>
+					<li>
+						<a href="/artists/5limbs/">5limbs</a>
+						<span class="albs">Faux Comp 1 · Modulation For Serious</span>
+					</li>
+					<li>
+						<a href="/artists/attack-rabbit/">Attack Rabbit</a>
+						<span class="albs">Millions Of Sparrows · Newchester · Somebody</span>
+					</li>
+					<li>
+						<a href="/artists/the-barco-project/">The Barco Project</a>
+						<span class="albs">Cow · Five · The Worst Of · +7 more</span>
+					</li>
+					<li>
+						<a href="/artists/assisted-living/">Assisted Living</a>
+						<span class="albs">Faux Faux Fest '24</span>
+					</li>
+				</ul>
+				<p class="sec-foot">
+					<a href="/artists/">all ninety-nine artists <span class="arrow">→</span></a>
+				</p>
+			</section>
+
+			<section aria-labelledby="h-news">
+				<h2 id="h-news"><span class="rom">III.</span> From the news</h2>
+				<ol class="newslist">
+					<li>
+						<p class="ndate">
+							<time class="sc" datetime="2026-11-14">Nov 14, 2026</time>
+						</p>
+						<h3>
+							<a href="/news/2026-11-14-album-downloads/"
+								>Album downloads for everyone</a
+							>
+						</h3>
+						<p class="excerpt">“I bet y'all thought that I forgot about y'all.”</p>
+					</li>
+					<li>
+						<p class="ndate"><time class="sc" datetime="2026-08-09">Aug 9, 2026</time></p>
+						<h3>
+							<a href="/news/2026-08-09-used-friends/"
+								>Used Friends, Assistant Manager</a
+							>
+						</h3>
+						<p class="excerpt">Two new artists enter the catalog.</p>
+					</li>
+					<li>
+						<p class="ndate">
+							<time class="sc" datetime="2026-05-17">May 17, 2026</time>
+						</p>
+						<h3>
+							<a href="/news/2026-05-17-voices-in-the-mist/"
+								>The long-lost Voices in the Mist</a
+							>
+						</h3>
+						<p class="excerpt">A lost album resurfaces.</p>
+					</li>
+				</ol>
+				<p class="sec-foot">
+					<a href="/news/">all news <span class="arrow">→</span></a>
+				</p>
+			</section>
+		</main>
+
+		<footer>
+			<hr class="rule-double" />
+			<nav aria-label="Footer">
+				<ul>
+					<li><a class="sc" href="https://github.com/meowsus/fauxfetus">GitHub</a></li>
+					<li><button type="button" class="sc">Install the app</button></li>
+					<li><a class="sc" href="/sitemap.xml">Sitemap</a></li>
+					<li><a class="sc" href="mailto:curt@fauxfetus.net">Email</a></li>
+				</ul>
+			</nav>
+			<p class="colophon">works offline · installable · forever</p>
+		</footer>
+	</body>
+</html>
