@@ -1,0 +1,1044 @@
+/*
+	Mothwing design system — tokens + base layer.
+
+	Values are transcribed from mockups/4-mothwing.html (the chosen
+	direction, v3.5) and its seven page stubs; see mockups/README.md and
+	plans/redesign-principles.md for the doctrine (esp. P6: acid is an
+	interaction color and a data-true tag, never decoration).
+
+	Chromium-only deviation from the mockup, on purpose (plans/
+	redesign-principles.md "Round-2 sanity audit" implementation flags):
+	body is 1rem everywhere (mockup used 0.95rem; USWDS floor 16px and the
+	search input inherits body size, so 16px avoids iOS focus-zoom).
+*/
+
+@font-face {
+	font-family: 'Instrument Serif';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('/fonts/instrument-serif-roman.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'Instrument Serif';
+	font-style: italic;
+	font-weight: 400;
+	font-display: swap;
+	src: url('/fonts/instrument-serif-italic.woff2') format('woff2');
+}
+
+/* Variable font: one file spans the weights in use (300/400/500). */
+@font-face {
+	font-family: 'Space Grotesk';
+	font-style: normal;
+	font-weight: 300 500;
+	font-display: swap;
+	src: url('/fonts/space-grotesk-variable.woff2') format('woff2');
+}
+
+:root {
+	color-scheme: dark;
+	--bg: #0e0f13;
+	--ink: #ece9f4;
+	--dim: #85819a;
+	--violet: #a79aff;
+	--acid: #c8f449;
+	--hair: rgba(236, 233, 244, 0.14);
+}
+
+* {
+	margin: 0;
+	box-sizing: border-box;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+}
+
+/* The page shell: one centered column that breathes wider at each
+   breakpoint. The player pill floats outside it (position: fixed). */
+body {
+	background: var(--bg);
+	color: var(--ink);
+	font-family: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+	font-size: 1rem;
+	line-height: 1.65;
+	max-width: 36rem;
+	margin-inline: auto;
+	padding: 1.4rem 1.25rem calc(8.5rem + env(safe-area-inset-bottom));
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+a:hover {
+	color: var(--violet);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+	outline: 2px solid var(--violet);
+	outline-offset: 3px;
+	border-radius: 2px;
+}
+
+/* acid splat #1: selection is an interaction color, on purpose */
+::selection {
+	background: var(--acid);
+	color: #0e0f13;
+}
+
+button {
+	font: inherit;
+	color: inherit;
+	background: none;
+	border: 0;
+	cursor: pointer;
+}
+
+/* ── a11y utilities ─────────────────────────── */
+.vh {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+.skip-link {
+	position: absolute;
+	left: -9999px;
+	top: 0;
+	background: var(--violet);
+	color: #0e0f13;
+	padding: 0.5em 1em;
+	z-index: 99;
+	font-size: 0.8rem;
+}
+
+.skip-link:focus-visible {
+	left: 0.5rem;
+}
+
+/* ── small shared voices ────────────────────── */
+/* tracked caps — nav and short labels only; body text never tracked */
+.cap {
+	font-size: 0.7rem;
+	font-weight: 500;
+	letter-spacing: 0.26em;
+	text-transform: uppercase;
+}
+
+.cap.dim {
+	color: var(--dim);
+}
+
+/* every time/number column is honest about its width */
+.tnum {
+	font-variant-numeric: tabular-nums lining-nums;
+}
+
+@media (min-width: 48em) {
+	body {
+		max-width: 44rem;
+		padding-top: 2rem;
+	}
+}
+
+@media (min-width: 64em) {
+	body {
+		max-width: 72rem;
+		padding-inline: 3rem;
+		padding-block: 2.5rem calc(9rem + env(safe-area-inset-bottom));
+	}
+}
+
+/* ── homepage grammar — hero, release ledger, news openers. Shared with
+   the artist pages (discography ledger) and news posts (front page);
+   values transcribed from mockups/4-mothwing.html (v3.5). ── */
+
+.hero {
+	padding-block: 4.5rem 1rem;
+}
+
+.eyebrow {
+	font-family: 'Instrument Serif', Georgia, serif;
+	font-style: italic;
+	font-size: 1.2rem;
+	color: var(--dim);
+	/* subtitle: hangs beneath the wordmark, not above it */
+	margin-top: 1.05rem;
+}
+
+/* the home wordmark; other pages' mastheads bring their own typography */
+.hero h1 {
+	font-family: 'Instrument Serif', Georgia, serif;
+	font-weight: 400;
+	font-size: clamp(4rem, 17vw, 8.5rem);
+	line-height: 0.92;
+	letter-spacing: -0.01em;
+	margin-top: 0;
+}
+
+.hero h1 em {
+	font-style: italic;
+}
+
+.tagline {
+	color: var(--dim);
+	font-weight: 300;
+	margin-top: 1.6rem;
+	text-wrap: balance;
+}
+
+.counts {
+	color: var(--dim);
+	margin-top: 1.1rem;
+	font-weight: 300;
+	font-variant-numeric: tabular-nums lining-nums;
+}
+
+.counts b {
+	color: var(--ink);
+	font-weight: 400;
+	font-size: 1.08rem;
+}
+
+/* opener #2: untracked caps label, then the note, then the ledger */
+.lbl {
+	font-size: 0.72rem;
+	font-weight: 500;
+	letter-spacing: 0.09em;
+	text-transform: uppercase;
+	color: var(--violet);
+}
+
+.note {
+	font-family: 'Instrument Serif', Georgia, serif;
+	font-style: italic;
+	font-size: 1.05rem;
+	color: var(--dim);
+	margin-top: 0.8rem;
+}
+
+/* the ledger: hanging em-dash grammar, serif release names */
+ol.groups {
+	list-style: none;
+	padding: 0;
+	margin-top: 2.2rem;
+}
+
+ol.groups > li + li {
+	margin-top: 3rem;
+}
+
+.group-date .cap {
+	letter-spacing: 0.14em;
+	font-variant-numeric: tabular-nums lining-nums;
+}
+
+.group-date a {
+	color: var(--violet);
+}
+
+.group-date a:hover {
+	color: var(--ink);
+}
+
+ul.items {
+	list-style: none;
+	padding: 0;
+	margin-top: 1.1rem;
+	font-family: 'Instrument Serif', Georgia, serif;
+	font-size: 1.45rem;
+	line-height: 1.35;
+}
+
+ul.items li {
+	padding-left: 1.7rem;
+	text-indent: -1.7rem;
+	margin-top: 0.55rem;
+}
+
+ul.items li::before {
+	content: '—';
+	color: var(--dim);
+	margin-right: 0.45em;
+}
+
+/* the signature: a name you touch stamps itself like a label.
+   Direct-child links = artist names; albums (inside .albs) hover violet. */
+ul.items li > a:hover {
+	background: var(--violet);
+	color: #0e0f13;
+	padding-inline: 0.14em;
+	margin-inline: -0.14em;
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+}
+
+.albs {
+	font-size: 1rem;
+	color: var(--dim);
+	font-style: italic;
+}
+
+.albs a {
+	color: var(--dim);
+}
+
+.albs a:hover {
+	color: var(--violet);
+}
+
+/* real data as texture: counted from catalog.json, never invented */
+.track-count {
+	font-size: 0.8em;
+	opacity: 0.72;
+	letter-spacing: 0.02em;
+	white-space: nowrap;
+	font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* acid splat #2 stays because it is data, not decoration */
+ul.items small {
+	font-family: 'Space Grotesk', system-ui, sans-serif;
+	font-size: 0.66rem;
+	font-weight: 500;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--acid);
+	margin-left: 0.5em;
+}
+
+.sec-foot {
+	margin-top: 2.2rem;
+}
+
+.sec-foot a {
+	color: var(--dim);
+}
+
+.sec-foot a:hover {
+	color: var(--violet);
+}
+
+/* opener #3: italic ink label, then the front page
+   (the side-two pause is below) */
+.news {
+	margin-top: 7rem;
+}
+
+.news-label {
+	font-family: 'Instrument Serif', Georgia, serif;
+	font-style: italic;
+	font-weight: 400;
+	font-size: 1.1rem;
+	color: var(--ink);
+	opacity: 0.85;
+}
+
+ol.newslist {
+	list-style: none;
+	padding: 0;
+	margin-top: 2rem;
+}
+
+ol.newslist li {
+	padding-block: 2rem;
+}
+
+ol.newslist li + li {
+	border-top: 1px solid var(--hair);
+}
+
+ol.newslist li:first-child {
+	padding-top: 0.5rem;
+}
+
+.newslist .date {
+	letter-spacing: 0.14em;
+	font-variant-numeric: tabular-nums lining-nums;
+}
+
+.newslist h3 {
+	font-family: 'Instrument Serif', Georgia, serif;
+	font-weight: 400;
+	font-size: 1.75rem;
+	line-height: 1.15;
+	margin-top: 0.5rem;
+	text-wrap: balance;
+}
+
+.newslist h3 a:hover {
+	color: var(--violet);
+}
+
+.newslist .excerpt {
+	font-family: 'Instrument Serif', Georgia, serif;
+	font-style: italic;
+	color: var(--dim);
+	margin-top: 0.6rem;
+}
+
+/* section rhythm: shared base, then the news's deeper pause */
+main > section {
+	margin-top: 5rem;
+}
+
+@media (min-width: 48em) {
+	.hero {
+		padding-block: 6rem 1.5rem;
+	}
+
+	/* freeform text gets a reading measure only when there's room */
+	.tagline {
+		max-width: 54ch;
+	}
+
+	main > section {
+		margin-top: 6.5rem;
+	}
+
+	.news {
+		margin-top: 8rem;
+	}
+
+	ul.items {
+		font-size: 1.55rem;
+	}
+}
+
+@media (min-width: 64em) {
+	.tagline {
+		max-width: 38ch;
+	}
+
+	/* masthead: title left, annotation right, baseline-locked */
+	.hero {
+		display: grid;
+		grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
+		column-gap: 3rem;
+		padding-block: 6.5rem 2rem;
+	}
+
+	.hero h1 {
+		grid-column: 1;
+		grid-row: 1;
+		font-size: clamp(8rem, 12vw, 11rem);
+		line-height: 0.85;
+		margin-top: 0;
+	}
+
+	.eyebrow {
+		grid-column: 1;
+		grid-row: 2;
+	}
+
+	.tagcol {
+		grid-column: 2;
+		grid-row: 1 / span 2;
+		align-self: end;
+		/* right block bottoms out on the same line as the subtitle:
+		   one shared visual baseline across the banner */
+		text-align: right;
+	}
+
+	/* ledger: dates hang in the left margin, items flow right */
+	main > section {
+		margin-top: 7.5rem;
+	}
+
+	ol.groups {
+		margin-top: 1.5rem;
+	}
+
+	ol.groups > li {
+		display: grid;
+		grid-template-columns: 11rem minmax(0, 1fr);
+		column-gap: 2.5rem;
+		align-items: baseline;
+		border-top: 1px solid var(--hair);
+		padding-block: 1.9rem;
+	}
+
+	ol.groups > li + li {
+		margin-top: 0;
+	}
+
+	ol.groups ul.items {
+		margin-top: 0;
+		font-size: 1.6rem;
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem 2.5rem;
+	}
+
+	ol.groups ul.items li {
+		margin-top: 0;
+	}
+
+	/* the side-two moment: one deep pause, on purpose */
+	.news {
+		margin-top: 12rem;
+	}
+
+	/* news: front page, three across */
+	ol.newslist {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 3rem;
+		margin-top: 1.5rem;
+	}
+
+	ol.newslist li {
+		padding-block: 0;
+	}
+
+	ol.newslist li + li {
+		border-top: 0;
+		border-left: 1px solid var(--hair);
+		padding-left: 3rem;
+	}
+
+	ol.newslist li:first-child {
+		padding-left: 0;
+		padding-top: 0;
+	}
+
+	.newslist h3 {
+		font-size: 1.95rem;
+	}
+}
+
+/* ── index pages grammar — /artists/ and /albums/: serif page masthead +
+   letter-led archive (mockups/5-artists-index.html, 8-albums-index.html).
+   Per-page letter color + row accents live in the components' scoped
+   styles; the breadcrumb treatment here is shared with detail pages. ── */
+
+.mast {
+	padding-block: 3.5rem 0;
+}
+
+.mast h1 {
+	font-family: 'Instrument Serif', Georgia, serif;
+	font-weight: 400;
+	font-size: clamp(3.4rem, 9vw, 5.5rem);
+	line-height: 0.92;
+	letter-spacing: -0.01em;
+}
+
+.mast .sub {
+	color: var(--dim);
+	font-weight: 300;
+	margin-top: 0.9rem;
+}
+
+.mast .sub b {
+	color: var(--ink);
+	font-weight: 400;
+	font-size: 1.08rem;
+}
+
+nav[aria-label='Breadcrumb'] {
+	margin-top: 1.8rem;
+}
+
+nav[aria-label='Breadcrumb'] ul {
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem 0.7rem;
+	padding: 0;
+	margin: 0;
+	font-size: 0.72rem;
+	font-weight: 500;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--dim);
+}
+
+nav[aria-label='Breadcrumb'] a {
+	color: var(--dim);
+}
+
+nav[aria-label='Breadcrumb'] a:hover {
+	color: var(--violet);
+}
+
+nav[aria-label='Breadcrumb'] [aria-current='page'] {
+	color: var(--ink);
+}
+
+/* letter-led archive: hairline bins, serif names */
+ol.letters {
+	list-style: none;
+	padding: 0;
+	margin-top: 2.6rem;
+}
+
+ol.letters > li {
+	border-top: 1px solid var(--hair);
+	padding-block: 1.6rem;
+}
+
+ul.names {
+	list-style: none;
+	padding: 0;
+	margin-top: 1.1rem;
+	font-size: 1.3rem;
+	line-height: 1.3;
+}
+
+ul.names a {
+	font-family: 'Instrument Serif', Georgia, serif;
+	font-size: 1em;
+}
+
+/* the stamp signature, on archive rows */
+ul.names a:hover {
+	background: var(--violet);
+	color: #0e0f13;
+	padding-inline: 0.14em;
+	margin-inline: -0.14em;
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+}
+
+ul.names li + li {
+	margin-top: 0.8rem;
+}
+
+@media (min-width: 48em) {
+	.mast {
+		padding-block: 4.5rem 0;
+	}
+
+	ul.names {
+		font-size: 1.4rem;
+	}
+}
+
+@media (min-width: 64em) {
+	.mast {
+		padding-block: 5.5rem 0;
+	}
+
+	/* letters hang in the left margin, names flow right */
+	ol.letters > li {
+		display: grid;
+		grid-template-columns: 4.5rem minmax(0, 1fr);
+		column-gap: 2.5rem;
+		align-items: baseline;
+		padding-block: 2rem;
+	}
+
+	ul.names {
+		margin-top: 0;
+		font-size: 1.5rem;
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem 2.5rem;
+	}
+
+	ul.names li + li {
+		margin-top: 0;
+	}
+}
+
+/* ── detail pages grammar — album / artist / track pages
+   (mockups/6-album-detail.html, 10-artist-detail.html, 11-track-detail.html).
+   The breadcrumb voice carries the trail; the kicker carries counts and
+   downloads; rows and sidecar facts stay in the archive grammar. Per-page
+   masthead pacing lives in the pages' scoped styles. ── */
+
+/* context line above the masthead: up-one-level link, counts, downloads */
+.kicker {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 1rem;
+	flex-wrap: wrap;
+	row-gap: 0.5rem;
+	padding-top: 3.2rem;
+}
+
+.kicker .right {
+	display: flex;
+	gap: 1.4rem;
+	align-items: baseline;
+	margin-left: auto;
+}
+
+.kicker .right .cap {
+	white-space: nowrap;
+	padding-block: 0.35em;
+}
+
+/* download affordances wear the interaction color */
+a.dl {
+	color: var(--violet);
+}
+
+a.dl:hover {
+	background: var(--violet);
+	color: #0e0f13;
+}
+
+/* numbered tracklist: hairline rows, serif titles, honest numbers */
+ol.tracks {
+	list-style: none;
+	padding: 0;
+	margin-top: 2.2rem;
+}
+
+ol.tracks > li {
+	border-top: 1px solid var(--hair);
+}
+
+ol.tracks > li:last-child {
+	border-bottom: 1px solid var(--hair);
+}
+
+ol.tracks a {
+	display: flex;
+	align-items: baseline;
+	gap: 1.1rem;
+	padding-block: 1.05rem;
+}
+
+ol.tracks .no {
+	font-size: 0.72rem;
+	letter-spacing: 0.08em;
+	min-width: 1.9rem;
+}
+
+ol.tracks .trname {
+	font-family: 'Instrument Serif', Georgia, serif;
+	font-size: 1.3rem;
+	line-height: 1.3;
+}
+
+/* guest artist on compilation tracks rides along, dim */
+ol.tracks .by {
+	color: var(--dim);
+	font-size: 0.85rem;
+}
+
+/* the one row the persistent pill is currently playing */
+ol.tracks li.playing .no {
+	color: var(--violet);
+}
+
+ol.tracks li.playing .now {
+	margin-left: auto;
+	padding-block: 0.35em;
+}
+
+/* album lists on the artist page: em-dash-led serif index */
+ul.music {
+	list-style: none;
+	padding: 0;
+	margin-top: 1.6rem;
+	font-family: 'Instrument Serif', Georgia, serif;
+	font-size: 1.45rem;
+	line-height: 1.35;
+}
+
+ul.music li {
+	border-top: 1px solid var(--hair);
+	padding-block: 1.05rem;
+	padding-left: 1.7rem;
+	text-indent: -1.7rem;
+}
+
+ul.music li::before {
+	content: '—';
+	color: var(--dim);
+	margin-right: 0.45em;
+}
+
+ul.music .count {
+	font-family: 'Space Grotesk', system-ui, sans-serif;
+	font-size: 0.72rem;
+	font-style: italic;
+	color: var(--dim);
+	margin-left: 0.6em;
+	white-space: nowrap;
+	font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* compilation marker — data-true tag, acid like the index archives */
+ul.music small {
+	font-family: 'Space Grotesk', system-ui, sans-serif;
+	font-size: 0.66rem;
+	font-style: normal;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--acid);
+	margin-left: 0.6em;
+}
+
+/* the track page's single row — the page's subject is what the pill plays */
+ol.now-playing {
+	list-style: none;
+	padding: 0;
+	margin-top: 2.8rem;
+}
+
+ol.now-playing li {
+	border-top: 1px solid var(--hair);
+}
+
+ol.now-playing button {
+	display: flex;
+	align-items: baseline;
+	gap: 1.4em;
+	width: 100%;
+	padding-block: 1.05rem;
+	text-align: left;
+}
+
+ol.now-playing .no {
+	font-size: 0.72rem;
+}
+
+ol.now-playing .trname {
+	font-family: 'Instrument Serif', Georgia, serif;
+	font-size: 1.45rem;
+}
+
+ol.now-playing .now {
+	margin-left: auto;
+	color: var(--violet);
+}
+
+/* the sidecar facts, one hairline row each, violet group labels */
+dl.meta {
+	margin-top: 1.6rem;
+}
+
+dl.meta dt {
+	font-size: 0.72rem;
+	letter-spacing: 0.09em;
+	text-transform: uppercase;
+	color: var(--dim);
+}
+
+dl.meta .grp {
+	padding-top: 3rem;
+	font-weight: 500;
+	color: var(--violet);
+}
+
+dl.meta .row {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 1.5rem;
+	border-top: 1px solid var(--hair);
+	padding-block: 0.8rem;
+}
+
+dl.meta dd {
+	margin: 0;
+	text-align: right;
+}
+
+/* quiet way back at the foot of a detail page */
+.endcap {
+	margin-top: 4.5rem;
+}
+
+.endcap a {
+	color: var(--dim);
+}
+
+.endcap a:hover {
+	color: var(--violet);
+}
+
+/* the stamp signature, on detail and entry rows */
+ol.tracks a:hover .trname,
+ul.music a:hover,
+ol.now-playing button:hover .trname,
+.entries a:hover h3 {
+	background: var(--violet);
+	color: #0e0f13;
+	padding-inline: 0.14em;
+	margin-inline: -0.14em;
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+}
+
+@media (min-width: 48em) {
+	.kicker {
+		padding-top: 4.2rem;
+	}
+
+	ul.music {
+		font-size: 1.6rem;
+	}
+
+	dl.meta .row {
+		padding-block: 0.9rem;
+	}
+}
+
+@media (min-width: 64em) {
+	.kicker {
+		padding-top: 5.5rem;
+	}
+
+	ol.tracks .trname {
+		font-size: 1.45rem;
+	}
+
+	ol.tracks a {
+		padding-block: 1.2rem;
+	}
+}
+
+/* ── news grammar — /news/ archive + post pages (mockups/7-news-index.html,
+   9-news-post.html). Year-led archive; at width each entry hangs its date in
+   a left column. The post reuses the kicker (parent link + full date) and
+   serif mast; prose owns its own reading column; the post's music rows ride
+   ul.music with the artist's albums italic and dim. ── */
+
+ol.years {
+	list-style: none;
+	padding: 0;
+	margin-top: 3.6rem;
+}
+
+li.year + li.year {
+	margin-top: 3.2rem;
+}
+
+.yr {
+	font-family: 'Instrument Serif', Georgia, serif;
+	font-weight: 400;
+	font-size: 2.1rem;
+	line-height: 1;
+	letter-spacing: -0.01em;
+}
+
+.yr .dim {
+	font-family: 'Space Grotesk', system-ui, sans-serif;
+	font-size: 0.8rem;
+	font-weight: 300;
+	margin-left: 0.5rem;
+	opacity: 0.8;
+}
+
+ol.entries {
+	list-style: none;
+	padding: 0;
+	margin-top: 1.2rem;
+}
+
+ol.entries > li {
+	border-top: 1px solid var(--hair);
+	padding-block: 1.5rem;
+}
+
+ol.entries a {
+	display: block;
+}
+
+.entries .dt {
+	display: inline-block;
+	padding-block: 0.35em;
+}
+
+.entries h3 {
+	font-family: 'Instrument Serif', Georgia, serif;
+	font-weight: 400;
+	font-size: 1.45rem;
+	line-height: 1.25;
+	margin-top: 0.3rem;
+}
+
+.entries .excerpt {
+	color: var(--dim);
+	margin-top: 0.3rem;
+	font-weight: 300;
+	max-width: 54ch;
+}
+
+/* post prose — the reading column (mockup leaves prose typography to
+   implementation: no size override, restrained link affordance) */
+.prose {
+	margin-top: 2.2rem;
+	max-width: 62ch;
+}
+
+.prose p + p {
+	margin-top: 1.2em;
+}
+
+.prose a {
+	text-decoration: underline;
+	text-decoration-color: var(--hair);
+	text-underline-offset: 0.2em;
+}
+
+.prose a:hover {
+	color: var(--violet);
+	text-decoration-color: var(--violet);
+}
+
+/* the post's music rows: the artist link stamps; its albums ride along
+   serif italic, dim — per mockup 9 (no grotesk override here) */
+ul.music .albs {
+	font-size: 1rem;
+	color: var(--dim);
+	font-style: italic;
+}
+
+ul.music .track-count {
+	font-size: 0.8em;
+	opacity: 0.72;
+	letter-spacing: 0.02em;
+	white-space: nowrap;
+	font-variant-numeric: tabular-nums lining-nums;
+}
+
+@media (min-width: 48em) {
+	.entries h3 {
+		font-size: 1.65rem;
+	}
+}
+
+@media (min-width: 64em) {
+	/* each entry hangs its date in a left column, baseline-locked */
+	ol.entries a {
+		display: grid;
+		grid-template-columns: 5.5rem minmax(0, 1fr);
+		column-gap: 2.5rem;
+		align-items: baseline;
+	}
+
+	.entries .dt {
+		grid-column: 1;
+		grid-row: 1;
+		padding-top: 0.5em;
+	}
+
+	.entries h3 {
+		font-size: 1.75rem;
+		margin-top: 0;
+		grid-column: 2;
+		grid-row: 1;
+	}
+
+	.entries .excerpt {
+		grid-column: 2;
+		max-width: 46ch;
+	}
+}

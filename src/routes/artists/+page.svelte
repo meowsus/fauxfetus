@@ -15,6 +15,9 @@
 
 	const breadcrumbItems = [{ name: 'Home', href: '/' as const }, { name: 'Artists' }];
 
+	/** Thousands separators so counts read like the mockups: 3,532 — not 3532. */
+	const formatCount = (value: number): string => value.toLocaleString('en-US');
+
 	const pageUrl = canonicalUrl('/artists/');
 	const pageTitle = 'Artists';
 	const pageDescription = 'Browse the collection of experimental music artists on Faux Fetus.';
@@ -40,5 +43,13 @@
 <JsonLd html={jsonLdScript(breadcrumbLd)} />
 
 <Breadcrumb items={breadcrumbItems} />
-<h1>Artists</h1>
+
+<div class="mast">
+	<h1>artists</h1>
+	<p class="sub">
+		<b>{formatCount(data.artistCount)}</b> artists · <b>{formatCount(data.albumCount)}</b> albums ·
+		<b>{formatCount(data.trackCount)}</b> tracks
+	</p>
+</div>
+
 <ArtistList artists={data.artists} />

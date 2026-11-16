@@ -47,7 +47,7 @@ export interface NewsMusicEntry {
 export interface PostMusicGroup {
 	artistSlug: string;
 	artistName: string;
-	albums: Array<{ slug: string; name: string }>;
+	albums: Array<{ slug: string; name: string; trackCount: number }>;
 }
 
 /** One release row inside a homepage "Recently added" group. */
@@ -57,6 +57,8 @@ export interface NewsReleaseItem {
 	/** artist-level announcement row (a new artist joins) when absent */
 	albumSlug?: string;
 	albumName?: string;
+	/** real track count from catalog.json — the ledger's data texture */
+	trackCount?: number;
 }
 
 /** One announcement's slice of the homepage "Recently added" nested list. */
@@ -272,9 +274,9 @@ function resolveMusicGroup(
 				);
 				return null;
 			}
-			return { slug: album.slug, name: album.name };
+			return { slug: album.slug, name: album.name, trackCount: album.tracks.length };
 		})
-		.filter((album): album is { slug: string; name: string } => album !== null);
+		.filter((album): album is { slug: string; name: string; trackCount: number } => album !== null);
 
 	return {
 		artistSlug: artist.slug,
@@ -397,7 +399,8 @@ export function getRecentReleaseGroups(posts: NewsPostMetadata[]): NewsReleaseGr
 					artistSlug: group.artistSlug,
 					artistName: group.artistName,
 					albumSlug: album.slug,
-					albumName: album.name
+					albumName: album.name,
+					trackCount: album.trackCount
 				});
 			}
 		}

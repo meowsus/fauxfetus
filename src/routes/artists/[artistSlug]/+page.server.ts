@@ -28,20 +28,23 @@ export const load: PageServerLoad = async ({ params }) => {
 			slug: album.slug,
 			name: album.name,
 			artistSlug: album.artistSlug,
-			isCompilation: album.isCompilation
+			isCompilation: album.isCompilation,
+			trackCount: album.tracks.length
 		}))
 	};
 
 	// Resolve recommended slugs to display names. Drop any that aren't in
 	// the catalog (defensive — recommendations.json could in theory name
 	// a stale slug after a rename).
-	const namesBySlug = new Map(catalog.map((a) => [a.slug, a.name]));
+	const infoBySlug = new Map(
+		catalog.map((a) => [a.slug, { name: a.name, albumCount: a.albums.length }])
+	);
 	const recommendedArtists = (recommendations[artistSlug] ?? [])
 		.map((slug) => {
-			const name = namesBySlug.get(slug);
-			return name ? { slug, name } : null;
+			const info = infoBySlug.get(slug);
+			return info ? { slug, name: info.name, albumCount: info.albumCount } : null;
 		})
-		.filter((entry): entry is { slug: string; name: string } => entry !== null);
+		.filter((entry): entry is { slug: string; name: string; albumCount: number } => entry !== null);
 
 	return { artist, recommendedArtists };
 };

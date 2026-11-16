@@ -4,7 +4,7 @@
 	import { canonicalUrl, ogMeta } from '$lib/helpers/seo';
 
 	const status = page.status;
-	const message = page.error?.message ?? 'Page not found';
+	const message = $derived(page.error?.message ?? 'Page not found');
 
 	const pageTitle = status === 404 ? '404 - Page Not Found' : `${status} - Error`;
 	const pageDescription =
@@ -27,6 +27,21 @@
 	{/each}
 </svelte:head>
 
-<h1>{pageTitle}</h1>
-<p>{message}</p>
-<p><a href={resolve('/')}>Go Home</a></p>
+<div class="mast">
+	<h1>{status ?? 'error'}</h1>
+</div>
+<p class="note">{message}</p>
+<p class="endcap"><a class="cap" href={resolve('/')}>← Home</a></p>
+
+<style>
+	/* the status page sits well below the chrome; the masthead air is too
+	   generous for an error, so it keeps the album page's tight pacing */
+	.mast {
+		padding-block: 1.6rem 0;
+	}
+
+	.note {
+		margin-top: 1.4rem;
+		max-width: 46ch;
+	}
+</style>

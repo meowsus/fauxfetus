@@ -24,17 +24,21 @@ if (html.includes('data-404-fallback')) {
 
 const title = '404 - Page Not Found | Faux Fetus';
 const noscript = `<noscript data-404-fallback>
-	<h1>Page not found</h1>
-	<p>The page you are looking for does not exist on fauxfetus.net.</p>
-	<p><a href="/">Go to the home page</a></p>
+	<div class="mast">
+		<h1>404</h1>
+	</div>
+	<p class="note">The page you are looking for does not exist on fauxfetus.net.</p>
+	<p class="endcap"><a class="cap" href="/">← Home</a></p>
 </noscript>`;
 
 // <title> belongs at the top of <head>; anchor it to the viewport meta.
-const viewport = '<meta name="viewport" content="width=device-width, initial-scale=1" />';
-if (!html.includes(viewport)) {
-	throw new Error('patch-404-fallback: expected viewport meta not found in build/404.html');
+// Matched structurally (not verbatim) so attribute changes to the meta —
+// e.g. adding viewport-fit=cover for PWA safe areas — don't break the patch.
+const viewport = /<meta\s+name="viewport"[^>]*>/;
+if (!viewport.test(html)) {
+	throw new Error('patch-404-fallback: viewport meta not found in build/404.html');
 }
-html = html.replace(viewport, `${viewport}\n\t\t<title>${title}</title>`);
+html = html.replace(viewport, (match) => `${match}\n\t\t<title>${title}</title>`);
 
 // Insert the static content at the top of the hydration target div.
 const target = '<div style="display: contents">';

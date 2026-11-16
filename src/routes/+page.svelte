@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import JsonLd from '$lib/components/JsonLd.svelte';
-	import { formatDateLong } from '$lib/helpers/format-date';
+	import { formatDateShort } from '$lib/helpers/format-date';
 	import {
 		canonicalUrl,
 		jsonLdBreadcrumb,
@@ -25,6 +25,8 @@
 	});
 	const webSiteLd = jsonLdWebsite();
 	const breadcrumbLd = jsonLdBreadcrumb([{ name: 'Home', href: '/' }]);
+
+	const formatCount = (value: number): string => value.toLocaleString('en-US');
 </script>
 
 <svelte:head>
@@ -39,29 +41,50 @@
 <JsonLd html={jsonLdScript(webSiteLd)} />
 <JsonLd html={jsonLdScript(breadcrumbLd)} />
 
-<h1>Faux Fetus</h1>
+<div class="hero">
+	<h1><em>faux</em>fetus</h1>
+	<p class="eyebrow">an experimental music collective</p>
+	<div class="tagcol">
+		<p class="tagline">{pageDescription}</p>
+		<p class="counts">
+			<b>{formatCount(data.artistCount)}</b> artists ·
+			<b>{formatCount(data.albumCount)}</b> albums ·
+			<b>{formatCount(data.trackCount)}</b> tracks
+		</p>
+	</div>
+</div>
 
 <section aria-labelledby="recently-added">
-	<h2 id="recently-added">Recently added</h2>
-	<p>Everything to land in the catalog since the site's reconception, newest first:</p>
+	<h2 id="recently-added" class="lbl">Recently added</h2>
+	<p class="note">Everything to land in the catalog since the site's reconception, newest first.</p>
 	{#if data.recentGroups.length > 0}
-		<ol>
+		<ol class="groups">
 			{#each data.recentGroups as group (group.slug)}
 				<li>
-					<a href={resolve(`/news/${group.slug}`)}>
-						<time datetime={group.date}>{formatDateLong(group.date)}</time>
-					</a>
-					<ul>
+					<p class="group-date">
+						<a class="cap" href={resolve(`/news/${group.slug}`)}>
+							<time datetime={group.date}>{formatDateShort(group.date)}</time>
+						</a>
+					</p>
+					<ul class="items">
 						{#each group.items as item (item.artistSlug + (item.albumSlug ?? ''))}
 							<li>
 								<a href={resolve(`/artists/${item.artistSlug}`)}>{item.artistName}</a>
 								{#if item.albumSlug}
-									,
-									<a href={resolve(`/artists/${item.artistSlug}/${item.albumSlug}`)}>
-										{item.albumName}
-									</a>
+									<span class="albs">
+										—
+										<a href={resolve(`/artists/${item.artistSlug}/${item.albumSlug}`)}>
+											{item.albumName}
+										</a>
+										{#if item.trackCount !== undefined}
+											<span class="track-count">
+												· {item.trackCount}
+												{item.trackCount === 1 ? 'track' : 'tracks'}
+											</span>
+										{/if}
+									</span>
 								{:else}
-									<small>New artist</small>
+									<small>new artist</small>
 								{/if}
 							</li>
 						{/each}
@@ -72,23 +95,31 @@
 	{:else}
 		<p>Nothing new announced. Check the news for the latest.</p>
 	{/if}
-	<p>
-		<a href={resolve('/news/')}>More context in the news &rarr;</a>
+	<p class="sec-foot">
+		<a class="cap dim" href={resolve('/news/')}>more context in the news →</a>
 	</p>
 </section>
 
-<section aria-labelledby="news-teaser">
-	<h2 id="news-teaser">News</h2>
-	{#each data.recentPosts as post (post.slug)}
-		<article>
-			<h3>
-				<a href={resolve(`/news/${post.slug}`)}>{post.title}</a>
-			</h3>
-			<time datetime={post.date}>{formatDateLong(post.date)}</time>
-			<p>{post.excerpt}</p>
-		</article>
-	{/each}
-	<p>
-		<a href={resolve('/news/')}>All news &rarr;</a>
+<section aria-labelledby="news-teaser" class="news">
+	<h2 id="news-teaser" class="news-label">News</h2>
+	{#if data.recentPosts.length > 0}
+		<ol class="newslist">
+			{#each data.recentPosts as post (post.slug)}
+				<li>
+					<p class="cap dim date">
+						<time datetime={post.date}>{formatDateShort(post.date)}</time>
+					</p>
+					<h3>
+						<a href={resolve(`/news/${post.slug}`)}>{post.title}</a>
+					</h3>
+					<p class="excerpt">{post.excerpt}</p>
+				</li>
+			{/each}
+		</ol>
+	{:else}
+		<p>No news posts yet.</p>
+	{/if}
+	<p class="sec-foot">
+		<a class="cap dim" href={resolve('/news/')}>all news →</a>
 	</p>
 </section>

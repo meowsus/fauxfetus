@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { PageData } from './$types';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import AlbumList from '$lib/components/AlbumList.svelte';
@@ -15,10 +16,14 @@
 
 	let { data }: { data: PageData } = $props();
 
+	const formatCount = (value: number): string => value.toLocaleString('en-US');
+
 	// These must be derived from `data` so they refresh when SvelteKit swaps
 	// in new data for a same-route navigation (e.g. clicking a related
 	// artist). A plain `const` would capture the first artist's data and
 	// never update, leaving the breadcrumbs/SEO/JSON-LD stale.
+	const albumCount = $derived(data.artist.albums.length);
+	const trackCount = $derived(data.artist.albums.reduce((sum, album) => sum + album.trackCount, 0));
 	const breadcrumbItems = $derived([
 		{ name: 'Home', href: '/' as const },
 		{ name: 'Artists', href: '/artists' as const },
@@ -72,8 +77,42 @@
 {/if}
 
 <Breadcrumb items={breadcrumbItems} />
-<h1>{data.artist.name}</h1>
-<AlbumList albums={data.artist.albums} />
+
+<div class="kicker tnum">
+	<a class="cap dim" href={resolve('/artists/')}>Artists</a>
+	<div class="right">
+		<span class="cap dim">
+			<span class="tnum">{formatCount(albumCount)}</span>
+			{albumCount === 1 ? 'album' : 'albums'}
+			·
+			<span class="tnum">{formatCount(trackCount)}</span>
+			{trackCount === 1 ? 'track' : 'tracks'}
+		</span>
+	</div>
+</div>
+
+<div class="mast">
+	<h1>{data.artist.name}</h1>
+</div>
+
+<section aria-labelledby="h-albums">
+	<h2 class="lbl" id="h-albums">Albums</h2>
+	<AlbumList albums={data.artist.albums} />
+</section>
+
 {#if data.recommendedArtists.length > 0}
-	<RelatedArtistList artists={data.recommendedArtists} />
+	<section aria-labelledby="h-related">
+		<h2 class="lbl" id="h-related">Related artists</h2>
+		<RelatedArtistList artists={data.recommendedArtists} />
+	</section>
 {/if}
+
+<p class="endcap">
+	<a class="cap" href={resolve('/artists/')}>← All artists</a>
+</p>
+
+<style>
+	section {
+		margin-top: 4.5rem;
+	}
+</style>

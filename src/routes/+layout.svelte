@@ -1,8 +1,9 @@
 <script lang="ts">
+	import '../app.css';
 	import Navbar from '$lib/components/Navbar/index.svelte';
-	import Player from '$lib/components/Player/index.svelte';
 	import UpdateNotification from '$lib/components/UpdateNotification.svelte';
 	import Footer from '$lib/components/Footer/index.svelte';
+	import Player from '$lib/components/Player/index.svelte';
 
 	import {
 		setPlayerContext,
@@ -42,18 +43,16 @@
 
 <a class="skip-link" href="#main">Skip to content</a>
 
-<header>
-	<Navbar />
-</header>
+<Navbar />
 
 <main id="main" tabindex="-1">
 	{@render children()}
 </main>
 
-<aside aria-label="Player">
-	<Player />
-</aside>
-
 <Footer />
+
+<!-- Global player engine + pill: renders nothing until a track plays;
+	owns the Gapless5 instance and replaces the layout's no-op actions -->
+<Player />
 
 <UpdateNotification />

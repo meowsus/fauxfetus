@@ -27,6 +27,8 @@ export type PlayerActions = {
 	togglePlay: () => void;
 	prev: () => void;
 	next: () => void;
+	/** Start playback at an index within the current playlist (queue click). */
+	jumpTo: (index: number) => void;
 };
 
 /** No-op defaults so components can safely call actions before Gapless5 initializes. */
@@ -36,7 +38,8 @@ export const defaultPlayerActions: PlayerActions = {
 	pause: () => {},
 	togglePlay: () => {},
 	prev: () => {},
-	next: () => {}
+	next: () => {},
+	jumpTo: () => {}
 };
 
 export const [getPlayerContext, setPlayerContext] = createContext<Writable<PlayerState>>();

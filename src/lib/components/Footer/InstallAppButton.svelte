@@ -40,3 +40,20 @@
 {#if showInstall}
 	<button type="button" onclick={handleInstallClick}>Install App</button>
 {/if}
+
+<style>
+	/* same voice as the footer's caps links (it renders inside the <footer>
+	 * nav, but lives in a child component — so it carries its own styles) */
+	button {
+		color: var(--dim);
+		font-size: 0.7rem;
+		font-weight: 500;
+		letter-spacing: 0.26em;
+		text-transform: uppercase;
+		padding: 0.55em 0;
+	}
+
+	button:hover {
+		color: var(--violet);
+	}
+</style>

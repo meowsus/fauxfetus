@@ -57,35 +57,55 @@
 
 <Breadcrumb items={breadcrumbItems} />
 
-<article>
-	<header>
-		<h1>{data.post.title}</h1>
-		<time datetime={data.post.date}>{formatDateLong(data.post.date)}</time>
-	</header>
+<div class="kicker tnum">
+	<a class="cap dim" href={resolve('/news/')}>News</a>
+	<div class="right">
+		<time class="cap dim" datetime={data.post.date}>{formatDateLong(data.post.date)}</time>
+	</div>
+</div>
 
-	{#if data.post.music.length > 0}
-		<section aria-labelledby="added-to-catalog">
-			<h2 id="added-to-catalog">Added to the catalog</h2>
-			<ul>
-				{#each data.post.music as group (group.artistSlug)}
-					<li>
-						<a href={resolve(`/artists/${group.artistSlug}`)}>{group.artistName}</a>
-						{#if group.albums.length > 0}
-							<ul>
-								{#each group.albums as album (album.slug)}
-									<li>
-										<a href={resolve(`/artists/${group.artistSlug}/${album.slug}`)}>{album.name}</a>
-									</li>
-								{/each}
-							</ul>
-						{/if}
-					</li>
-				{/each}
-			</ul>
-		</section>
-	{/if}
+<div class="mast">
+	<h1>{data.post.title}</h1>
+</div>
 
+<div class="prose">
 	<!-- Server-rendered HTML from trusted markdown -->
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html data.post.html}
-</article>
+</div>
+
+{#if data.post.music.length > 0}
+	<section aria-labelledby="h-music">
+		<h2 class="lbl" id="h-music">New in the catalog</h2>
+		<ul class="music">
+			{#each data.post.music as group (group.artistSlug)}
+				<li>
+					<a href={resolve(`/artists/${group.artistSlug}`)}>{group.artistName}</a>
+					{#if group.albums.length > 0}
+						<span class="albs">
+							{#each group.albums as album (album.slug)}
+								<a href={resolve(`/artists/${group.artistSlug}/${album.slug}`)}>
+									— {album.name}
+									<span class="track-count">
+										· {album.trackCount}
+										{album.trackCount === 1 ? 'track' : 'tracks'}
+									</span>
+								</a>
+							{/each}
+						</span>
+					{/if}
+				</li>
+			{/each}
+		</ul>
+	</section>
+{/if}
+
+<p class="endcap">
+	<a class="cap" href={resolve('/news/')}>← All news</a>
+</p>
+
+<style>
+	section {
+		margin-top: 4.5rem;
+	}
+</style>

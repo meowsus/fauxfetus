@@ -3,7 +3,7 @@
 	import { SvelteMap } from 'svelte/reactivity';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import JsonLd from '$lib/components/JsonLd.svelte';
-	import { formatDateLong } from '$lib/helpers/format-date';
+	import { formatDateMonthDay } from '$lib/helpers/format-date';
 	import {
 		canonicalUrl,
 		jsonLdBreadcrumb,
@@ -53,23 +53,33 @@
 <JsonLd html={jsonLdScript(breadcrumbLd)} />
 
 <Breadcrumb items={[{ name: 'Home', href: '/' as const }, { name: 'News' }]} />
-<h1>News</h1>
 
-{#each yearGroups as [year, posts] (year)}
-	<section aria-labelledby={`news-${year}`}>
-		<h2 id={`news-${year}`}>{year}</h2>
-		<ol>
-			{#each posts as post (post.slug)}
-				<li>
-					<article>
-						<h3>
-							<a href={resolve(`/news/${post.slug}`)}>{post.title}</a>
-						</h3>
-						<time datetime={post.date}>{formatDateLong(post.date)}</time>
-						<p>{post.excerpt}</p>
-					</article>
-				</li>
-			{/each}
-		</ol>
-	</section>
-{/each}
+<div class="mast">
+	<h1>news</h1>
+	<p class="sub">
+		<b><span class="tnum">{data.posts.length}</span></b> posts since the relaunch · every one, nothing
+		trimmed
+	</p>
+</div>
+
+<ol class="years">
+	{#each yearGroups as [year, posts] (year)}
+		<li class="year">
+			<h2 class="yr">
+				{year}
+				<span class="dim tnum">{posts.length} {posts.length === 1 ? 'post' : 'posts'}</span>
+			</h2>
+			<ol class="entries">
+				{#each posts as post (post.slug)}
+					<li>
+						<a href={resolve(`/news/${post.slug}`)}>
+							<span class="cap dim tnum dt">{formatDateMonthDay(post.date)}</span>
+							<h3>{post.title} →</h3>
+							<p class="excerpt">{post.excerpt}</p>
+						</a>
+					</li>
+				{/each}
+			</ol>
+		</li>
+	{/each}
+</ol>

@@ -27,9 +27,6 @@ export async function GET() {
 	// Artists listing
 	urls.push(urlEntry(`${baseUrl}/artists/`, today, 'daily', '0.9'));
 
-	// Albums listing (all-albums index)
-	urls.push(urlEntry(`${baseUrl}/albums/`, today, 'daily', '0.9'));
-
 	// News index + posts (post lastmod = publish date)
 	urls.push(urlEntry(`${baseUrl}/news/`, today, 'weekly', '0.7'));
 	for (const post of await readNewsSummary()) {

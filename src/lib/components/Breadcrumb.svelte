@@ -8,7 +8,7 @@
 
 	interface BreadcrumbItem {
 		name: string;
-		href?: '/' | '/artists' | '/albums' | ArtistPath | AlbumPath | TrackPath | NewsPath;
+		href?: '/' | '/artists' | ArtistPath | AlbumPath | TrackPath | NewsPath;
 	}
 
 	let { items }: { items: BreadcrumbItem[] } = $props();

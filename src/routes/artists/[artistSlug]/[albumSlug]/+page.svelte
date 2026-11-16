@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { PageData } from './$types';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import TrackList from '$lib/components/TrackList.svelte';
@@ -15,12 +16,15 @@
 
 	let { data }: { data: PageData } = $props();
 
+	const formatCount = (value: number): string => value.toLocaleString('en-US');
+
 	// All of the following depend on `data`, which SvelteKit updates in place
 	// when navigating between albums under the same artist (or otherwise
 	// reusing this page component). A plain `const` would capture the first
 	// album's data and go stale, so these must be `$derived`.
 	const artistHref = $derived(`/artists/${data.album.artistSlug}` as const);
 	const zipPath = $derived(albumZipPath(data.album.artistSlug, data.album.slug));
+	const trackTotal = $derived(data.album.tracks.length);
 	const breadcrumbItems = $derived([
 		{ name: 'Home', href: '/' as const },
 		{ name: 'Artists', href: '/artists' as const },
@@ -69,8 +73,27 @@
 <JsonLd html={jsonLdScript(breadcrumbLd)} />
 
 <Breadcrumb items={breadcrumbItems} />
-<h1>{data.album.name}</h1>
 
-<p><a href={asset(zipPath)} download rel="nofollow">Download ZIP</a></p>
+<div class="kicker tnum">
+	<a class="cap dim" href={resolve(artistHref)}>{data.album.artistName}</a>
+	<div class="right">
+		<span class="cap dim">
+			<span class="tnum">{formatCount(trackTotal)}</span>
+			{trackTotal === 1 ? 'track' : 'tracks'}
+		</span>
+		<a class="cap dl" href={asset(zipPath)} download rel="nofollow">download zip ↓</a>
+	</div>
+</div>
 
-<TrackList tracks={data.album.tracks} shouldDisableRadioMode={true} />
+<div class="mast">
+	<h1>{data.album.name}</h1>
+</div>
+
+<TrackList tracks={data.album.tracks} />
+
+<style>
+	/* the kicker carries the separation the tight masthead needs */
+	.mast {
+		padding-block: 1.1rem 0;
+	}
+</style>

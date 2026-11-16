@@ -27,49 +27,39 @@ All site content (artists, albums, tracks) is generated at build time from JSON 
 ```
 fauxfetus/
 ├── src/
-│   ├── app.css                    # Tailwind 4 + daisyUI (dracula theme)
-│   ├── app.html                   # HTML shell
+│   ├── app.css                    # Mothwing design tokens + base layer (plain CSS, no framework)
+│   ├── app.html                   # HTML shell (font preloads, viewport-fit=cover, analytics)
 │   ├── service-worker/index.ts    # PWA service worker
 │   └── lib/
-│       ├── index.ts               # Barrel exports
+│       ├── index.ts               # Barrel exports (intentionally empty)
 │       ├── context/
 │       │   └── player.ts          # Svelte context for player state
 │       ├── helpers/
-│       │   ├── catalog.ts         # readCatalog(): loads static/data/catalog.json
-│       │   ├── player.ts          # Player logic helpers
-│       │   └── tailwind.ts        # cn(): clsx + tailwind-merge
+│       │   ├── catalog.ts         # readCatalog(): memoized read of static/data/catalog.json (SERVER-ONLY)
+│       │   ├── news.ts            # News pipeline: parse/resolve content/news/*.md (SERVER-ONLY)
+│       │   ├── seo.ts             # canonical URLs, OG meta, JSON-LD builders
+│       │   ├── downloads.ts       # albumZipPath() for the dl/ sidecar (browser-safe)
+│       │   ├── format-date.ts     # Intl date formatters (UTC + en-US for deterministic prerender)
+│       │   ├── media-session.ts   # Media Session API glue
+│       │   ├── recommendations.ts # related-artist logic
+│       │   ├── track-metadata.ts  # audio sidecar data for track pages
+│       │   └── index.ts           # radio helpers: startRadio(), sampleRadioPlaylist()
 │       └── components/
-│           ├── AlbumList.svelte
-│           ├── ArtistList.svelte
-│           ├── TrackList.svelte
+│           ├── Navbar/index.svelte  # header grid: mark, caps nav, search (search markup: Search.svelte)
+│           ├── Search.svelte        # global search (client-side index, results panel)
+│           ├── Footer/              # footer links + InstallAppButton (PWA install)
+│           ├── Player/index.svelte  # floating pill player (own <aside>; owns fixed positioning)
+│           ├── AlbumList.svelte     # /albums/ index
+│           ├── ArtistList.svelte    # /artists/ index
+│           ├── RelatedArtistList.svelte
+│           ├── TrackList.svelte     # album tracklist (also the radio queue grammar)
+│           ├── TrackRow.svelte
 │           ├── Breadcrumb.svelte
-│           ├── MetadataTable.svelte
-│           ├── Navbar/            # Nav bar + install app button (PWA)
-│           └── Player/            # Audio player (card, controls, progress)
-├── src/routes/
-│   ├── +layout.server.ts          # prerender = true, trailingSlash = 'always'
-│   ├── +page.server.ts            # Home: "Recently added" + news teaser via $lib/helpers/news
-│   ├── +page.svelte               # Home page
-│   ├── artists/
-│   │   ├── +page.server.ts        # Lists all artists
-│   │   ├── +page.svelte           # Artists listing with search
-│   │   └── [artistSlug]/
-│   │       ├── +page.server.ts    # Single artist + their albums
-│   │       ├── +page.svelte
-│   │       └── [albumSlug]/
-│   │           ├── +page.server.ts    # Single album + tracks
-│   │           ├── +page.svelte
-│   │           └── [trackSlug]/
-│   │               ├── +page.server.ts  # Single track + metadata
-│   │               └── +page.svelte
-│   └── sitemap.xml/+server.ts     # Sitemap generation
-│   ├── news/
-│   │   ├── +page.server.ts        # News index (all posts, summaries only)
-│   │   ├── +page.svelte           # News archive, grouped by year
-│   │   ├── feed.xml/+server.ts    # RSS 2.0 feed (prerender = true)
-│   │   └── [slug]/
-│   │       ├── +page.server.ts    # Single post; entries() from news dir
-│   │       └── +page.svelte       # Post page: title/date/music/prose
+│           ├── MetadataTable.svelte # track-page audio sidecar table
+│           ├── JsonLd.svelte        # invisible JSON-LD script emitter
+│           └── UpdateNotification.svelte  # PWA update notice (fixed pill, top)
+├── mockups/                      # DESIGN REFERENCE: Mothwing direction (see mockups/README.md)
+├── src/routes/                   # (unchanged from earlier structure docs)
 ├── packages/data-generator/      # @fauxfetus/data-generator workspace package
 │   ├── index.ts
 │   └── src/
@@ -82,10 +72,13 @@ fauxfetus/
 │       ├── types.ts               # Shared PathMetadataTuple
 │       └── walk.ts                # readAudioMetadata(): klaw walker
 ├── scripts/
+│   ├── build/                     # post-build steps
+│   │   └── patch-404-fallback.mjs #   patches build/404.html (title + <noscript> content, idempotent)
 │   ├── data/generate.ts           # pnpm generate:data: runs DataGenerator
 │   ├── data/validate.ts           # pnpm validate:data: runs validateAudio
 │   ├── deploy.sh                  # Build + rsync deploy (site + dl/ sidecar)
-│   └── release.sh                 # Version bump + release
+│   ├── release.sh                 # Version bump + release
+│   └── rip.ts                     # CD ripper CLI (see plans/cd-ripper-cli.md)
 ├── server/
 │   └── dl/                        # Album-zip sidecar (PHP) → fauxfetus.net/dl/
 │       ├── index.php              #   Lazy zip generation; 302 to static cache file
@@ -93,10 +86,12 @@ fauxfetus/
 │       └── cache/.htaccess        #   dl/cache/ exists only on the server (rsync-excluded)
 ├── static/
 │   ├── audio/                     # Source MP3 files (input to generator)
-│   └── data/                      # Generated: catalog.json, tracks.json
+│   ├── data/                      # Generated: catalog.json, tracks.json, search-index.json
+│   ├── fonts/                     # Self-hosted woff2: Instrument Serif + Space Grotesk (latin)
+│   └── icons/                     # PWA icons + the header mark (invert/screen-blend via CSS)
 ├── content/
 │   └── news/                      # Dated news posts: YYYY-MM-DD-<slug>.md (title + music frontmatter)
-└── package.json                   # v2.7.0, pnpm monorepo
+└── package.json                   # pnpm monorepo
 ```
 
 ## Data Flow
@@ -106,7 +101,19 @@ fauxfetus/
 3. Outputs `static/data/catalog.json` and `static/data/tracks.json`
 4. At build time, `+page.server.ts` load functions call `readCatalog()` which reads `static/data/catalog.json`
 5. At build time, news load functions call `readNews()` which parses `content/news/*.md` and resolves every frontmatter `music` slug (`+` prose catalog links) against `catalog.json`; the build fails loudly on drift
-6. `adapter-static` prerenders all pages: no runtime server
+6. `adapter-static` prerenders all pages: no runtime server. A post-build step (`scripts/build/patch-404-fallback.mjs`) patches `build/404.html` with a `<title>` + `<noscript>` fallback; it matches the viewport meta structurally so attribute changes (e.g. `viewport-fit=cover`) don't break it.
+
+## Design system — Mothwing
+
+The visual design is **Mothwing**: near-black + violet, large Instrument Serif display type, Space Grotesk body, tracked-caps labels. The design is **plain hand-written CSS** — there is **no Tailwind, no daisyUI, no utility-class framework, no CSS tooling** (deliberately removed in the semantic-foundation phase, commit `822eda7`).
+
+- **Markup is semantic-first**: components are styled via element/attribute selectors (`nav[aria-label='Main']`, `form[role='search']`, `ol.groups`) and small scoped `<style>` blocks per component, plus a tiny global utility voice in `src/app.css` (`.cap`, `.tnum`, `.vh`).
+- **Tokens live in `src/app.css`**: `--bg #0e0f13`, `--ink #ece9f4`, `--dim #85819a`, `--violet` (links/focus), `--acid #c8f449` (interaction color + data-true tags only), `--hair` (hairlines), plus the page-shell (36/44/72rem column) and fonts. Values are transcribed from `mockups/4-mothwing.html` (v3.5).
+- **Doctrine**: `plans/redesign-principles.md` (de-templating principles P1–P8) and `mockups/README.md` (the four directions + the seven Mothwing page stubs).
+- **Mockups are exemplary, real data is law**: the mockups' fabricated numbers (counts, durations, catalog slice) never get hardcoded; the real catalog.json/news data decides (e.g. real track counts in the ledger, player times live from the audio element, counts computed from catalog).
+- **A11y flags baked in**: ≥16px body + search input (iOS focus-zoom), 44px-class padding on nav/footer links, `viewport-fit=cover` + `env(safe-area-inset-*)` offsets, tabular figures for all number columns, `text-wrap: balance` on display lines.
+- **Fonts are self-hosted** (`static/fonts/*.woff2`, latin subsets; Space Grotesk is one variable file spanning wght 300–500), preloaded in `app.html`.
+- **Verify visually** with `pnpm build` + `pnpm preview` + headless Firefox screenshots at 390/800/1440 and compare against the mockups (see `mockups/shot.html` for viewport-crop shots).
 
 **Package dependency direction:** `data-generator` depends on `validator`. `validator` knows nothing about `data-generator`. This matches the natural relationship: "the audio directory has this contract" is a validator concern; "given valid audio, build a navigable catalog" is a generator concern.
 
@@ -159,15 +166,16 @@ Invariants to keep when touching this area:
 
 - See **Mandatory Post-Task Verification** at the top of this file: always run `pnpm format` (alongside `pnpm check` and `pnpm lint`) after changes.
 - Config: tabs, single quotes, trailing commas off, 100 char width.
-- Plugins run automatically: `prettier-plugin-svelte`, `prettier-plugin-tailwindcss`, `prettier-plugin-organize-imports`.
-- `tailwindStylesheet` points at `./src/app.css`, so class sorting uses your actual Tailwind config.
+- Plugins run automatically: `prettier-plugin-svelte`, `prettier-plugin-organize-imports`.
+- Markdown and CSS are formatted too (the tab/single-quote config applies).
 
 ### Conventions
 
-- Component style: `<script lang="ts">` with TypeScript.
-- Utility classes: use `cn()` from `$lib/helpers/tailwind` (wraps `clsx` + `tailwind-merge`) when merging or conditionally applying classes. For static class strings with no merging needed, plain string classnames are fine.
+- Component style: `<script lang="ts">` with TypeScript, plus a scoped `<style>` block for the component's own CSS (plain CSS — tokens come from `--var()` custom properties in `src/app.css`).
+- Styling rule: prefer element/attribute selectors over added classes when the markup is already semantic (`nav[aria-label='Main']`, `ol.groups`); add global classes in `src/app.css` only for voices repeated across components (`.cap`, `.tnum`, and the shared ledger grammar). Never reintroduce a utility-CSS framework.
+- Static-file references (fonts, icons, non-route paths) go through `asset()` from `$app/paths`; internal navigation goes through `resolve(`/`)
 - Import aliases: `$lib` for `src/lib/`.
-- Data access: always go through `readCatalog()` in `$lib/helpers/catalog.ts`, which memoizes and reads from `static/data/catalog.json`.
+- Data access: always go through `readCatalog()` in `$lib/helpers/catalog.ts`, which memoizes and reads from `static/data/catalog.json`. Same for news: `readNews()`/helpers in `$lib/helpers/news.ts` (both SERVER-ONLY: Node imports; never import them client-side).
 - Type imports: `Artist`, `Album`, `Track`, etc. come from `@fauxfetus/data-generator`.
 
 ## Build Verification
@@ -215,14 +223,12 @@ Invariants to keep when touching this area:
 
 ## Context7 (Documentation Lookup)
 
-Use the `ctx7` CLI to fetch current documentation **before writing or modifying any code that uses Svelte, SvelteKit, daisyUI, Tailwind, or any other library**, even if you think you know the API. Your training data may not reflect recent changes (especially Svelte 5 runes, daisyUI 5 classes, Tailwind 4 directives).
+Use the `ctx7` CLI to fetch current documentation **before writing or modifying any code that uses Svelte, SvelteKit, or any other library**, even if you think you know the API. Your training data may not reflect recent changes (especially Svelte 5 runes).
 
 ### When to use
 
 - **Writing or editing any `.svelte` file** → look up Svelte 5 syntax first (runes, snippets, props)
 - **Adding or modifying a route / load function** → look up SvelteKit API first (load, actions, adapters, page options)
-- **Styling with daisyUI classes** → look up daisyUI 5 component docs first (class names changed in v5)
-- **Using Tailwind utilities or directives** → look up Tailwind 4 docs first (v4 uses CSS-based config, not `tailwind.config.js`)
 - **Any task involving a library API, CLI tool, or SDK** → look it up first
 
 ### When NOT to use
@@ -247,12 +253,3 @@ Use the `ctx7` CLI to fetch current documentation **before writing or modifying 
 You MUST call `library` first to get a valid ID unless the user provides one directly in `/org/project` format. Do not run more than 3 commands per question. Do not include sensitive information (API keys, passwords, credentials) in queries.
 
 If a command fails with a quota error, inform the user and suggest `npx ctx7@latest login` or setting `CONTEXT7_API_KEY` for higher limits. Do not silently fall back to training data.
-
-### Key daisyUI 5 Notes
-
-- daisyUI 5 requires Tailwind CSS 4 (`@import "tailwindcss";` + `@plugin "daisyui";` in CSS)
-- Component classes are added directly to HTML elements alongside Tailwind utility classes
-- Use daisyUI semantic color names (e.g., `bg-primary`, `text-base-content`) instead of Tailwind colors so themes work correctly
-- If a component doesn't exist in daisyUI, create it with Tailwind CSS utilities
-- Use `!` suffix on Tailwind classes (e.g., `bg-red-500!`) as a last resort to override specificity
-- **This project uses the `dracula` daisyUI theme** (configured as default in `src/app.css`)

@@ -21,7 +21,8 @@
 		return `${(hz / 1000).toFixed(1)} kHz`;
 	}
 
-	const formatRows = $derived(
+	/** Container/codec facts — the "Audio" group. */
+	const audioRows = $derived(
 		metadata
 			? [
 					{ label: 'Container', value: metadata.format.container },
@@ -31,14 +32,23 @@
 						: []),
 					{ label: 'Bitrate', value: formatBitrate(metadata.format.bitrate ?? 0) },
 					{ label: 'Sample rate', value: formatSampleRate(metadata.format.sampleRate ?? 0) },
-					{ label: 'Channels', value: metadata.format.numberOfChannels ?? '—' },
+					{
+						label: 'Channels',
+						value:
+							metadata.format.numberOfChannels === undefined
+								? '—'
+								: String(metadata.format.numberOfChannels)
+					},
 					{ label: 'Duration', value: formatDuration(metadata.format.duration ?? 0) },
 					{ label: 'Lossless', value: metadata.format.lossless ? 'Yes' : 'No' }
 				]
 			: []
 	);
 
-	const commonRows = $derived(
+	/** Title/artist/album/track tag values — the "Tags" group. Plain text on
+	    purpose: these are the file's embedded values, which can drift from the
+	    catalog's names. */
+	const tagRows = $derived(
 		metadata
 			? [
 					...(metadata.common.title ? [{ label: 'Title', value: metadata.common.title }] : []),
@@ -70,35 +80,54 @@
 			: []
 	);
 
-	const nativeRows = $derived.by(() => {
+	/** APEv2-only tags beyond the common five — the "APEv2" group. Tag ids are
+	    stored shouty; the label is UI voice, the value stays raw. COMPOSER is
+	    suppressed: track metadata never shows composer information. */
+	const prettifyTagId = (id: string): string =>
+		id
+			.trim()
+			.toLowerCase()
+			.replace(/\b[a-z]/g, (char) => char.toUpperCase());
+
+	const apeRows = $derived.by(() => {
 		if (!metadata?.native?.APEv2?.length) return [];
-		const commonKeys = new Set(['TITLE', 'ARTIST', 'ALBUM', 'COMPOSER', 'TRACK', 'DISC']);
+		const hiddenKeys = new Set(['TITLE', 'ARTIST', 'ALBUM', 'TRACK', 'DISC', 'COMPOSER']);
 		return metadata.native.APEv2.filter(
-			(tag) => !commonKeys.has(String(tag.id).trim().toUpperCase())
-		).map((tag) => ({ label: tag.id, value: tag.value }));
+			(tag) => !hiddenKeys.has(String(tag.id).trim().toUpperCase())
+		).map((tag) => ({ label: prettifyTagId(tag.id), value: String(tag.value) }));
 	});
 
-	const tableRows = $derived([...formatRows, ...commonRows, ...nativeRows]);
+	const hasRows = $derived(audioRows.length + tagRows.length + apeRows.length > 0);
 </script>
 
 {#if !metadata}
-	<p>No metadata available.</p>
-{:else if tableRows.length > 0}
-	<table>
-		<caption>Metadata</caption>
-		<thead>
-			<tr>
-				<th>Metadata</th>
-				<th>Value</th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each tableRows as { label, value } (label)}
-				<tr>
-					<th>{label}</th>
-					<td>{value}</td>
-				</tr>
+	<p class="note">No metadata available.</p>
+{:else if hasRows}
+	<dl class="meta tnum">
+		<dt class="grp">Audio</dt>
+		{#each audioRows as { label, value } (label)}
+			<div class="row">
+				<dt>{label}</dt>
+				<dd>{value}</dd>
+			</div>
+		{/each}
+		{#if tagRows.length > 0}
+			<dt class="grp">Tags</dt>
+			{#each tagRows as { label, value } (label)}
+				<div class="row">
+					<dt>{label}</dt>
+					<dd>{value}</dd>
+				</div>
 			{/each}
-		</tbody>
-	</table>
+		{/if}
+		{#if apeRows.length > 0}
+			<dt class="grp">APEv2</dt>
+			{#each apeRows as { label, value } (label)}
+				<div class="row">
+					<dt>{label}</dt>
+					<dd>{value}</dd>
+				</div>
+			{/each}
+		{/if}
+	</dl>
 {/if}

@@ -1,46 +1,47 @@
 <script lang="ts">
-	import TrackRow from './TrackRow.svelte';
-
-	interface Track {
-		slug: string;
-		name: string;
-		artistSlug: string;
-		artistName: string;
-		albumSlug: string;
-		albumName: string;
-		isCompilation: boolean;
-		audioUrl: string;
-		number: number | null;
-	}
+	import { resolve } from '$app/paths';
+	import type { Track } from '@fauxfetus/data-generator';
+	import { getPlayerContext } from '$lib/context/player';
 
 	interface Props {
 		tracks: Track[];
-		shouldUseIndexAsTrackNumber?: boolean;
-		shouldDisableRadioMode?: boolean;
+		/** Hide the guest-artist link inside compilation albums. */
 		shouldHideArtist?: boolean;
 	}
 
-	let {
-		tracks,
-		shouldUseIndexAsTrackNumber = false,
-		shouldDisableRadioMode = false,
-		shouldHideArtist = false
-	}: Props = $props();
+	let { tracks, shouldHideArtist = false }: Props = $props();
+
+	const playerStore = getPlayerContext();
+
+	// Which row the persistent pill is currently playing, if any. audioUrl
+	// is unique per track across the catalog, so it identifies rows even
+	// after the player has moved on to a different playlist (e.g. radio).
+	const currentAudioUrl = $derived(
+		$playerStore.currentTrackIndex == null
+			? undefined
+			: $playerStore.playlist[$playerStore.currentTrackIndex]?.audioUrl
+	);
+
+	function formatTrackNumber(number: number | null, index: number): string {
+		const value = number ?? index + 1;
+		return value < 10 ? `0${value}` : String(value);
+	}
 </script>
 
-<section>
-	<h2>Tracks</h2>
-
-	<ol>
-		{#each tracks as track, index (track.audioUrl)}
-			<TrackRow
-				{track}
-				{index}
-				playlist={tracks}
-				{shouldUseIndexAsTrackNumber}
-				{shouldDisableRadioMode}
-				{shouldHideArtist}
-			/>
-		{/each}
-	</ol>
-</section>
+<ol class="tracks tnum">
+	{#each tracks as track, index (track.audioUrl)}
+		{@const playing = track.audioUrl === currentAudioUrl}
+		<li class:playing>
+			<a href={resolve(`/artists/${track.artistSlug}/${track.albumSlug}/${track.slug}`)}>
+				<span class="no tnum dim">{formatTrackNumber(track.number, index)}</span>
+				<span class="trname">{track.name}</span>
+				{#if track.isCompilation && !shouldHideArtist}
+					<span class="by">{track.artistName}</span>
+				{/if}
+				{#if playing}
+					<span class="cap now">playing</span>
+				{/if}
+			</a>
+		</li>
+	{/each}
+</ol>
