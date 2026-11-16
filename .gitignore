@@ -17,6 +17,8 @@ Thumbs.db
 .env.*
 !.env.example
 !.env.test
+# Local tool config with credentials (kept on disk, never committed)
+.mcp.json
 
 # Vite
 vite.config.js.timestamp-*
