@@ -75,7 +75,10 @@
 	<h1>{data.album.name}</h1>
 	<p class="byline">
 		<span class="who">by <a href={resolve(artistHref)}>{data.album.artistName}</a></span>
-		<a class="dl" href={asset(zipPath)} download rel="nofollow">download zip ↓</a>
+		<!-- rel="external" is load-bearing: the dl/ sidecar is server-only PHP at
+			fauxfetus.net/dl/ (404s during prerender); SvelteKit's crawler skips
+			rel="external" links, which silences the [404] GET build spam. -->
+		<a class="dl" href={asset(zipPath)} download rel="nofollow external">download zip ↓</a>
 	</p>
 </div>
 
