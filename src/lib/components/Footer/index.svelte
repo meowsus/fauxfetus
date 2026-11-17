@@ -2,15 +2,24 @@
 	import { asset } from '$app/paths';
 
 	import InstallAppButton from './InstallAppButton.svelte';
+
+	/* The address is assembled only at click time so it never ships as a
+	 * static `mailto:` string that spambots can scrape (the approach main
+	 * used). */
+	function handleEmail(): void {
+		const u = 'curt';
+		const d = 'fauxfetus.net';
+		window.location.href = `mailto:${u}@${d}`;
+	}
 </script>
 
 <footer>
 	<nav aria-label="Footer">
 		<ul>
 			<li><a href="https://github.com/meowsus/fauxfetus">GitHub</a></li>
-			<li><InstallAppButton /></li>
+			<InstallAppButton />
 			<li><a href={asset('/sitemap.xml')}>Sitemap</a></li>
-			<li><a href="mailto:curt@fauxfetus.net">Email</a></li>
+			<li><button type="button" onclick={handleEmail}>Email</button></li>
 		</ul>
 	</nav>
 </footer>
@@ -33,7 +42,8 @@
 		padding: 0;
 	}
 
-	nav a {
+	nav a,
+	nav button {
 		color: var(--dim);
 		font-size: 0.7rem;
 		font-weight: 500;
@@ -43,7 +53,11 @@
 		padding: 0.55em 0;
 	}
 
-	nav a:hover {
+	/* the Email “link” is really a button (address is click-assembled);
+	 * app.css's global button reset already strips the UA chrome */
+
+	nav a:hover,
+	nav button:hover {
 		color: var(--violet);
 	}
 </style>

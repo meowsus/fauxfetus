@@ -38,7 +38,10 @@
 </script>
 
 {#if showInstall}
-	<button type="button" onclick={handleInstallClick}>Install App</button>
+	<!-- renders its own <li> (sibling of the footer's link items), so a
+	 * hidden install button leaves no empty list item and the flex gap
+	 * closes up around it -->
+	<li><button type="button" onclick={handleInstallClick}>Install App</button></li>
 {/if}
 
 <style>

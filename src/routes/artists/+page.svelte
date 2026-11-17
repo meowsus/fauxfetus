@@ -47,8 +47,7 @@
 <div class="mast">
 	<h1>artists</h1>
 	<p class="sub">
-		<b>{formatCount(data.artistCount)}</b> artists · <b>{formatCount(data.albumCount)}</b> albums ·
-		<b>{formatCount(data.trackCount)}</b> tracks
+		<b>{formatCount(data.artistCount)}</b> artists · <b>{formatCount(data.albumCount)}</b> albums
 	</p>
 </div>
 

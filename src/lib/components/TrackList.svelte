@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { Track } from '@fauxfetus/data-generator';
-	import { getPlayerContext } from '$lib/context/player';
+	import { getPlayerContext, getPlayerActions } from '$lib/context/player';
 
 	interface Props {
 		tracks: Track[];
@@ -12,6 +12,7 @@
 	let { tracks, shouldHideArtist = false }: Props = $props();
 
 	const playerStore = getPlayerContext();
+	const actionsStore = getPlayerActions();
 
 	// Which row the persistent pill is currently playing, if any. audioUrl
 	// is unique per track across the catalog, so it identifies rows even
@@ -38,10 +39,15 @@
 				{#if track.isCompilation && !shouldHideArtist}
 					<span class="by">{track.artistName}</span>
 				{/if}
-				{#if playing}
-					<span class="cap now">playing</span>
-				{/if}
 			</a>
+			<button
+				type="button"
+				class="cap dim"
+				aria-label={`Play ${track.name} by ${track.artistName}`}
+				onclick={() => $actionsStore.loadPlaylist(tracks, index, { isRadio: false })}
+			>
+				{playing ? 'playing' : 'play'}
+			</button>
 		</li>
 	{/each}
 </ol>

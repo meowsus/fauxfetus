@@ -36,11 +36,17 @@
 		return currentTrackIndex != null ? playlist[currentTrackIndex] : null;
 	});
 
-	/** Queue = everything after the playing track (pill panel list). */
-	const queue = $derived.by(() => {
-		const { playlist, currentTrackIndex } = $playerStore;
-		return currentTrackIndex != null ? playlist.slice(currentTrackIndex + 1) : [];
-	});
+	/** Queue = the full playlist; the playing row is marked in place, so
+	 * advancing a track moves one badge instead of reflowing the list. */
+	const playlist = $derived($playerStore.playlist);
+	const currentIndex = $derived($playerStore.currentTrackIndex);
+
+	/** The queue's scroller: anchor for the scroll-current-into-view effect. */
+	let scrollEl: HTMLDivElement | null = $state(null);
+	/** The plate itself (queue + bar): the click-out boundary for the
+	 * queue drawer — the bar's controls stay inside it, so playing or
+	 * scrolling the pill never shuts the list. */
+	let plateEl: HTMLElement | null = $state(null);
 
 	/** Chord-line progress (0–100) feeding the pill's gradient hairline —
 	 * the one motion moment in this design, and it tracks real audio time. */
@@ -274,7 +280,92 @@
 		}
 	});
 
+	// Park the queue on open and on every track change: the next track
+	// becomes the top row of the list, a little air under the head's
+	// border. The target is assigned in the scroller's own content space —
+	// (row viewport top − scroller viewport top) + scrollTop is the same
+	// number whether the drawer is a sliver mid-slide or fully open — so
+	// it lands exactly at any box state. How it moves there depends on
+	// the trigger: opening the drawer snaps instantly (orientation before
+	// the slide reveals it); a track ADVANCE glides — ease-out, ~200ms
+	// for one row, capped for far jumps; any other rerun re-asserts the
+	// park silently; and the user's own wheel/touch cancels a glide
+	// rather than fighting the hand.
+	let parkPrevOpen = false;
+	let parkPrevIdx = -1;
+
+	$effect(() => {
+		const q = scrollEl;
+		if (!q || !queueOpen) {
+			// closed (or not mounted): the next open must classify as an
+			// open, not resume mid-list as an advance
+			parkPrevOpen = false;
+			parkPrevIdx = currentIndex ?? -1;
+			return;
+		}
+		const idx = currentIndex;
+		if (idx == null || idx < 0 || idx >= playlist.length) return;
+
+		// target: the fresh set starts at the top (row 1 under the head);
+		// otherwise the track after the playing one — the last track rows
+		// itself up. Exactly at the row's top edge, no sliver of the
+		// playing row above; the air under the head is the head's margin
+		// plus the row's own padding, not scroll math.
+		let target = 0;
+		if (idx > 0) {
+			const rows = q.querySelectorAll('ol > li');
+			const row = rows[Math.min(idx + 1, playlist.length - 1)] as HTMLElement | undefined;
+			if (!row) return;
+			const rowTop = row.getBoundingClientRect().top - q.getBoundingClientRect().top + q.scrollTop;
+			target = Math.max(0, rowTop);
+		}
+
+		const opened = !parkPrevOpen;
+		const advanced = !opened && idx !== parkPrevIdx;
+		parkPrevOpen = true;
+		parkPrevIdx = idx;
+
+		// instant when opening, on unrelated reruns, and under reduced motion
+		if (!advanced || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+			q.scrollTop = target;
+			return;
+		}
+
+		// glide: ease-out cubic, duration scaled by distance (one row ≈
+		// 200ms) and capped for far jumps
+		const from = q.scrollTop;
+		const delta = target - from;
+		if (Math.abs(delta) < 1) return;
+		const dur = Math.min(400, 180 + Math.abs(delta) * 0.25);
+		const t0 = performance.now();
+		let raf = 0;
+		const stop = () => cancelAnimationFrame(raf);
+		const step = (now: number) => {
+			const t = Math.min(1, (now - t0) / dur);
+			q.scrollTop = from + delta * (1 - Math.pow(1 - t, 3)); // ease-out cubic
+			if (t < 1) raf = requestAnimationFrame(step);
+		};
+		raf = requestAnimationFrame(step);
+		q.addEventListener('wheel', stop, { passive: true });
+		q.addEventListener('touchstart', stop, { passive: true });
+		return () => {
+			cancelAnimationFrame(raf);
+			q.removeEventListener('wheel', stop);
+			q.removeEventListener('touchstart', stop);
+		};
+	});
+
 	// ── UI event handlers ──────────────────────────────────────────────
+	/** Click-out dismissal: a pointerdown that lands outside the plate
+	 * closes the queue drawer (any pointer, so a tap clears it on touch
+	 * too). Inside the plate the event is ignored — the drawer only
+	 * yields to hands that were never in it. */
+	function handleDocumentPointerdown(event: PointerEvent): void {
+		if (!queueOpen) return;
+		if (plateEl && event.target instanceof Node && plateEl.contains(event.target)) return;
+		queueOpen = false;
+	}
+
 	// Radio entry points are startRadio() in $lib/helpers, invoked from the
 	// navbar Radio button; the in-player "Radio Mode" button was removed
 	// in the IA rework (one global trigger, available on every page).
@@ -286,123 +377,136 @@
 	}}
 />
 
+<svelte:document onpointerdown={handleDocumentPointerdown} />
+
 {#if currentTrack}
 	<div class="dock">
-		{#if queueOpen}
-			<div class="queue" id="player-queue" aria-label="Up next">
-				<p class="q-head cap">Up next&nbsp;<span class="tnum">{queue.length}</span></p>
-				{#if queue.length === 0}
-					<p class="q-note">
-						{$playerStore.isRadio
-							? 'Queue empty — a fresh set follows this track.'
-							: 'Last track of the set.'}
+		<aside
+			class="player"
+			aria-label="Now playing"
+			class:expanded={queueOpen}
+			style="--p: {progress}%"
+			bind:this={plateEl}
+		>
+			<div class="queue-slot">
+				<div class="queue" id="player-queue" role="region" aria-label="Queue">
+					<p class="q-head cap">
+						Queue&nbsp;<span class="tnum">{(currentIndex ?? 0) + 1} / {playlist.length}</span>
 					</p>
-				{:else}
-					<ol>
-						{#each queue as qTrack, i (getAudioUrl(qTrack))}
-							<li>
-								<button
-									type="button"
-									onclick={() =>
-										$playerActionsStore.jumpTo($playerStore.playlist.length - queue.length + i)}
-								>
-									<span class="no tnum">{i + 1}</span>
-									<span class="qmain">
-										<span class="qt">{qTrack.name}</span>
-										<span class="qx">{qTrack.artistName} · {qTrack.albumName}</span>
-									</span>
-								</button>
-							</li>
-						{/each}
-					</ol>
-				{/if}
+					<div class="queue-scroll" bind:this={scrollEl}>
+						<ol>
+							{#each playlist as qTrack, i (getAudioUrl(qTrack))}
+								{@const current = i === currentIndex}
+								{@const upcoming = i === (currentIndex ?? -1) + 1}
+								<li class:current class:past={!current && i < (currentIndex ?? -1)}>
+									<button
+										type="button"
+										aria-current={current ? 'true' : undefined}
+										onclick={() => $playerActionsStore.jumpTo(i)}
+									>
+										<span class="no tnum">{i + 1}</span>
+										<span class="qmain">
+											<span class="qt">{qTrack.name}</span>
+											<span class="qx">{qTrack.artistName} · {qTrack.albumName}</span>
+										</span>
+										{#if current}
+											<span class="cap now">playing</span>
+										{:else if upcoming}
+											<span class="cap next">next up</span>
+										{/if}
+									</button>
+								</li>
+							{/each}
+						</ol>
+					</div>
+				</div>
 			</div>
-		{/if}
-		<aside class="player" aria-label="Now playing" style="--p: {progress}%">
-			<p class="track">
-				<a
-					href={resolve(
-						`/artists/${currentTrack.artistSlug}/${currentTrack.albumSlug}/${currentTrack.slug}`
-					)}>{currentTrack.name}</a
-				>
-				<span> — {currentTrack.artistName} · {currentTrack.albumName}</span>
-			</p>
+			<div class="bar">
+				<p class="track">
+					<a
+						href={resolve(
+							`/artists/${currentTrack.artistSlug}/${currentTrack.albumSlug}/${currentTrack.slug}`
+						)}>{currentTrack.name}</a
+					>
+					<span> — {currentTrack.artistName} · {currentTrack.albumName}</span>
+				</p>
 
-			<span class="time tnum">{timeText}</span>
+				<span class="time tnum">{timeText}</span>
 
-			<div class="glyphs">
-				<button
-					type="button"
-					class="glyph chev"
-					aria-label={queueOpen ? 'Hide queue' : 'Show queue'}
-					aria-expanded={queueOpen}
-					aria-controls="player-queue"
-					onclick={() => (queueOpen = !queueOpen)}
-				>
-					<svg
-						width="16"
-						height="16"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.8"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true"><path d="m6 14 6-6 6 6" /></svg
+				<div class="glyphs">
+					<button
+						type="button"
+						class="glyph chev"
+						aria-label={queueOpen ? 'Hide queue' : 'Show queue'}
+						aria-expanded={queueOpen}
+						aria-controls="player-queue"
+						onclick={() => (queueOpen = !queueOpen)}
 					>
-				</button>
-				<button
-					type="button"
-					class="glyph"
-					aria-label="Previous track"
-					onclick={() => $playerActionsStore.prev()}
-				>
-					<svg
-						width="16"
-						height="16"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.8"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true"><path d="m13 6-5 6 5 6M19 6l-5 6 5 6" /></svg
-					>
-				</button>
-				<button
-					type="button"
-					class="glyph play"
-					aria-label={isPlaying ? 'Pause' : 'Play'}
-					onclick={() => $playerActionsStore.togglePlay()}
-				>
-					{#if isPlaying}
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-							><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z" /></svg
+						<svg
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.8"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"><path d="m6 14 6-6 6 6" /></svg
 						>
-					{:else}
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-							><path d="M8 5.4v13.2L19.5 12z" /></svg
-						>
-					{/if}
-				</button>
-				<button
-					type="button"
-					class="glyph"
-					aria-label="Next track"
-					onclick={() => $playerActionsStore.next()}
-				>
-					<svg
-						width="16"
-						height="16"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.8"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true"><path d="m11 6 5 6-5 6M5 6l5 6-5 6" /></svg
+					</button>
+					<button
+						type="button"
+						class="glyph"
+						aria-label="Previous track"
+						onclick={() => $playerActionsStore.prev()}
 					>
-				</button>
+						<svg
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.8"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"><path d="m13 6-5 6 5 6M19 6l-5 6 5 6" /></svg
+						>
+					</button>
+					<button
+						type="button"
+						class="glyph play"
+						aria-label={isPlaying ? 'Pause' : 'Play'}
+						onclick={() => $playerActionsStore.togglePlay()}
+					>
+						{#if isPlaying}
+							<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+								><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z" /></svg
+							>
+						{:else}
+							<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+								><path d="M8 5.4v13.2L19.5 12z" /></svg
+							>
+						{/if}
+					</button>
+					<button
+						type="button"
+						class="glyph"
+						aria-label="Next track"
+						onclick={() => $playerActionsStore.next()}
+					>
+						<svg
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.8"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"><path d="m11 6 5 6-5 6M5 6l5 6-5 6" /></svg
+						>
+					</button>
+				</div>
 			</div>
 		</aside>
 	</div>
@@ -417,31 +521,48 @@
 		inset-inline: 0;
 		margin-inline: auto;
 		width: min(calc(100% - 2.5rem), 33rem);
-		display: flex;
-		flex-direction: column;
-		gap: 0.55rem;
 	}
 
+	/* The pill is the whole player: collapsed it is the familiar capsule;
+	 * expanded it grows upward into a plate with the queue riding inside
+	 * and the bar row holding the capsule bottom in place. */
 	.player {
+		display: flex;
+		flex-direction: column;
+		background: rgb(19 20 27 / 0.93);
+		backdrop-filter: blur(18px);
+		border: 1px solid rgb(236 233 244 / 0.24);
+		/* one radius for every corner and every state — the bar half-height
+		 * (2.16rem = (48px glyph + 2 × .6rem padding + 2px border) / 2):
+		 * collapsed it is the capsule curve itself, expanded it matches the
+		 * plate's bottom, and because no value ever changes, no corner
+		 * morphs while the drawer slides */
+		border-radius: 2.16rem;
+		box-shadow: 0 12px 32px rgb(0 0 0 / 0.5);
+	}
+
+	.bar {
 		position: relative;
 		display: flex;
 		align-items: center;
 		gap: 0.7rem;
-		background: rgb(19 20 27 / 0.93);
-		backdrop-filter: blur(18px);
-		border: 1px solid rgb(236 233 244 / 0.24);
-		border-radius: 999px;
 		padding: 0.6rem 0.7rem 0.6rem 1.1rem;
-		box-shadow: 0 12px 32px rgb(0 0 0 / 0.5);
 	}
 
-	/* the chord line: real playback progress, not a decorative gradient */
-	.player::before {
+	/* the chord line: real playback progress, not a decorative gradient —
+	 * drawn on the bar's top edge, i.e. the queue seam when expanded */
+	/* progress: the plate's BOTTOM border is the indicator. Anchored to
+	 * the plate itself — not the bar's top edge — it reads at the same
+	 * place collapsed and expanded; the old seam chord jumped when the
+	 * queue opened because its anchor moved with the state. The plate's
+	 * ends are curves, so the chord spans between the 2.16rem arcs and
+	 * terminates at the tangents. */
+	.player::after {
 		content: '';
 		position: absolute;
-		top: -1px;
-		left: 12%;
-		right: 12%;
+		bottom: -1px;
+		left: 2.16rem;
+		right: 2.16rem;
 		height: 1px;
 		background: linear-gradient(
 			to right,
@@ -517,46 +638,83 @@
 		color: #0e0f13;
 	}
 
-	/* ── queue panel: stacked dock, right-aligned drawer over the pill ── */
-	.queue {
-		align-self: flex-end;
-		width: min(100%, 22rem);
-		max-height: min(17.5rem, 44vh);
-		overflow-y: auto;
-		overscroll-behavior: contain;
-		background: rgb(19 20 27 / 0.93);
-		backdrop-filter: blur(18px);
-		border: 1px solid rgb(236 233 244 / 0.24);
-		border-radius: 0.9rem;
-		box-shadow: 0 12px 32px rgb(0 0 0 / 0.5);
-		padding: 0.65rem 0 0.4rem;
-		animation: queue-rise 0.18s ease-out;
+	/* ── queue region: an in-flow section of the expanded plate ──
+	 * the drawer slides up out of the pill: grid 0fr ↔ 1fr animates the
+	 * region's real height (content of any length, no max-height wait),
+	 * the clip keeps it growing out of the seam, and the bar row — the
+	 * pill the user already knows — never moves or reshapes */
+	.queue-slot {
+		display: grid;
+		grid-template-rows: 0fr;
+		transition: grid-template-rows 0.18s cubic-bezier(0.33, 1, 0.68, 1);
 	}
 
-	@keyframes queue-rise {
-		from {
-			opacity: 0;
-			transform: translateY(0.4rem);
-		}
+	.player.expanded .queue-slot {
+		grid-template-rows: 1fr;
+	}
+
+	.queue-slot .queue {
+		min-height: 0;
+		/* out of tab order while collapsed; the delay keeps it visible
+		 * through the close slide, then hides it */
+		visibility: hidden;
+		transition: visibility 0s linear 0.18s;
+	}
+
+	.player.expanded .queue-slot .queue {
+		visibility: visible;
+		transition-delay: 0s;
+	}
+
+	.queue {
+		display: flex;
+		flex-direction: column;
+		max-height: min(20rem, 46vh);
+		/* clips the drawer mid-slide; the head stays pinned above the port */
+		overflow: hidden;
+		/* spacing lives on the head/list, not here: under the 0fr slide the
+		 * grid item is clamped by min-height: 0, but padding and border live
+		 * outside that clamp — 18px of padding kept the collapsed pill ~20px
+		 * too tall, flattening its capsule ends into a ledge */
+		border-bottom: 1px solid var(--hair);
+	}
+
+	.queue-scroll {
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow-y: auto;
+		overflow-x: hidden;
+		overscroll-behavior: contain;
+		/* browser chrome in the Mothwing voice — a dim thumb on glass */
+		scrollbar-width: thin;
+		scrollbar-color: rgb(236 233 244 / 0.3) transparent;
+		/* the scrollport starts below the fixed head, inside the straight
+		 * glass — the scrollbar and its arrow buttons never cross the plate's
+		 * top curve */
 	}
 
 	.q-head {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
-		padding: 0 1rem 0.45rem;
+		padding: 0.75rem 1.1rem 0.45rem;
 		color: var(--dim);
 		border-bottom: 1px solid var(--hair);
-		margin-bottom: 0.2rem;
+		/* the park lands the next row's top edge at the port top, so this
+		 * margin is all the air between the head's border and its number */
+		margin-bottom: 0.5rem;
 	}
 
 	.queue ol {
 		list-style: none;
+		padding: 0 0 0.4rem;
 	}
 
 	.queue li button {
 		display: grid;
-		grid-template-columns: 1.7rem 1fr;
+		/* minmax(0, 1fr): plain 1fr floors the second column at min-content,
+		 * fighting the ellipsis and leaking a horizontal scrollbar */
+		grid-template-columns: 1.7rem minmax(0, 1fr) auto;
 		column-gap: 0.55rem;
 		align-items: baseline;
 		width: 100%;
@@ -576,6 +734,7 @@
 	}
 
 	.queue li .qt {
+		display: block;
 		grid-column: 2;
 		line-height: 1.3;
 		white-space: nowrap;
@@ -584,6 +743,7 @@
 	}
 
 	.queue li .qx {
+		display: block;
 		grid-column: 2;
 		font-weight: 300;
 		font-size: 0.8rem;
@@ -591,6 +751,36 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+
+	/* the playing row: violet number + the caps badge at the title line's
+	 * end — the same li.playing / .now grammar as the album tracklists */
+	.queue li .now {
+		grid-column: 3;
+		grid-row: 1;
+		align-self: center;
+		color: var(--violet);
+		white-space: nowrap;
+		padding-left: 0.7rem;
+	}
+
+	/* the row that follows: same shelf on the title line, quiet dim caps */
+	.queue li .next {
+		grid-column: 3;
+		grid-row: 1;
+		align-self: center;
+		color: var(--dim);
+		white-space: nowrap;
+		padding-left: 0.7rem;
+	}
+
+	.queue li.current .no {
+		color: var(--violet);
+	}
+
+	/* already-played rows keep their place in the set, quietly */
+	.queue li.past .qt {
+		color: var(--dim);
 	}
 
 	/* invert signature, same as the nav */
@@ -601,22 +791,21 @@
 	}
 
 	.queue li button:hover .no,
+	.queue li button:hover .now,
+	.queue li button:hover .next,
 	.queue li button:hover .qx,
 	.queue li button:focus-visible .no,
+	.queue li button:focus-visible .now,
+	.queue li button:focus-visible .next,
 	.queue li button:focus-visible .qx {
 		color: rgb(14 15 19 / 0.6);
 	}
 
-	.q-note {
-		padding: 0.55rem 1rem 0.6rem;
-		font-weight: 300;
-		font-size: 0.95rem;
-		color: var(--dim);
-	}
-
 	@media (prefers-reduced-motion: reduce) {
-		.queue {
-			animation: none;
+		.queue-slot,
+		.queue,
+		.player {
+			transition: none;
 		}
 
 		.glyph.chev svg {

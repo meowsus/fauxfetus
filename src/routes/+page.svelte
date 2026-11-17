@@ -95,9 +95,6 @@
 	{:else}
 		<p>Nothing new announced. Check the news for the latest.</p>
 	{/if}
-	<p class="sec-foot">
-		<a class="cap dim" href={resolve('/news/')}>more context in the news →</a>
-	</p>
 </section>
 
 <section aria-labelledby="news-teaser" class="news">

@@ -45,6 +45,9 @@
 	--violet: #a79aff;
 	--acid: #c8f449;
 	--hair: rgba(236, 233, 244, 0.14);
+	/* page-shell width; breathes wider at each breakpoint (set on body
+	 * below, consumed wherever a component needs the shell's measure) */
+	--shell: 36rem;
 }
 
 * {
@@ -64,7 +67,7 @@ body {
 	font-family: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
 	font-size: 1rem;
 	line-height: 1.65;
-	max-width: 36rem;
+	max-width: var(--shell);
 	margin-inline: auto;
 	padding: 1.4rem 1.25rem calc(8.5rem + env(safe-area-inset-bottom));
 }
@@ -144,15 +147,21 @@ button {
 }
 
 @media (min-width: 48em) {
+	:root {
+		--shell: 44rem;
+	}
+
 	body {
-		max-width: 44rem;
 		padding-top: 2rem;
 	}
 }
 
 @media (min-width: 64em) {
+	:root {
+		--shell: 72rem;
+	}
+
 	body {
-		max-width: 72rem;
 		padding-inline: 3rem;
 		padding-block: 2.5rem calc(9rem + env(safe-area-inset-bottom));
 	}
@@ -549,11 +558,15 @@ nav[aria-label='Breadcrumb'] {
 	margin-top: 1.8rem;
 }
 
+/* One line, always: chevron separators make it read as a trail, and long
+   crumbs ellipsize instead of wrapping into a second line at mobile. The
+   first two crumbs (Home and the section term) hold their ground; the
+   path names take the pressure. The current crumb may ellipsize too — its
+   full text is the masthead directly below. */
 nav[aria-label='Breadcrumb'] ul {
 	list-style: none;
 	display: flex;
-	flex-wrap: wrap;
-	gap: 0.3rem 0.7rem;
+	align-items: baseline;
 	padding: 0;
 	margin: 0;
 	font-size: 0.72rem;
@@ -561,6 +574,32 @@ nav[aria-label='Breadcrumb'] ul {
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
 	color: var(--dim);
+}
+
+nav[aria-label='Breadcrumb'] li {
+	display: flex;
+	align-items: baseline;
+	min-width: 0;
+}
+
+nav[aria-label='Breadcrumb'] li:first-child,
+nav[aria-label='Breadcrumb'] li:nth-child(2) {
+	min-width: max-content;
+}
+
+nav[aria-label='Breadcrumb'] li:not(:first-child)::before {
+	content: '›';
+	flex: none;
+	margin-inline: 0.85rem;
+}
+
+nav[aria-label='Breadcrumb'] a,
+nav[aria-label='Breadcrumb'] span {
+	display: block;
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 nav[aria-label='Breadcrumb'] a {
@@ -653,11 +692,13 @@ ul.names li + li {
 
 /* ── detail pages grammar — album / artist / track pages
    (mockups/6-album-detail.html, 10-artist-detail.html, 11-track-detail.html).
-   The breadcrumb voice carries the trail; the kicker carries counts and
-   downloads; rows and sidecar facts stay in the archive grammar. Per-page
-   masthead pacing lives in the pages' scoped styles. ── */
+   The breadcrumb voice carries the trail; the masthead carries the counts
+   (artist detail, index style) or the byline (album/track detail: the
+   “by …” credit left, the download right); rows and sidecar facts stay in
+   the archive grammar. ── */
 
-/* context line above the masthead: up-one-level link, counts, downloads */
+/* context line above the masthead — the news post's parent link + date
+   (detail pages carry credits and downloads in the byline instead) */
 .kicker {
 	display: flex;
 	align-items: baseline;
@@ -690,6 +731,39 @@ a.dl:hover {
 	color: #0e0f13;
 }
 
+/* credit line beneath a detail masthead: the “by …” credit left, the
+   download right (album → zip, track → mp3). Same weights as the index
+   masthead's sub line: dim lead-in, ink-lifted name. The download wears
+   the interaction color at body size so the two clusters read as one
+   row — small tracked caps next to body text never sat level. */
+.byline {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 0.5rem 1rem;
+	margin-top: 1.1rem;
+}
+
+.byline .who {
+	color: var(--dim);
+	font-weight: 300;
+}
+
+.byline .who a {
+	color: var(--ink);
+	font-size: 1.08rem;
+}
+
+.byline a.dl {
+	font-size: 1rem;
+	font-weight: 300;
+	white-space: nowrap;
+	padding-inline: 0.14em;
+	margin-inline: -0.14em;
+	padding-block: 0.35em;
+}
+
 /* numbered tracklist: hairline rows, serif titles, honest numbers */
 ol.tracks {
 	list-style: none;
@@ -699,6 +773,8 @@ ol.tracks {
 
 ol.tracks > li {
 	border-top: 1px solid var(--hair);
+	display: flex;
+	align-items: baseline;
 }
 
 ol.tracks > li:last-child {
@@ -706,6 +782,7 @@ ol.tracks > li:last-child {
 }
 
 ol.tracks a {
+	flex: 1;
 	display: flex;
 	align-items: baseline;
 	gap: 1.1rem;
@@ -735,9 +812,28 @@ ol.tracks li.playing .no {
 	color: var(--violet);
 }
 
-ol.tracks li.playing .now {
-	margin-left: auto;
-	padding-block: 0.35em;
+/* :not(:hover) is load-bearing: the state can change while the pointer is
+   held over the button (click a row → it becomes the playing row), and the
+   hover inversion must keep winning over the playing violet, else the
+   violet label sits on the violet hover ground, invisible. */
+ol.tracks li.playing button:not(:hover) {
+	color: var(--violet);
+}
+
+/* row invocation: a caps play stamp rides each row's right edge; for the row
+   the pill is on, the same slot reads its status ('playing'). Tapping loads
+   the album queue at that row — deliberately isRadio:false (an explicit pick
+   ends radio auto-continue, matching the track detail page). */
+ol.tracks button {
+	align-self: stretch;
+	display: grid;
+	place-items: center;
+	padding-inline: 0.5rem;
+}
+
+ol.tracks button:hover {
+	background: var(--violet);
+	color: #0e0f13;
 }
 
 /* album lists on the artist page: em-dash-led serif index */
@@ -850,7 +946,20 @@ dl.meta dd {
 	text-align: right;
 }
 
-/* quiet way back at the foot of a detail page */
+/* the Tags group's linked rows (Artist, Album): a quiet prose-style
+   underline so data links are discoverable; violet on approach */
+dl.meta dd a {
+	text-decoration: underline;
+	text-decoration-color: var(--hair);
+	text-underline-offset: 0.2em;
+}
+
+dl.meta dd a:hover {
+	color: var(--violet);
+	text-decoration-color: var(--violet);
+}
+
+/* the error page's escape hatch — the one "way back" without a breadcrumb */
 .endcap {
 	margin-top: 4.5rem;
 }

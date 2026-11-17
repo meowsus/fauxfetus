@@ -100,10 +100,6 @@
 	</section>
 {/if}
 
-<p class="endcap">
-	<a class="cap" href={resolve('/news/')}>← All news</a>
-</p>
-
 <style>
 	section {
 		margin-top: 4.5rem;

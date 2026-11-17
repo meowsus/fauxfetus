@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
 	import type { PageData } from './$types';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import AlbumList from '$lib/components/AlbumList.svelte';
@@ -78,21 +77,14 @@
 
 <Breadcrumb items={breadcrumbItems} />
 
-<div class="kicker tnum">
-	<a class="cap dim" href={resolve('/artists/')}>Artists</a>
-	<div class="right">
-		<span class="cap dim">
-			<span class="tnum">{formatCount(albumCount)}</span>
-			{albumCount === 1 ? 'album' : 'albums'}
-			·
-			<span class="tnum">{formatCount(trackCount)}</span>
-			{trackCount === 1 ? 'track' : 'tracks'}
-		</span>
-	</div>
-</div>
-
 <div class="mast">
 	<h1>{data.artist.name}</h1>
+	<p class="sub">
+		<b>{formatCount(albumCount)}</b>
+		{albumCount === 1 ? 'album' : 'albums'} ·
+		<b>{formatCount(trackCount)}</b>
+		{trackCount === 1 ? 'track' : 'tracks'}
+	</p>
 </div>
 
 <section aria-labelledby="h-albums">
@@ -101,18 +93,20 @@
 </section>
 
 {#if data.recommendedArtists.length > 0}
-	<section aria-labelledby="h-related">
-		<h2 class="lbl" id="h-related">Related artists</h2>
+	<section class="afterthought" aria-labelledby="h-related">
+		<h2 class="cap dim" id="h-related">Related artists</h2>
 		<RelatedArtistList artists={data.recommendedArtists} />
 	</section>
 {/if}
 
-<p class="endcap">
-	<a class="cap" href={resolve('/artists/')}>← All artists</a>
-</p>
-
 <style>
 	section {
 		margin-top: 4.5rem;
+	}
+
+	/* the related line is an afterthought: it tucks in sooner than the
+	   album ledger, and its label wears the metadata voice, not the .lbl */
+	.afterthought {
+		margin-top: 3.2rem;
 	}
 </style>

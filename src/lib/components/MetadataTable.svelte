@@ -1,11 +1,29 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { PrunedMetadata } from '@fauxfetus/data-generator';
+
+	/** Catalog routes behind the Tags group's linked rows (same shapes the
+	 *  breadcrumb items use). */
+	type CatalogPath = `/artists/${string}` | `/artists/${string}/${string}`;
+
+	interface TagRow {
+		label: string;
+		value: string;
+		href?: CatalogPath;
+	}
 
 	interface Props {
 		metadata: PrunedMetadata | undefined;
+		/** Catalog routes for the Tags group's Artist and Album rows. The text
+		 *  stays the file's embedded value — which can drift from the catalog's
+		 *  names — but the link leads to the real pages. */
+		links?: { artist?: CatalogPath; album?: CatalogPath };
+		/** Catalog placement label ("7 of 12") for the Tags group's Track row;
+		 *  the embedded tag numbering only wins when this is not provided. */
+		trackLabel?: string;
 	}
 
-	let { metadata }: Props = $props();
+	let { metadata, links = {}, trackLabel }: Props = $props();
 
 	function formatDuration(seconds: number): string {
 		const m = Math.floor(seconds / 60);
@@ -45,26 +63,33 @@
 			: []
 	);
 
-	/** Title/artist/album/track tag values — the "Tags" group. Plain text on
-	    purpose: these are the file's embedded values, which can drift from the
-	    catalog's names. */
-	const tagRows = $derived(
+	/** Title/artist/album/track tag values — the "Tags" group. Text values
+	    are the file's embedded ones, which can drift from the catalog's
+	    names; Artist and Album links resolve through the catalog, and the
+	    Track row prefers the caller's catalog "X of Y" placement label. */
+	const tagRows: TagRow[] = $derived(
 		metadata
 			? [
 					...(metadata.common.title ? [{ label: 'Title', value: metadata.common.title }] : []),
-					...(metadata.common.artist ? [{ label: 'Artist', value: metadata.common.artist }] : []),
-					...(metadata.common.album ? [{ label: 'Album', value: metadata.common.album }] : []),
-					...(metadata.common.track?.no != null
-						? [
-								{
-									label: 'Track',
-									value:
-										metadata.common.track.of != null
-											? `${metadata.common.track.no} / ${metadata.common.track.of}`
-											: String(metadata.common.track.no)
-								}
-							]
+					...(metadata.common.artist
+						? [{ label: 'Artist', value: metadata.common.artist, href: links.artist }]
 						: []),
+					...(metadata.common.album
+						? [{ label: 'Album', value: metadata.common.album, href: links.album }]
+						: []),
+					...(trackLabel
+						? [{ label: 'Track', value: trackLabel }]
+						: metadata.common.track?.no != null
+							? [
+									{
+										label: 'Track',
+										value:
+											metadata.common.track.of != null
+												? `${metadata.common.track.no} / ${metadata.common.track.of}`
+												: String(metadata.common.track.no)
+									}
+								]
+							: []),
 					...(metadata.common.disk?.no != null
 						? [
 								{
@@ -104,6 +129,17 @@
 	<p class="note">No metadata available.</p>
 {:else if hasRows}
 	<dl class="meta tnum">
+		{#if tagRows.length > 0}
+			<dt class="grp">Tags</dt>
+			{#each tagRows as { label, value, href } (label)}
+				<div class="row">
+					<dt>{label}</dt>
+					<dd>
+						{#if href}<a href={resolve(href)}>{value}</a>{:else}{value}{/if}
+					</dd>
+				</div>
+			{/each}
+		{/if}
 		<dt class="grp">Audio</dt>
 		{#each audioRows as { label, value } (label)}
 			<div class="row">
@@ -111,15 +147,6 @@
 				<dd>{value}</dd>
 			</div>
 		{/each}
-		{#if tagRows.length > 0}
-			<dt class="grp">Tags</dt>
-			{#each tagRows as { label, value } (label)}
-				<div class="row">
-					<dt>{label}</dt>
-					<dd>{value}</dd>
-				</div>
-			{/each}
-		{/if}
 		{#if apeRows.length > 0}
 			<dt class="grp">APEv2</dt>
 			{#each apeRows as { label, value } (label)}

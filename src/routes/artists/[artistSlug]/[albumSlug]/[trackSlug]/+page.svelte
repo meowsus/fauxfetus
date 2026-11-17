@@ -88,28 +88,21 @@
 
 <Breadcrumb items={breadcrumbItems} />
 
-<div class="kicker tnum">
-	<a class="cap dim" href={resolve(albumHref)}>{data.track.albumName}</a>
-	<div class="right">
-		<span class="cap dim">
-			track
-			<span class="tnum">{trackNumber}</span>
-			of
-			<span class="tnum">{data.playlist.length}</span>
+<div class="mast">
+	<h1>{data.track.name}</h1>
+	<p class="byline">
+		<span class="who">
+			by <a href={resolve(artistHref)}>{data.track.artistName}</a>
 		</span>
 		<a
-			class="cap dl"
+			class="dl"
 			href={asset(`/audio/${data.track.audioUrl}`)}
 			download={audioFilename}
 			rel="nofollow"
 		>
 			download mp3 ↓
 		</a>
-	</div>
-</div>
-
-<div class="mast">
-	<h1>{data.track.name}</h1>
+	</p>
 </div>
 
 <ol class="now-playing">
@@ -124,27 +117,8 @@
 	</li>
 </ol>
 
-<MetadataTable metadata={data.metadata} />
-
-<p class="endcap">
-	<a class="cap" href={resolve(albumHref)}>← {data.track.albumName}</a>
-</p>
-
-<style>
-	/* between the album's tight masthead and the artist's deep one */
-	.mast {
-		padding-block: 2.6rem 0;
-	}
-
-	@media (min-width: 48em) {
-		.mast {
-			padding-block: 3.5rem 0;
-		}
-	}
-
-	@media (min-width: 64em) {
-		.mast {
-			padding-block: 4.5rem 0;
-		}
-	}
-</style>
+<MetadataTable
+	metadata={data.metadata}
+	links={{ artist: artistHref, album: albumHref }}
+	trackLabel={`${trackNumber} of ${data.playlist.length}`}
+/>
