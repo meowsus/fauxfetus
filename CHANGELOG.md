@@ -1,3 +1,8 @@
+# v3.0.0 - November 16, 2026
+
+- Redesign (V) i_i (V)
+- Add Organ of Record
+
 # v2.17.0 - November 14, 2026
 
 - Friggin album & track downloads
