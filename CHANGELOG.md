@@ -1,3 +1,8 @@
+# v3.0.1 - November 16, 2026
+
+- Fixed a build annoyance
+- Fixed some wack service worker horseshit
+
 # v3.0.0 - November 16, 2026
 
 - Redesign (V) i_i (V)
