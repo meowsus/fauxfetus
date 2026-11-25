@@ -5,7 +5,7 @@ music:
     albums: [wooden-skull]
 ---
 
-Oh boy, you would not _believe_ how excited I am to announce that the original audio from The Beautiful Traps' _Wooden Skull_ has been recovered. 
+Oh boy, you would not _believe_ how excited I am to announce that the original audio from The Beautiful Traps' _Wooden Skull_ has been recovered.
 
 For probably close to a decade I've been asked more times than I can count by a number of people that I can count on one hand: "why isn't The Beautiful Traps 7-inch on Faux Fetus?"
 
