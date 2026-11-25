@@ -1,3 +1,7 @@
+# v3.1.0 - November 24, 2026
+
+- Add The Beuatiful Traps' Wooden Skull
+
 # v3.0.1 - November 16, 2026
 
 - Fixed a build annoyance
