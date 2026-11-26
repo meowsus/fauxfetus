@@ -14,9 +14,11 @@
 </script>
 
 <header>
-	<a class="mark" href={resolve('/')} aria-label="Faux Fetus home">
-		<img src={asset('/icons/icon-192x192.png')} alt="" width="96" height="96" decoding="async" />
-	</a>
+	{#if page.url.pathname !== '/'}
+		<a class="mark" href={resolve('/')} aria-label="Faux Fetus home">
+			<img src={asset('/icons/mark.svg')} alt="" width="350" height="300" decoding="async" />
+		</a>
+	{/if}
 	<nav aria-label="Main">
 		<ul>
 			<li><a href={resolve('/artists/')}>Artists ({page.data.artistCount})</a></li>
@@ -47,7 +49,7 @@
 		align-self: stretch;
 	}
 
-	/* PWA mark: inverted + screen-blended renders as white-on-midnight */
+	/* mark.svg: white blob, lettering knocked out against the page bg */
 	.mark img {
 		position: absolute;
 		inset: 0;
@@ -55,8 +57,6 @@
 		width: 100%;
 		object-fit: contain;
 		object-position: left center;
-		filter: invert(1);
-		mix-blend-mode: screen;
 	}
 
 	nav[aria-label='Main'] {

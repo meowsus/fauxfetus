@@ -31,7 +31,8 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href="/icons/icon-32x32.png" type="image/png" />
+	<link rel="icon" href="/icons/favicon.svg" type="image/svg+xml" />
+	<link rel="icon" href="/icons/icon-32x32.png" type="image/png" sizes="32x32" />
 
 	<title>Faux Fetus</title>
 	<meta
