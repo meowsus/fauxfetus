@@ -49,7 +49,7 @@ fauxfetus/
 │           ├── Search.svelte        # global search (client-side index, results panel)
 │           ├── Footer/              # footer links + InstallAppButton (PWA install)
 │           ├── Player/index.svelte  # floating pill player (own <aside>; owns fixed positioning)
-│           ├── AlbumList.svelte     # /albums/ index
+│           ├── AlbumList.svelte     # artist page: that artist's albums
 │           ├── ArtistList.svelte    # /artists/ index
 │           ├── RelatedArtistList.svelte
 │           ├── TrackList.svelte     # album tracklist (also the radio queue grammar)
@@ -88,7 +88,7 @@ fauxfetus/
 │   ├── audio/                     # Source MP3 files (input to generator)
 │   ├── data/                      # Generated: catalog.json, tracks.json, search-index.json
 │   ├── fonts/                     # Self-hosted woff2: Instrument Serif + Space Grotesk (latin)
-│   └── icons/                     # PWA icons + the header mark (invert/screen-blend via CSS)
+│   └── icons/                     # PWA icons (dark tiles), mark.svg (header), favicon.svg (theme-aware)
 ├── content/
 │   └── news/                      # Dated news posts: YYYY-MM-DD-<slug>.md (title + music frontmatter)
 └── package.json                   # pnpm monorepo
