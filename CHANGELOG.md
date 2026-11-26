@@ -1,3 +1,8 @@
+# v3.1.1 - November 26, 2026
+
+- Update logo
+- Bump node & pnpm
+
 # v3.1.0 - November 24, 2026
 
 - Add The Beuatiful Traps' Wooden Skull
