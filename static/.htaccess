@@ -4,3 +4,30 @@ ErrorDocument 404 /404.html
   RewriteEngine On
   RewriteRule ^artist/(.*)$ /artists/$1 [R=301,L]
 </IfModule>
+
+# Caching (site-side counterpart: src/service-worker/index.ts owns the SW
+# regime). Kit's build assets are content-hashed, so the browser can treat
+# them as immutable; the service worker script and Kit's version sidecar
+# must always revalidate, or update detection stalls (the browser's SW
+# script check + Kit's updated.check() both depend on them). The generated
+# data JSONs change content without changing URLs, so they revalidate too
+# (the SW serves the two client-fetched ones network-first, so the two
+# layers agree). Fonts/icons/manifest are content-frozen; a change ships
+# with a new SW generation anyway, so a month of HTTP-cache freshness is
+# plenty. Matched files are re-scoped by later <FilesMatch> sections: the
+# `\.js$` rule applies to every deployed .js (all hashed build output)
+# with only service-worker.js carved out by the following section.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "^service-worker\.js$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "\.json$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "\.(woff2?|png|svg|webmanifest)$">
+    Header set Cache-Control "max-age=2592000"
+  </FilesMatch>
+</IfModule>
