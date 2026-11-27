@@ -1,4 +1,10 @@
+# v3.1.3 - November 27, 2026
+
+- Bump dependencies across the board
+
 # v3.1.2 - November 27, 2026
+
+Robot authored:
 
 - Precache diet: install set down 52%, stops the /.htaccess 403 on every install
 - Data JSONs (radio queue, search index) served network-first — no stale pinning on deploys that skip the version bump
