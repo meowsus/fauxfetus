@@ -8,6 +8,11 @@
 		updateMediaSessionMetadata,
 		updateMediaSessionPlaybackState
 	} from '$lib/helpers/media-session';
+	import {
+		getPlayerDiagnosticDump,
+		logPlayerEvent,
+		type PlayerDiagData
+	} from '$lib/helpers/player-diagnostics';
 	import type { Track } from '@fauxfetus/data-generator';
 	import { resolve } from '$app/paths';
 	import type { Gapless5 } from '@regosen/gapless-5';
@@ -82,6 +87,11 @@
 		startIndex: number,
 		options: { isRadio?: boolean } = {}
 	): void {
+		logPlayerEvent('load-playlist', {
+			count: tracks.length,
+			start: startIndex,
+			radio: options.isRadio ?? false
+		});
 		if (!player) return;
 
 		// Stop current playback before swapping tracks
@@ -113,20 +123,56 @@
 		player.gotoTrack(startIndex, true);
 	}
 
+	/** Where a transport command came from — widget taps vs car Media Session. */
+	type Via = 'ui' | 'mediasession';
+
+	function doPlay(): void {
+		logPlayerEvent('command', { kind: 'play' });
+		player?.play();
+	}
+
+	function doPause(): void {
+		logPlayerEvent('command', { kind: 'pause' });
+		player?.pause();
+	}
+
+	function doTogglePlay(): void {
+		logPlayerEvent('command', { kind: isPlaying ? 'pause' : 'play' });
+		player?.playpause();
+	}
+
+	function doPrev(via: Via): void {
+		logPlayerEvent('command', { kind: 'prev', via });
+		player?.prevtrack();
+	}
+
+	function doNext(via: Via): void {
+		const data: PlayerDiagData = { kind: 'next', via };
+		if (currentIndex != null) data.from = currentIndex;
+		logPlayerEvent('command', data);
+		player?.next(null, null, null);
+	}
+
+	function doJumpTo(index: number): void {
+		logPlayerEvent('command', { kind: 'jump', to: index });
+		player?.gotoTrack(index, true);
+	}
+
 	const actions: PlayerActions = {
 		loadPlaylist,
-		play: () => player?.play(),
-		pause: () => player?.pause(),
-		togglePlay: () => player?.playpause(),
-		prev: () => player?.prevtrack(),
-		next: () => player?.next(null, null, null),
+		play: doPlay,
+		pause: doPause,
+		togglePlay: doTogglePlay,
+		prev: () => doPrev('ui'),
+		next: () => doNext('ui'),
 		// onplay syncs the store index, so a bare gotoTrack is enough
-		jumpTo: (index: number) => player?.gotoTrack(index, true)
+		jumpTo: doJumpTo
 	};
 
 	// ── Gapless5 callbacks → store sync ────────────────────────────────
 
 	function handlePlay(trackPath: string): void {
+		logPlayerEvent('play', { track: trackPath });
 		const track = trackMap.get(trackPath);
 		const index = track ? $playerStore.playlist.indexOf(track) : (player?.getIndex() ?? -1);
 
@@ -138,17 +184,20 @@
 		updateMediaSessionPlaybackState(true);
 	}
 
-	function handlePause(): void {
+	function handlePause(trackPath: string): void {
+		logPlayerEvent('pause', { track: trackPath });
 		playerStore.update((state) => ({ ...state, isPlaying: false }));
 		updateMediaSessionPlaybackState(false);
 	}
 
-	function handleStop(): void {
+	function handleStop(trackPath: string): void {
+		logPlayerEvent('stop', { track: trackPath });
 		playerStore.update((state) => ({ ...state, isPlaying: false }));
 		updateMediaSessionPlaybackState(false);
 	}
 
-	function handleNext(fromPath: string): void {
+	function handleNext(fromPath: string, toPath: string): void {
+		logPlayerEvent('switch', { direction: 'next', from: fromPath, to: toPath });
 		const fromTrack = trackMap.get(fromPath);
 		const fromIndex = fromTrack
 			? $playerStore.playlist.indexOf(fromTrack)
@@ -161,7 +210,8 @@
 		}
 	}
 
-	function handlePrev(_fromPath: string, toPath: string): void {
+	function handlePrev(fromPath: string, toPath: string): void {
+		logPlayerEvent('switch', { direction: 'prev', from: fromPath, to: toPath });
 		const toTrack = trackMap.get(toPath);
 		const toIndex = toTrack ? $playerStore.playlist.indexOf(toTrack) : (player?.getIndex() ?? -1);
 
@@ -204,11 +254,66 @@
 		if (isRadio && allTracks.length > 0) {
 			// Auto-continue radio: generate fresh playlist and keep playing
 			const newPlaylist = sampleRadioPlaylist(allTracks, RADIO_PLAYLIST_SIZE);
+			logPlayerEvent('radio-continue', { count: newPlaylist.length });
 			loadPlaylist(newPlaylist, 0, { isRadio: true });
 		} else {
+			logPlayerEvent('finished-all');
 			playerStore.update((state) => ({ ...state, isPlaying: false }));
 			updateMediaSessionPlaybackState(false);
 		}
+	}
+
+	// ── Diagnostics watchdog ──────────────────────────────────────────
+	// gapless-5 latches dead on skip failures but keeps reporting play
+	// state — an audio-element error ends in a terminal Error state it
+	// never reloads, and a rejected play() promise strands a source in
+	// Starting. Both LOOK like playing while position freezes; detect
+	// that signature directly, since onerror alone cannot see the
+	// swallowed-rejection path.
+
+	const WATCHDOG_TICK_MS = 2000;
+	const STALL_AFTER_MS = 8000;
+	const STALL_MOVE_THRESHOLD_MS = 250;
+	let watchdogId: ReturnType<typeof setInterval> | null = null;
+	let lastWatchedPos = 0;
+	let firstStallAt: number | null = null;
+	let stallLogged = false;
+
+	function startDiagnosticsWatchdog(): void {
+		if (watchdogId !== null) return;
+		watchdogId = setInterval(() => {
+			if (!player) return;
+			const pos = player.getPosition();
+			const moved = pos > lastWatchedPos + STALL_MOVE_THRESHOLD_MS;
+			lastWatchedPos = pos;
+
+			// progress or an honest paused state resets the stall window
+			if (moved || !player.isPlaying()) {
+				if (stallLogged) logPlayerEvent('stall-clear');
+				firstStallAt = null;
+				stallLogged = false;
+				return;
+			}
+			if (firstStallAt === null) {
+				firstStallAt = Date.now();
+				return;
+			}
+			if (!stallLogged && Date.now() - firstStallAt >= STALL_AFTER_MS) {
+				stallLogged = true;
+				logPlayerEvent('stall', {
+					track: player.getTrack(),
+					index: player.getIndex(),
+					pos: Math.round(pos),
+					dur: Math.round(player.currentLength())
+				});
+			}
+		}, WATCHDOG_TICK_MS);
+	}
+
+	function stopDiagnosticsWatchdog(): void {
+		if (watchdogId === null) return;
+		clearInterval(watchdogId);
+		watchdogId = null;
 	}
 
 	// ── Media Session setup ────────────────────────────────────────────
@@ -216,21 +321,13 @@
 	function setupMediaSession(): void {
 		if (!('mediaSession' in navigator) || !player) return;
 
-		navigator.mediaSession.setActionHandler('play', () => {
-			player!.play();
-		});
+		navigator.mediaSession.setActionHandler('play', doPlay);
 
-		navigator.mediaSession.setActionHandler('pause', () => {
-			player!.pause();
-		});
+		navigator.mediaSession.setActionHandler('pause', doPause);
 
-		navigator.mediaSession.setActionHandler('previoustrack', () => {
-			player!.prevtrack();
-		});
+		navigator.mediaSession.setActionHandler('previoustrack', () => doPrev('mediasession'));
 
-		navigator.mediaSession.setActionHandler('nexttrack', () => {
-			player!.next(null, null, null);
-		});
+		navigator.mediaSession.setActionHandler('nexttrack', () => doNext('mediasession'));
 	}
 
 	// ── Lifecycle ──────────────────────────────────────────────────────
@@ -260,6 +357,27 @@
 			player.ontimeupdate = handleTimeUpdate;
 			player.onfinishedall = handleFinishedAll;
 
+			// Diagnostics hooks: the library's Error/Starting latches are invisible
+			// through onplay/onpause alone — record every load/unload/error edge.
+			player.onerror = (trackPath, error) => {
+				logPlayerEvent('error', { track: trackPath, message: String(error) });
+			};
+			player.onunload = (trackPath) => {
+				logPlayerEvent('unload', { track: trackPath });
+			};
+			player.onloadstart = (trackPath) => {
+				logPlayerEvent('load-start', { track: trackPath });
+			};
+			player.onload = (trackPath) => {
+				logPlayerEvent('load', { track: trackPath });
+			};
+			player.onfinishedtrack = (trackPath) => {
+				logPlayerEvent('track-end', { track: trackPath });
+			};
+			logPlayerEvent('boot', { path: location.pathname });
+
+			startDiagnosticsWatchdog();
+
 			// Replace the no-op defaults with real Gapless5-bound actions
 			playerActionsStore.set(actions);
 
@@ -268,6 +386,8 @@
 
 		return () => {
 			if (rafId !== null) cancelAnimationFrame(rafId);
+			stopDiagnosticsWatchdog();
+			if (diagFeedbackTimer !== null) clearTimeout(diagFeedbackTimer);
 			player?.stop();
 			player?.removeAllTracks();
 		};
@@ -366,6 +486,24 @@
 		queueOpen = false;
 	}
 
+	/** Queue-head "log" button: copies the diagnostics ring buffer. The
+	 * buffer lives in localStorage, so it survives the app restart that is
+	 * currently the only fix for a dead player — the postmortem of a car
+	 * ride is still exportable after arriving home. */
+	let diagFeedback: string | null = $state(null);
+	let diagFeedbackTimer: ReturnType<typeof setTimeout> | null = null;
+
+	async function copyDiagnostics(): Promise<void> {
+		try {
+			await navigator.clipboard.writeText(getPlayerDiagnosticDump());
+			diagFeedback = 'copied';
+		} catch {
+			diagFeedback = 'failed';
+		}
+		if (diagFeedbackTimer !== null) clearTimeout(diagFeedbackTimer);
+		diagFeedbackTimer = setTimeout(() => (diagFeedback = null), 1600);
+	}
+
 	// Radio entry points are startRadio() in $lib/helpers, invoked from the
 	// navbar Radio button; the in-player "Radio Mode" button was removed
 	// in the IA rework (one global trigger, available on every page).
@@ -375,9 +513,14 @@
 	onkeydown={(e) => {
 		if (e.key === 'Escape') queueOpen = false;
 	}}
+	ononline={() => logPlayerEvent('network', { state: 'online' })}
+	onoffline={() => logPlayerEvent('network', { state: 'offline' })}
 />
 
-<svelte:document onpointerdown={handleDocumentPointerdown} />
+<svelte:document
+	onpointerdown={handleDocumentPointerdown}
+	onvisibilitychange={() => logPlayerEvent('visibility', { state: document.visibilityState })}
+/>
 
 {#if currentTrack}
 	<div class="dock">
@@ -391,7 +534,16 @@
 			<div class="queue-slot">
 				<div class="queue" id="player-queue" role="region" aria-label="Queue">
 					<p class="q-head cap">
-						Queue&nbsp;<span class="tnum">{(currentIndex ?? 0) + 1} / {playlist.length}</span>
+						<span
+							>Queue&nbsp;<span class="tnum">{(currentIndex ?? 0) + 1} / {playlist.length}</span
+							></span
+						>
+						<button
+							type="button"
+							class="diag"
+							aria-label="Copy player diagnostics"
+							onclick={copyDiagnostics}>{diagFeedback ?? 'log'}</button
+						>
 					</p>
 					<div class="queue-scroll" bind:this={scrollEl}>
 						<ol>
@@ -703,6 +855,18 @@
 		/* the park lands the next row's top edge at the port top, so this
 		 * margin is all the air between the head's border and its number */
 		margin-bottom: 0.5rem;
+	}
+
+	/* diagnostics export: chrome, not a row — quiet voice, no inversion */
+	.q-head .diag {
+		padding: 0.3rem 0.55rem;
+		border-radius: 0.45rem;
+		color: var(--dim);
+	}
+
+	.q-head .diag:hover,
+	.q-head .diag:focus-visible {
+		color: var(--ink);
 	}
 
 	.queue ol {
