@@ -1,4 +1,4 @@
-import { readCatalog } from '$lib/helpers/catalog.js';
+import { readCatalog } from '#lib/helpers/catalog.js';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {

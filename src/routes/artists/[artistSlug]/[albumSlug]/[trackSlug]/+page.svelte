@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { PageData } from './$types';
-	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
-	import MetadataTable from '$lib/components/MetadataTable.svelte';
+	import Breadcrumb from '#lib/components/Breadcrumb.svelte';
+	import MetadataTable from '#lib/components/MetadataTable.svelte';
 	import {
 		canonicalUrl,
 		jsonLdBreadcrumb,
 		jsonLdMusicRecording,
 		jsonLdScript,
 		ogMeta
-	} from '$lib/helpers/seo';
+	} from '#lib/helpers/seo.js';
 	import { asset } from '$app/paths';
-	import JsonLd from '$lib/components/JsonLd.svelte';
-	import { getPlayerContext, getPlayerActions } from '$lib/context/player';
+	import JsonLd from '#lib/components/JsonLd.svelte';
+	import { getPlayerContext, getPlayerActions } from '#lib/context/player.js';
 
 	let { data }: { data: PageData } = $props();
 
@@ -33,7 +33,7 @@
 	// when navigating between tracks under the same album/artist (or
 	// otherwise reusing this page component). A plain `const` would capture
 	// the first track's data and go stale, so these must be `$derived`.
-	const artistHref = $derived(`/artists/${data.track.artistSlug}` as const);
+	const artistHref = $derived(`artists/${data.track.artistSlug}` as const);
 	const albumHref = $derived(`${artistHref}/${data.track.albumSlug}` as const);
 	const audioFilename = $derived(data.track.audioUrl.split('/').pop() || 'track.mp3');
 	const trackNumber = $derived(data.track.number ?? data.startIndex + 1);
@@ -48,7 +48,7 @@
 	]);
 
 	const pageUrl = $derived(
-		canonicalUrl(`/artists/${data.track.artistSlug}/${data.track.albumSlug}/${data.track.slug}/`)
+		canonicalUrl(`artists/${data.track.artistSlug}/${data.track.albumSlug}/${data.track.slug}/`)
 	);
 	const pageTitle = $derived(`${data.track.name} by ${data.track.artistName} - Faux Fetus`);
 	const pageDescription = $derived(
@@ -96,7 +96,7 @@
 		</span>
 		<a
 			class="dl"
-			href={asset(`/audio/${data.track.audioUrl}`)}
+			href={asset(`audio/${data.track.audioUrl}` as Parameters<typeof asset>[0])}
 			download={audioFilename}
 			rel="nofollow"
 		>

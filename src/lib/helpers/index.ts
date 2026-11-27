@@ -1,4 +1,4 @@
-import type { PlayerActions, PlayerState } from '$lib/context/player';
+import type { PlayerActions, PlayerState } from '#lib/context/player.js';
 import type { Track } from '@fauxfetus/data-generator';
 import type { Writable } from 'svelte/store';
 import { get } from 'svelte/store';

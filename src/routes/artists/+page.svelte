@@ -1,15 +1,15 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
-	import ArtistList from '$lib/components/ArtistList.svelte';
+	import Breadcrumb from '#lib/components/Breadcrumb.svelte';
+	import ArtistList from '#lib/components/ArtistList.svelte';
 	import {
 		canonicalUrl,
 		jsonLdBreadcrumb,
 		jsonLdCollectionPage,
 		jsonLdScript,
 		ogMeta
-	} from '$lib/helpers/seo';
-	import JsonLd from '$lib/components/JsonLd.svelte';
+	} from '#lib/helpers/seo.js';
+	import JsonLd from '#lib/components/JsonLd.svelte';
 
 	let { data }: { data: PageData } = $props();
 

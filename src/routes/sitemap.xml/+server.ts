@@ -1,5 +1,5 @@
-import { readNewsSummary } from '$lib/helpers/news';
-import { BASE_URL } from '$lib/helpers/seo';
+import { readNewsSummary } from '#lib/helpers/news.js';
+import { BASE_URL } from '#lib/helpers/seo.js';
 import type { Artist } from '@fauxfetus/data-generator';
 import fs from 'fs-extra';
 import { join } from 'path';

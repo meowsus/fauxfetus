@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { Track } from '@fauxfetus/data-generator';
-	import { getPlayerContext, getPlayerActions } from '$lib/context/player';
+	import { getPlayerContext, getPlayerActions } from '#lib/context/player.js';
 
 	interface Props {
 		tracks: Track[];
@@ -33,7 +33,7 @@
 	{#each tracks as track, index (track.audioUrl)}
 		{@const playing = track.audioUrl === currentAudioUrl}
 		<li class:playing>
-			<a href={resolve(`/artists/${track.artistSlug}/${track.albumSlug}/${track.slug}`)}>
+			<a href={resolve(`artists/${track.artistSlug}/${track.albumSlug}/${track.slug}`)}>
 				<span class="no tnum dim">{formatTrackNumber(track.number, index)}</span>
 				<span class="trname">{track.name}</span>
 				{#if track.isCompilation && !shouldHideArtist}

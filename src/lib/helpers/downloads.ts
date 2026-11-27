@@ -7,7 +7,7 @@
  *
  * Keep this module free of Node-only imports (fs/path): it is shared with
  * the browser bundle. For the same reason, don't import readCatalog from
- * `$lib/helpers/catalog.ts` here — that module is server-only.
+ * `#lib/helpers/catalog.ts` here — that module is server-only.
  */
 export const albumZipPath = (artistSlug: string, albumSlug: string): string =>
-	`/dl/${artistSlug}/${albumSlug}/`;
+	`dl/${artistSlug}/${albumSlug}/`;

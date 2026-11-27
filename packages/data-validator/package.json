@@ -12,10 +12,10 @@
 	"license": "ISC",
 	"devDependencies": {
 		"@types/fs-extra": "catalog:fs-extra",
-		"@types/klaw": "^3.0.7",
+		"@types/klaw": "^3.0.8",
 		"fs-extra": "catalog:fs-extra",
 		"klaw": "^4.1.0",
-		"music-metadata": "^11.10.0",
-		"zod": "^4.1.12"
+		"music-metadata": "^13.0.1",
+		"zod": "^4.6.7"
 	}
 }

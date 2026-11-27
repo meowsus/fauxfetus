@@ -3,7 +3,8 @@
 /// <reference lib="webworker" />
 /// <reference types="@sveltejs/kit" />
 
-import { build, files, version } from '$service-worker';
+import { version } from '$app/env';
+import { assets, immutable } from '$app/manifest';
 
 // SAFETY: inside a service worker, globalThis is the
 // ServiceWorkerGlobalScope per spec; the lib references above type it.
@@ -11,7 +12,7 @@ const self = globalThis as unknown as ServiceWorkerGlobalScope;
 
 /**
  * Data sidecars the browser fetches directly, regardless of cache name: the
- * radio queue grammar in $lib/helpers/index.ts and the search index in
+ * radio queue grammar in #lib/helpers/index.ts and the search index in
  * Search.svelte.
  *
  * Served network-first with the installed copy as offline fallback:
@@ -23,38 +24,40 @@ const self = globalThis as unknown as ServiceWorkerGlobalScope;
  */
 const DATA_ASSETS = ['/data/tracks.json', '/data/search-index.json'];
 
-const ASSETS = [...build, ...files].filter((url) => {
-	const pathname = new URL(url, self.location.origin).pathname;
-	// Excluded from the install set:
-	// - the bulky audio files and the generated data sidecars the browser
-	//   never fetches (catalog, track metadata, recommendations are read
-	//   by server-only code during build/prerender — and catalog.json is
-	//   too big to cache regardless);
-	// - the dl/ zip sidecar namespace: its requests are generated on
-	//   demand and its redirect targets must never be intercepted or
-	//   cached;
-	// - crawler/share-only files (robots.txt, og-image.png) and the
-	//   deployed .htaccess, whose install-time fetch is 403-rejected by
-	//   Apache, so caching it would only log install failures;
-	// - icons/icon.png: unreferenced source art, kept on disk.
-	return (
-		!pathname.startsWith('/audio') &&
-		!pathname.startsWith('/dl') &&
-		// defensive: never precache prerendered HTML. Kit's `build` export
-		// holds only immutable build output today; if a future version ever
-		// added prerendered pages to it, this keeps them out of the install
-		// set — and out of the contract hash, whose cache name must not
-		// churn on every content-only deploy.
-		!pathname.endsWith('.html') &&
-		pathname !== '/.htaccess' &&
-		pathname !== '/og-image.png' &&
-		pathname !== '/robots.txt' &&
-		pathname !== '/icons/icon.png' &&
-		pathname !== '/data/catalog.json' &&
-		pathname !== '/data/track-metadata.json' &&
-		pathname !== '/data/recommendations.json'
-	);
-});
+const ASSETS = [...immutable, ...assets]
+	.map((entry) => entry.path)
+	.filter((path) => {
+		const pathname = new URL(path, self.location.origin).pathname;
+		// Excluded from the install set:
+		// - the bulky audio files and the generated data sidecars the browser
+		//   never fetches (catalog, track metadata, recommendations are read
+		//   by server-only code during build/prerender — and catalog.json is
+		//   too big to cache regardless);
+		// - the dl/ zip sidecar namespace: its requests are generated on
+		//   demand and its redirect targets must never be intercepted or
+		//   cached;
+		// - crawler/share-only files (robots.txt, og-image.png) and the
+		//   deployed .htaccess, whose install-time fetch is 403-rejected by
+		//   Apache, so caching it would only log install failures;
+		// - icons/icon.png: unreferenced source art, kept on disk.
+		return (
+			!pathname.startsWith('/audio') &&
+			!pathname.startsWith('/dl') &&
+			// defensive: never precache prerendered HTML. The manifest's `immutable`
+			// list holds only immutable build output today; if a future version ever
+			// added prerendered pages to it, this keeps them out of the install
+			// set — and out of the contract hash, whose cache name must not
+			// churn on every content-only deploy.
+			!pathname.endsWith('.html') &&
+			pathname !== '/.htaccess' &&
+			pathname !== '/og-image.png' &&
+			pathname !== '/robots.txt' &&
+			pathname !== '/icons/icon.png' &&
+			pathname !== '/data/catalog.json' &&
+			pathname !== '/data/track-metadata.json' &&
+			pathname !== '/data/recommendations.json'
+		);
+	});
 
 const isInstallAsset = (pathname: string): boolean => ASSETS.includes(pathname);
 

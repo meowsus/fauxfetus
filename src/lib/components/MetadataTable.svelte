@@ -4,7 +4,7 @@
 
 	/** Catalog routes behind the Tags group's linked rows (same shapes the
 	 *  breadcrumb items use). */
-	type CatalogPath = `/artists/${string}` | `/artists/${string}/${string}`;
+	type CatalogPath = `artists/${string}` | `artists/${string}/${string}`;
 
 	interface TagRow {
 		label: string;

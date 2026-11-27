@@ -12,7 +12,7 @@
      the metadata voice, far from the album ledger's serif prominence. -->
 <ul class="related">
 	{#each artists as artist (artist.slug)}
-		<li><a href={resolve(`/artists/${artist.slug}`)}>{artist.name}</a></li>
+		<li><a href={resolve(`artists/${artist.slug}`)}>{artist.name}</a></li>
 	{/each}
 </ul>
 

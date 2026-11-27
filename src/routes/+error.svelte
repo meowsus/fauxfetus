@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { canonicalUrl, ogMeta } from '$lib/helpers/seo';
+	import { canonicalUrl, ogMeta } from '#lib/helpers/seo.js';
 
 	const status = page.status;
 	const message = $derived(page.error?.message ?? 'Page not found');

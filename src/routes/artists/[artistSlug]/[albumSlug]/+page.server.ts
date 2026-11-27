@@ -1,4 +1,4 @@
-import { readCatalog } from '$lib/helpers/catalog.js';
+import { readCatalog } from '#lib/helpers/catalog.js';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 

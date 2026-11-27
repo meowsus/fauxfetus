@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
-	import AlbumList from '$lib/components/AlbumList.svelte';
-	import RelatedArtistList from '$lib/components/RelatedArtistList.svelte';
+	import Breadcrumb from '#lib/components/Breadcrumb.svelte';
+	import AlbumList from '#lib/components/AlbumList.svelte';
+	import RelatedArtistList from '#lib/components/RelatedArtistList.svelte';
 	import {
 		canonicalUrl,
 		jsonLdBreadcrumb,
@@ -10,8 +10,8 @@
 		jsonLdRelatedArtists,
 		jsonLdScript,
 		ogMeta
-	} from '$lib/helpers/seo';
-	import JsonLd from '$lib/components/JsonLd.svelte';
+	} from '#lib/helpers/seo.js';
+	import JsonLd from '#lib/components/JsonLd.svelte';
 
 	let { data }: { data: PageData } = $props();
 

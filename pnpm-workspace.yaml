@@ -3,7 +3,7 @@ packages:
 
 catalogs:
   fs-extra:
-    fs-extra: ^11.3.2
+    fs-extra: ^11.4.1
     '@types/fs-extra': ^11.0.4
 
 strictDepBuilds: true

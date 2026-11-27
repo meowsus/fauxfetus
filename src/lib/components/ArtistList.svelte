@@ -43,7 +43,7 @@
 			<ul class="names">
 				{#each group as artist (artist.slug)}
 					<li>
-						<a href={resolve(`/artists/${artist.slug}`)}>{artist.name}</a>
+						<a href={resolve(`artists/${artist.slug}`)}>{artist.name}</a>
 						{#if artist.albumCount > 1}
 							<span class="count dim tnum">{artist.albumCount}</span>
 						{/if}

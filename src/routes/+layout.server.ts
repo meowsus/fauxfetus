@@ -1,4 +1,4 @@
-import { readCatalog } from '$lib/helpers/catalog';
+import { readCatalog } from '#lib/helpers/catalog.js';
 import type { LayoutServerLoad } from './$types';
 
 export const prerender = true;

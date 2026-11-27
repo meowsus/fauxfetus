@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { PageData } from './$types';
-	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
-	import TrackList from '$lib/components/TrackList.svelte';
+	import Breadcrumb from '#lib/components/Breadcrumb.svelte';
+	import TrackList from '#lib/components/TrackList.svelte';
 	import {
 		canonicalUrl,
 		jsonLdBreadcrumb,
 		jsonLdMusicAlbum,
 		jsonLdScript,
 		ogMeta
-	} from '$lib/helpers/seo';
-	import JsonLd from '$lib/components/JsonLd.svelte';
-	import { albumZipPath } from '$lib/helpers/downloads.js';
+	} from '#lib/helpers/seo.js';
+	import JsonLd from '#lib/components/JsonLd.svelte';
+	import { albumZipPath } from '#lib/helpers/downloads.js';
 	import { asset } from '$app/paths';
 
 	let { data }: { data: PageData } = $props();
@@ -20,7 +20,7 @@
 	// when navigating between albums under the same artist (or otherwise
 	// reusing this page component). A plain `const` would capture the first
 	// album's data and go stale, so these must be `$derived`.
-	const artistHref = $derived(`/artists/${data.album.artistSlug}` as const);
+	const artistHref = $derived(`artists/${data.album.artistSlug}` as const);
 	const zipPath = $derived(albumZipPath(data.album.artistSlug, data.album.slug));
 	const breadcrumbItems = $derived([
 		{ name: 'Home', href: '/' as const },
@@ -29,7 +29,7 @@
 		{ name: data.album.name }
 	]);
 
-	const pageUrl = $derived(canonicalUrl(`/artists/${data.album.artistSlug}/${data.album.slug}/`));
+	const pageUrl = $derived(canonicalUrl(`artists/${data.album.artistSlug}/${data.album.slug}/`));
 	const pageTitle = $derived(`${data.album.name} by ${data.album.artistName} - Faux Fetus`);
 	const pageDescription = $derived(
 		`Listen to tracks from the album ${data.album.name} by ${data.album.artistName} on Faux Fetus.`
@@ -78,7 +78,14 @@
 		<!-- rel="external" is load-bearing: the dl/ sidecar is server-only PHP at
 			fauxfetus.net/dl/ (404s during prerender); SvelteKit's crawler skips
 			rel="external" links, which silences the [404] GET build spam. -->
-		<a class="dl" href={asset(zipPath)} download rel="nofollow external">download zip ↓</a>
+		<a
+			class="dl"
+			href={asset(zipPath as Parameters<typeof asset>[0])}
+			download
+			rel="nofollow external"
+		>
+			download zip ↓
+		</a>
 	</p>
 </div>
 

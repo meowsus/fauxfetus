@@ -1,5 +1,5 @@
-import { readNewsSummary } from '$lib/helpers/news';
-import { BASE_URL, canonicalUrl } from '$lib/helpers/seo';
+import { readNewsSummary } from '#lib/helpers/news.js';
+import { BASE_URL, canonicalUrl } from '#lib/helpers/seo.js';
 
 // Same lesson as the sitemap: without this export the route is dynamic and
 // adapter-static ships no feed artifact at all; `build/news/feed.xml` is

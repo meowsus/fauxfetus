@@ -1,5 +1,5 @@
-import { readCatalog } from '$lib/helpers/catalog.js';
-import { readTrackMetadata } from '$lib/helpers/track-metadata.js';
+import { readCatalog } from '#lib/helpers/catalog.js';
+import { readTrackMetadata } from '#lib/helpers/track-metadata.js';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 

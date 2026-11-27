@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { SvelteMap } from 'svelte/reactivity';
-	import { getPlayerContext, getPlayerActions } from '$lib/context/player';
-	import type { PlayerActions } from '$lib/context/player';
-	import { sampleRadioPlaylist, RADIO_PLAYLIST_SIZE } from '$lib/helpers';
+	import { getPlayerContext, getPlayerActions } from '#lib/context/player.js';
+	import type { PlayerActions } from '#lib/context/player.js';
+	import { sampleRadioPlaylist, RADIO_PLAYLIST_SIZE } from '#lib/helpers/index.js';
 	import {
 		updateMediaSessionMetadata,
 		updateMediaSessionPlaybackState
-	} from '$lib/helpers/media-session';
+	} from '#lib/helpers/media-session.js';
 	import {
 		getPlayerDiagnosticDump,
 		logPlayerEvent,
 		type PlayerDiagData
-	} from '$lib/helpers/player-diagnostics';
+	} from '#lib/helpers/player-diagnostics.js';
 	import type { Track } from '@fauxfetus/data-generator';
 	import { resolve } from '$app/paths';
 	import type { Gapless5 } from '@regosen/gapless-5';
@@ -504,7 +504,7 @@
 		diagFeedbackTimer = setTimeout(() => (diagFeedback = null), 1600);
 	}
 
-	// Radio entry points are startRadio() in $lib/helpers, invoked from the
+	// Radio entry points are startRadio() in #lib/helpers, invoked from the
 	// navbar Radio button; the in-player "Radio Mode" button was removed
 	// in the IA rework (one global trigger, available on every page).
 </script>
@@ -534,16 +534,17 @@
 			<div class="queue-slot">
 				<div class="queue" id="player-queue" role="region" aria-label="Queue">
 					<p class="q-head cap">
-						<span
-							>Queue&nbsp;<span class="tnum">{(currentIndex ?? 0) + 1} / {playlist.length}</span
-							></span
-						>
+						<span>
+							Queue&nbsp;<span class="tnum">{(currentIndex ?? 0) + 1} / {playlist.length}</span>
+						</span>
 						<button
 							type="button"
 							class="diag"
 							aria-label="Copy player diagnostics"
-							onclick={copyDiagnostics}>{diagFeedback ?? 'log'}</button
+							onclick={copyDiagnostics}
 						>
+							{diagFeedback ?? 'log'}
+						</button>
 					</p>
 					<div class="queue-scroll" bind:this={scrollEl}>
 						<ol>
@@ -577,9 +578,11 @@
 				<p class="track">
 					<a
 						href={resolve(
-							`/artists/${currentTrack.artistSlug}/${currentTrack.albumSlug}/${currentTrack.slug}`
-						)}>{currentTrack.name}</a
+							`artists/${currentTrack.artistSlug}/${currentTrack.albumSlug}/${currentTrack.slug}`
+						)}
 					>
+						{currentTrack.name}
+					</a>
 					<span> — {currentTrack.artistName} · {currentTrack.albumName}</span>
 				</p>
 
@@ -603,8 +606,10 @@
 							stroke-width="1.8"
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							aria-hidden="true"><path d="m6 14 6-6 6 6" /></svg
+							aria-hidden="true"
 						>
+							<path d="m6 14 6-6 6 6" />
+						</svg>
 					</button>
 					<button
 						type="button"
@@ -621,8 +626,10 @@
 							stroke-width="1.8"
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							aria-hidden="true"><path d="m13 6-5 6 5 6M19 6l-5 6 5 6" /></svg
+							aria-hidden="true"
 						>
+							<path d="m13 6-5 6 5 6M19 6l-5 6 5 6" />
+						</svg>
 					</button>
 					<button
 						type="button"
@@ -631,13 +638,25 @@
 						onclick={() => $playerActionsStore.togglePlay()}
 					>
 						{#if isPlaying}
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-								><path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z" /></svg
+							<svg
+								width="14"
+								height="14"
+								viewBox="0 0 24 24"
+								fill="currentColor"
+								aria-hidden="true"
 							>
+								<path d="M7 5h3.4v14H7zM13.6 5H17v14h-3.4z" />
+							</svg>
 						{:else}
-							<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-								><path d="M8 5.4v13.2L19.5 12z" /></svg
+							<svg
+								width="14"
+								height="14"
+								viewBox="0 0 24 24"
+								fill="currentColor"
+								aria-hidden="true"
 							>
+								<path d="M8 5.4v13.2L19.5 12z" />
+							</svg>
 						{/if}
 					</button>
 					<button
@@ -655,8 +674,10 @@
 							stroke-width="1.8"
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							aria-hidden="true"><path d="m11 6 5 6-5 6M5 6l5 6-5 6" /></svg
+							aria-hidden="true"
 						>
+							<path d="m11 6 5 6-5 6M5 6l5 6-5 6" />
+						</svg>
 					</button>
 				</div>
 			</div>

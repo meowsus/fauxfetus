@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { asset } from '$app/paths';
+	import { resolve } from '$app/paths';
 
 	import InstallAppButton from './InstallAppButton.svelte';
 
@@ -18,7 +18,7 @@
 		<ul>
 			<li><a href="https://github.com/meowsus/fauxfetus">GitHub</a></li>
 			<InstallAppButton />
-			<li><a href={asset('/sitemap.xml')}>Sitemap</a></li>
+			<li><a href={resolve('sitemap.xml')}>Sitemap</a></li>
 			<li><button type="button" onclick={handleEmail}>Email</button></li>
 		</ul>
 	</nav>

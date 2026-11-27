@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import JsonLd from '$lib/components/JsonLd.svelte';
-	import { formatDateShort } from '$lib/helpers/format-date';
+	import JsonLd from '#lib/components/JsonLd.svelte';
+	import { formatDateShort } from '#lib/helpers/format-date.js';
 	import {
 		canonicalUrl,
 		jsonLdBreadcrumb,
 		jsonLdScript,
 		jsonLdWebsite,
 		ogMeta
-	} from '$lib/helpers/seo';
+	} from '#lib/helpers/seo.js';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -62,18 +62,18 @@
 			{#each data.recentGroups as group (group.slug)}
 				<li>
 					<p class="group-date">
-						<a class="cap" href={resolve(`/news/${group.slug}`)}>
+						<a class="cap" href={resolve(`news/${group.slug}`)}>
 							<time datetime={group.date}>{formatDateShort(group.date)}</time>
 						</a>
 					</p>
 					<ul class="items">
 						{#each group.items as item (item.artistSlug + (item.albumSlug ?? ''))}
 							<li>
-								<a href={resolve(`/artists/${item.artistSlug}`)}>{item.artistName}</a>
+								<a href={resolve(`artists/${item.artistSlug}`)}>{item.artistName}</a>
 								{#if item.albumSlug}
 									<span class="albs">
 										—
-										<a href={resolve(`/artists/${item.artistSlug}/${item.albumSlug}`)}>
+										<a href={resolve(`artists/${item.artistSlug}/${item.albumSlug}`)}>
 											{item.albumName}
 										</a>
 										{#if item.trackCount !== undefined}
@@ -107,7 +107,7 @@
 						<time datetime={post.date}>{formatDateShort(post.date)}</time>
 					</p>
 					<h3>
-						<a href={resolve(`/news/${post.slug}`)}>{post.title}</a>
+						<a href={resolve(`news/${post.slug}`)}>{post.title}</a>
 					</h3>
 					<p class="excerpt">{post.excerpt}</p>
 				</li>
@@ -117,6 +117,6 @@
 		<p>No news posts yet.</p>
 	{/if}
 	<p class="sec-foot">
-		<a class="cap dim" href={resolve('/news/')}>all news →</a>
+		<a class="cap dim" href={resolve('news/')}>all news →</a>
 	</p>
 </section>

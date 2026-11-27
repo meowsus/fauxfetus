@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { SvelteMap } from 'svelte/reactivity';
-	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
-	import JsonLd from '$lib/components/JsonLd.svelte';
-	import { formatDateMonthDay } from '$lib/helpers/format-date';
+	import Breadcrumb from '#lib/components/Breadcrumb.svelte';
+	import JsonLd from '#lib/components/JsonLd.svelte';
+	import { formatDateMonthDay } from '#lib/helpers/format-date.js';
 	import {
 		canonicalUrl,
 		jsonLdBreadcrumb,
 		jsonLdCollectionPage,
 		jsonLdScript,
 		ogMeta
-	} from '$lib/helpers/seo';
+	} from '#lib/helpers/seo.js';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -72,7 +72,7 @@
 			<ol class="entries">
 				{#each posts as post (post.slug)}
 					<li>
-						<a href={resolve(`/news/${post.slug}`)}>
+						<a href={resolve(`news/${post.slug}`)}>
 							<span class="cap dim tnum dt">{formatDateMonthDay(post.date)}</span>
 							<h3>{post.title} →</h3>
 							<p class="excerpt">{post.excerpt}</p>

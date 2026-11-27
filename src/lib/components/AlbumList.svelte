@@ -19,7 +19,7 @@
 <ul class="music">
 	{#each albums as album (album.slug)}
 		<li>
-			<a href={resolve(`/artists/${album.artistSlug}/${album.slug}`)}>{album.name}</a>
+			<a href={resolve(`artists/${album.artistSlug}/${album.slug}`)}>{album.name}</a>
 			{#if album.isCompilation}
 				<small>Compilation</small>
 			{/if}

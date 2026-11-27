@@ -176,7 +176,7 @@ export class DataGenerator {
 		const track: Track = {
 			slug: createSlug(trackName),
 			name: trackName,
-			number: metadata.common.track.no,
+			number: metadata.common.trackNumber ?? null,
 
 			artistSlug: createSlug(artistName),
 			artistName,
@@ -409,10 +409,10 @@ export class DataGenerator {
 			(tag): tag is { id: string; value: string } => typeof tag.value === 'string'
 		);
 
-		const trackNo = metadata.common?.track?.no ?? null;
-		const trackOf = metadata.common?.track?.of ?? null;
-		const diskNo = metadata.common?.disk?.no ?? null;
-		const diskOf = metadata.common?.disk?.of ?? null;
+		const trackNo = metadata.common?.trackNumber ?? null;
+		const trackOf = metadata.common?.trackTotal ?? null;
+		const diskNo = metadata.common?.discNumber ?? null;
+		const diskOf = metadata.common?.discTotal ?? null;
 
 		return {
 			format: {

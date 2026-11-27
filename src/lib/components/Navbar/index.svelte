@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { resolve, asset } from '$app/paths';
-	import { getPlayerActions, getPlayerContext } from '$lib/context/player';
-	import Search from '$lib/components/Search.svelte';
-	import { startRadio } from '$lib/helpers';
+	import { getPlayerActions, getPlayerContext } from '#lib/context/player.js';
+	import Search from '#lib/components/Search.svelte';
+	import { startRadio } from '#lib/helpers/index.js';
 
 	const playerStore = getPlayerContext();
 	const playerActionsStore = getPlayerActions();
@@ -16,13 +16,13 @@
 <header>
 	{#if page.url.pathname !== '/'}
 		<a class="mark" href={resolve('/')} aria-label="Faux Fetus home">
-			<img src={asset('/icons/mark.svg')} alt="" width="350" height="300" decoding="async" />
+			<img src={asset('icons/mark.svg')} alt="" width="350" height="300" decoding="async" />
 		</a>
 	{/if}
 	<nav aria-label="Main">
 		<ul>
-			<li><a href={resolve('/artists/')}>Artists ({page.data.artistCount})</a></li>
-			<li><a href={resolve('/news/')}>News</a></li>
+			<li><a href={resolve('artists/')}>Artists ({page.data.artistCount})</a></li>
+			<li><a href={resolve('news/')}>News</a></li>
 			<li><button type="button" onclick={handleRadioStart}>Radio</button></li>
 		</ul>
 	</nav>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { browser } from '$app/environment';
+	import { browser } from '$app/env';
 	import type { SearchIndexEntry, SearchIndexFile } from '@fauxfetus/data-generator';
 
 	const MAX_RESULTS = 12;
@@ -336,14 +336,12 @@
 	 * matching SvelteKit's generated route unions — a plain `string` return
 	 * would be rejected by the strictly-typed resolve(). */
 	type EntryHref =
-		| `/artists/${string}`
-		| `/artists/${string}/${string}`
-		| `/artists/${string}/${string}/${string}`;
+		`artists/${string}` | `artists/${string}/${string}` | `artists/${string}/${string}/${string}`;
 
 	function entryHref(entry: SearchIndexEntry): EntryHref {
-		if (entry.type === 'artist') return `/artists/${entry.slug}`;
-		if (entry.type === 'album') return `/artists/${entry.artistSlug}/${entry.slug}`;
-		return `/artists/${entry.artistSlug}/${entry.albumSlug}/${entry.slug}`;
+		if (entry.type === 'artist') return `artists/${entry.slug}`;
+		if (entry.type === 'album') return `artists/${entry.artistSlug}/${entry.slug}`;
+		return `artists/${entry.artistSlug}/${entry.albumSlug}/${entry.slug}`;
 	}
 
 	function entryLabel(entry: SearchIndexEntry): string {
@@ -364,8 +362,10 @@
 		stroke="currentColor"
 		stroke-width="2"
 		stroke-linecap="round"
-		aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg
+		aria-hidden="true"
 	>
+		<circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" />
+	</svg>
 	<input
 		id="site-search"
 		type="search"
@@ -392,8 +392,10 @@
 						href={resolve(entryHref(entry))}
 						title={entryLabel(entry)}
 						onkeydown={handleResultsKeydown}
-						onclick={closeResults}>{entryLabel(entry)}</a
+						onclick={closeResults}
 					>
+						{entryLabel(entry)}
+					</a>
 				</li>
 			{/each}
 			{#if search.strongCount < search.list.length}
@@ -406,8 +408,10 @@
 						href={resolve(entryHref(entry))}
 						title={entryLabel(entry)}
 						onkeydown={handleResultsKeydown}
-						onclick={closeResults}>{entryLabel(entry)}</a
+						onclick={closeResults}
 					>
+						{entryLabel(entry)}
+					</a>
 				</li>
 			{/each}
 		</ol>

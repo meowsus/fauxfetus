@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
-	import JsonLd from '$lib/components/JsonLd.svelte';
-	import { formatDateLong } from '$lib/helpers/format-date';
+	import Breadcrumb from '#lib/components/Breadcrumb.svelte';
+	import JsonLd from '#lib/components/JsonLd.svelte';
+	import { formatDateLong } from '#lib/helpers/format-date.js';
 	import {
 		canonicalUrl,
 		jsonLdBlogPosting,
 		jsonLdBreadcrumb,
 		jsonLdScript,
 		ogMeta
-	} from '$lib/helpers/seo';
+	} from '#lib/helpers/seo.js';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -58,7 +58,7 @@
 <Breadcrumb items={breadcrumbItems} />
 
 <div class="kicker tnum">
-	<a class="cap dim" href={resolve('/news/')}>News</a>
+	<a class="cap dim" href={resolve('news/')}>News</a>
 	<div class="right">
 		<time class="cap dim" datetime={data.post.date}>{formatDateLong(data.post.date)}</time>
 	</div>
@@ -80,11 +80,11 @@
 		<ul class="music">
 			{#each data.post.music as group (group.artistSlug)}
 				<li>
-					<a href={resolve(`/artists/${group.artistSlug}`)}>{group.artistName}</a>
+					<a href={resolve(`artists/${group.artistSlug}`)}>{group.artistName}</a>
 					{#if group.albums.length > 0}
 						<span class="albs">
 							{#each group.albums as album (album.slug)}
-								<a href={resolve(`/artists/${group.artistSlug}/${album.slug}`)}>
+								<a href={resolve(`artists/${group.artistSlug}/${album.slug}`)}>
 									— {album.name}
 									<span class="track-count">
 										· {album.trackCount}
