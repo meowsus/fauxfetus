@@ -1,3 +1,11 @@
+# v3.1.2 - November 27, 2026
+
+- Precache diet: install set down 52%, stops the /.htaccess 403 on every install
+- Data JSONs (radio queue, search index) served network-first — no stale pinning on deploys that skip the version bump
+- Apache Cache-Control: hashed css/js immutable, service worker & version.json no-cache
+- SW cache name now hashes the install set itself: purges when the contract changes, zero manual -rN busters to remember
+- Fetch handler opens the cache once per request; theme-color meta for browser chrome
+
 # v3.1.1 - November 26, 2026
 
 - Update logo
